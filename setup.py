@@ -15,7 +15,7 @@ setup(
     author_email = 'haim@babysnakes.org',
     packages = ['babysnakes'],
     package_dir = {'': 'src'},
-    install_requires = ['ConfigObj'],
+    install_requires = ['configobj==4.7.0'],
     entry_points = ("""
         [console_scripts]
         runssh = babysnakes.runsshlib:main
