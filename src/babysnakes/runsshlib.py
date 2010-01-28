@@ -1,9 +1,9 @@
-# 
+#
 #  runsshlib.py
-#  
+#
 #  Created by Haim Ashkenazi on 2010-01-27.
 #  Copyright 2010 Haim Ashkenazi. All rights reserved.
-# 
+#
 
 import os, sys
 from configobj import ConfigObj
@@ -27,12 +27,20 @@ def main():
     if s.sections:      # group
         print_sections(s)
     else:
-        pass
-            
+        run_ssh(s)
 
 def print_sections(section):
     for s in section.sections:
         print s
 
-class RunSSH:
-    pass
+def run_ssh(section):
+    user = ''
+    if 'user' in section.keys():
+        user = '-l %s' % section['user']
+    
+    try:
+        host = section['host']
+    except KeyError, ke:
+        print 'Invalid configuration for "%s". No host specified!' % section
+    
+    print 'ssh %s %s' % (user, host)
