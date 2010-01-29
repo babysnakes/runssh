@@ -6,12 +6,19 @@
 #
 
 import os, sys
+from optparse import OptionParser
 from configobj import ConfigObj
 
 _configfile = os.path.join(os.getenv('HOME'), '.runssh.conf')
 
 def main():
-    args = sys.argv[1:]
+    # command line arguments
+    usage = "usage: %prog [options] [section ...] host"
+    parser = OptionParser(usage=usage)
+    parser.add_option("-l", action="store_true", dest="list", default=False,
+                      help="list available sub-secions.")
+    (options, args) = parser.parse_args()
+    
     config = ConfigObj(_configfile)
     
     # initialy we use the 'root' section
@@ -25,9 +32,13 @@ def main():
     
     # is this a group or host?
     if s.sections:      # group
-        print_sections(s)
-    else:
-        run_ssh(s)
+        if options.list:
+            print_sections(s)
+        else:
+            parser.error("last argument is a section, not host!")
+    else:               # host
+        if not options.list:
+            run_ssh(s)
 
 def print_sections(section):
     for s in section.sections:
