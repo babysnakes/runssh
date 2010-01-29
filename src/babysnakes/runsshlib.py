@@ -20,7 +20,7 @@ def main():
         try:
             s = s[arg]
         except KeyError, ke:
-            print 'invalid section: "%s"' % arg
+            sys.stderr.write('invalid section: "%s"\n' % arg)
             sys.exit(5)
     
     # is this a group or host?
