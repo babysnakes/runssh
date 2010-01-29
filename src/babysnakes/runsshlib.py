@@ -45,13 +45,18 @@ def print_sections(section):
         print s
 
 def run_ssh(section):
-    user = ''
+    # TODO: why 'ssh' have to appear twice in execvp?
+    sshargs = ['ssh']
     if 'user' in section.keys():
-        user = '-l %s' % section['user']
+        sshargs.extend(['-l', section['user']])
     
     try:
         host = section['host']
+        sshargs.append(host)
     except KeyError, ke:
-        print 'Invalid configuration for "%s". No host specified!' % section
+        # TODO: call this error through parser?
+        sys.stderr.write('Invalid configuration for "%s". No host specified!\n'
+                         % section.name)
+        sys.exit(3)
     
-    print 'ssh %s %s' % (user, host)
+    os.execvp('ssh', sshargs)
