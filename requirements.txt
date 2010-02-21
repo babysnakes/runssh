@@ -1,0 +1,4 @@
+distribute==0.6.10
+ipython==0.10
+rope==0.9.3
+wsgiref==0.1.2
