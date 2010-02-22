@@ -27,8 +27,7 @@ def main():
         try:
             s = s[arg]
         except KeyError, ke:
-            sys.stderr.write('invalid section: "%s"\n' % arg)
-            sys.exit(5)
+            parser.error('invalid section: "%s"\n' % arg)
     
     # is this a group or host?
     if s.sections:      # group
