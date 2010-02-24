@@ -49,7 +49,7 @@ def main():
     else:               # host
         if options.list:
             pass    # list has no effect here.
-        if options.printconfig:
+        elif options.printconfig:
             print_host(s)
         else:
             run_ssh(s)
