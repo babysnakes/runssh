@@ -109,6 +109,20 @@ class RunSSHConfig:
         s = self._get_section_from_path(path)
         return s.sections
     
+    def get_host_config(self, path):
+        """ A utility method to return a dictionary with host configuration
+            extracted from the path.
+            
+            path is a sequence of ordered subsection names separated
+            by spaces. e.g, 'section1 subsection12 subsection124' where
+            subsecion12 is a sub-section of section1 etc...
+        """
+        s = self._get_section_from_path(path)
+        if s.sections:
+            raise SectionError('%s is a section, not a host configuration!' 
+                               % s.name)
+        return s
+    
     def _get_section_from_path(self, path):
         """ extract the section specified through the path.
             
@@ -131,7 +145,11 @@ class RunSSHCmd(cmdln.Cmdln):
     
     def do_connect(self, subcmd, opts, *host):
         "connect to remote host"
-        print 'connecting to',  host
+        try:
+            c = RunSSHCmd.config.get_host_config(host)
+        except SectionError, e:
+            raise cmdln.CmdlnUserError(e)
+        print 'connecting to ', host
     
     def complete_connect(self, text, line, begidx, endidx):
         path = line.split()
