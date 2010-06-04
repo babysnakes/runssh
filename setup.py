@@ -7,15 +7,18 @@
 
 from setuptools import setup
 
+_requirements = ['configobj==4.7.0',
+                 'argparse==1.1']
+
 setup(
-    name = 'RunssH',
-    version = '0.1.0a1',
+    name = 'RunSSH',
+    version = '0.1.1dev',
     description = 'Easy way to organize and launch ssh sessions.',
     author = 'Haim Ashkenazi',
     author_email = 'haim@babysnakes.org',
     packages = ['babysnakes'],
     package_dir = {'': 'src'},
-    install_requires = ['configobj==4.7.0'],
+    install_requires = _requirements,
     entry_points = ("""
         [console_scripts]
         runssh = babysnakes.runsshlib:main
