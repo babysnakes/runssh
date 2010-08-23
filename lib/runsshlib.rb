@@ -13,6 +13,9 @@ module RunSSHLib
   # to/from yaml file.
   class ConfigFile
     
+    # Initialize new ConfigFile. Uses supplied config_file or the default
+    # '~/.runssh'. If file doesn't exist, it issues a warning and creates 
+    # a new empty one.
     def initialize(config_file = DEFAULT_CONFIG)
       @config_file = config_file
       if File.exists? config_file
@@ -24,7 +27,30 @@ module RunSSHLib
       end
     end
     
-    def add_host_def(path, host_def)
+    # Add host definition to config file.
+    # `path`: An array of symbols that represent the path
+    #         for the host. e.g, [:client, :datacenter1].
+    # `name`: The name of the host definition as symbol.
+    # `host_def`: A HostDef instance.
+    def add_host_def(path, name, host_def)
+      # sanity
+      raise ConfigError.new('Invalid host definition') unless host_def.instance_of? HostDef
+      
+      k = path.inject(@config) do |hsh, key|
+        if hsh.include? key
+          if hsh[key].instance_of? HostDef
+            raise ConfigError.new('Cannot override host definition with path!')
+          end
+          hsh[key]
+        else
+          hsh[key] = {}
+        end
+      end
+      
+      raise ConfigError.new('path already exist!') if k.include? name
+      
+      k[name] = host_def
+      save
     end
     
     # Update host definition (host_def) at the specified path.
