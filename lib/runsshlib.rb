@@ -60,8 +60,20 @@ module RunSSHLib
       raise ConfigError.new('Invalid host definition!') if not 
             host_def.instance_of? HostDef
       
-      host = get_host(path)
-      host = host_def
+      # we need to separate the host name from the path
+      # in order to get the key of the host definition.
+      host = path.pop
+      groups = path.inject(@config) do |hsh, ky|
+        raise ConfigError.new("Invalid path!") unless hsh
+        hsh[ky]
+      end
+      if groups.include? host
+        raise ConfigError.new("Cannot overwrite group with host definition") unless
+              groups[host].instance_of? HostDef
+        groups[host] = host_def
+      else
+        raise ConfigError.new("Host definition doesn't exist!")
+      end
       save
     end
     

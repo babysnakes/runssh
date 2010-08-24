@@ -24,6 +24,7 @@ describe "RunSSH Configuration class" do
     RunSSHLib::ConfigFile.new(@temp_file)
     read_config.should == {}
   end
+  
   it "should create a backup while saving" do
     c = RunSSHLib::ConfigFile.new(@temp_file)
     c.send(:save)
@@ -81,6 +82,41 @@ describe "RunSSH Configuration class" do
       c.add_host_def([:one, :two], :h2, @h2)
       c.get_host([:one, :two, :h1]).should == @h1
       c.get_host([:one, :two, :h2]).should == @h2
+    end
+  end
+  
+  describe "when updating host" do
+    it "should refuse to *update* non-existing host" do
+      initial_data
+      lambda { @c.update_host_def([:one, :two, :host], @h1) }.
+              should raise_error(RunSSHLib::ConfigError, 
+                                 /Host definition doesn't exist/)
+    end
+    
+    it "should refuse to accept invalid host definition" do
+      initial_data
+      lambda { @c.update_host_def([:one, :two, :three, :www], :wrong) }.
+              should raise_error(RunSSHLib::ConfigError, /Invalid/)
+    end
+    
+    it "should NOT replace path with host definition" do
+      initial_data
+      lambda { @c.update_host_def([:one, :two, :three], @h2) }.
+              should raise_error(RunSSHLib::ConfigError, /Cannot overwrite/)
+      
+    end
+    
+    it "should correctly update and save host definition" do
+      initial_data
+      @c.update_host_def([:one, :two, :three, :www], @h2)
+      c = RunSSHLib::ConfigFile.new(@temp_file)
+      c.get_host([:one, :two, :three, :www]).should == @h2
+    end
+    
+    it "should handle invalid paths correctly" do
+      initial_data
+      lambda { @c.update_host_def([:two, :three, :four], @h2) }.
+              should raise_error(RunSSHLib::ConfigError, /Invalid/)
     end
   end
   
