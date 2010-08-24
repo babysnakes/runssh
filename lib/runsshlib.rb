@@ -21,7 +21,7 @@ module RunSSHLib
       if File.exists? config_file
         File.open(config_file) { |io| @config = Marshal.load(io) }
       else
-        warn "Config file not found. It must be the first time you run this app..."
+        # warn "Config file not found. It must be the first time you run this app..."
         @config = Hash.new
         save
       end
