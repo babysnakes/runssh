@@ -64,24 +64,27 @@ describe "RunSSH Configuration class" do
       c = RunSSHLib::ConfigFile.new(@temp_file)
       c.add_host_def([:one, :two], :h1, @h1)
       c.add_host_def([:three, :four], :h2, @h2)
-      c.get_host([:one, :two, :h1]).should == @h1
-      c.get_host([:three, :four, :h2]).should == @h2
+      d = RunSSHLib::ConfigFile.new(@temp_file)
+      d.get_host([:one, :two, :h1]).should == @h1
+      d.get_host([:three, :four, :h2]).should == @h2
     end
     
     it "should correctly merge paths with common path" do
       c = RunSSHLib::ConfigFile.new(@temp_file)
       c.add_host_def([:one, :two], :h1, @h1)
       c.add_host_def([:one, :three], :h2, @h2)
-      c.get_host([:one, :two, :h1]).should == @h1
-      c.get_host([:one, :three, :h2]).should == @h2
+      d = RunSSHLib::ConfigFile.new(@temp_file)
+      d.get_host([:one, :two, :h1]).should == @h1
+      d.get_host([:one, :three, :h2]).should == @h2
     end
     
     it "should correctly merge hosts under same path" do
       c = RunSSHLib::ConfigFile.new(@temp_file)
       c.add_host_def([:one, :two], :h1, @h1)
       c.add_host_def([:one, :two], :h2, @h2)
-      c.get_host([:one, :two, :h1]).should == @h1
-      c.get_host([:one, :two, :h2]).should == @h2
+      d = RunSSHLib::ConfigFile.new(@temp_file)
+      d.get_host([:one, :two, :h1]).should == @h1
+      d.get_host([:one, :two, :h2]).should == @h2
     end
   end
   
