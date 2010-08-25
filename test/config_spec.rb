@@ -161,6 +161,32 @@ describe "RunSSH Configuration class" do
     end
   end
 
+  describe "when listing subgroups" do
+    before(:all) do
+      initial_data
+    end
+
+    it "should raise error if path is invalid" do
+      lambda { @c.list_groups([:one, :three, :four]) }.
+              should raise_error(RunSSHLib::ConfigError, /invalid path/i)
+      lambda { @c.list_groups([:two, :three, :four]) }.
+              should raise_error(RunSSHLib::ConfigError, /invalid path/i)
+    end
+
+    it "should return [] if path points to host definition" do
+      @c.list_groups([:one, :two, :three, :www]).should == []
+    end
+
+    it "should return [] for group without subgroups"
+
+    it "should return valid subgroups if there are any" do
+      @c.add_host_def([:one, :two, :four], :host, @h2)
+      @c.add_host_def([:one, :two, :three], :host, @h1)
+      @c.list_groups([:one, :two]).should include(:three, :four)
+      @c.list_groups([:one, :two, :three]).should include(:host, :www)
+    end
+  end
+
   after(:each) do
     if File.exists? @temp_file
       File.delete(@temp_file)

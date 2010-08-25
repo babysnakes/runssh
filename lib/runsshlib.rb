@@ -97,15 +97,15 @@ module RunSSHLib
     end
 
     def list_groups(path)
-      value = path.inject(@config) { |hsh, key| hsh[key] }
-
-      # handle invalid path
-      raise ConfigError.new(%Q("#{path.join(' => ')}" doesn't exist!')) unless value
+      value = path.inject(@config) do |hsh, ky|
+        raise ConfigError.new('Invalid path!') unless hsh
+        hsh[ky]
+      end
 
       if value.instance_of? Hash
         value.keys
       else
-        nil
+        []
       end
     end
 
