@@ -99,6 +99,25 @@ module RunSSHLib
       end
     end
 
+    # This will delete any path if it's a host definition
+    # or an empty group.
+    def delete_path(path)
+      # we need access to the delete key, not just the value
+      mykey = path.pop
+      value = retrieve_path(path, 'Invalid path!')
+      raise ConfigError.new('Invalid path!') unless value
+
+      if value[mykey].instance_of? HostDef or value[mykey] == {}
+        value.delete(mykey)
+      elsif not value[mykey]
+        raise ConfigError.new('Invalid path!')
+      else
+        raise ConfigError.new('Supplied path is non-empty group!')
+      end
+
+      save
+    end
+
     # Export config as YAML to the supplied file.
     def import(file)
       require 'yaml'

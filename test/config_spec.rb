@@ -133,6 +133,43 @@ describe "RunSSH Configuration class" do
     end
   end
 
+  describe "when deleting host" do
+    before(:each) do
+      initial_data
+    end
+
+    it "should raise error if path is invalid" do
+      lambda { @c.delete_path([:one, :three]) }.
+              should raise_error(RunSSHLib::ConfigError, /invalid path/i)
+      lambda { @c.delete_path([:non, :existing]) }.
+              should raise_error(RunSSHLib::ConfigError, /invalid path/i)
+      lambda { @c.delete_path([]) }.
+              should raise_error(RunSSHLib::ConfigError, /invalid path/i)
+    end
+
+    it "should refuse to delete non-empty groups" do
+      lambda { @c.delete_path([:one, :two]) }.
+              should raise_error(RunSSHLib::ConfigError,
+                                 /Supplied path is non-empty group/)
+    end
+
+    it "should delete host definitions" do
+      @c.add_host_def([:another, :path], :host, @h2)
+      @c.delete_path([:another, :path, :host])
+      b = RunSSHLib::ConfigFile.new(@temp_file)
+      b.list_groups([:another, :path]).should == []
+    end
+
+    it "should delete empty groups" do
+      @c.add_host_def([:another, :path], :host, @h2)
+      @c.delete_path([:another, :path, :host])
+      # I should be able to delete the empty path
+      @c.delete_path([:another, :path])
+      b = RunSSHLib::ConfigFile.new(@temp_file)
+      b.list_groups([:another]).should == []
+    end
+  end
+
   describe "when quering for host" do
     it "should raise error if requested host is path" do
       initial_data
@@ -162,7 +199,7 @@ describe "RunSSH Configuration class" do
   end
 
   describe "when listing subgroups" do
-    before(:all) do
+    before(:each) do
       initial_data
     end
 
@@ -177,7 +214,11 @@ describe "RunSSH Configuration class" do
       @c.list_groups([:one, :two, :three, :www]).should == []
     end
 
-    it "should return [] for group without subgroups"
+    it "should return [] for group without subgroups" do
+      @c.add_host_def([:another, :path], :host, @h2)
+      @c.delete_path([:another, :path, :host])
+      @c.list_groups([:another, :path]).should == []
+    end
 
     it "should return valid subgroups if there are any" do
       @c.add_host_def([:one, :two, :four], :host, @h2)
