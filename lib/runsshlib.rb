@@ -9,14 +9,14 @@ module RunSSHLib
   # points to another hash or to host definition.
   #
   # The configuration file should use Marshal to save/load
-  #  configuration, but should also be able to import/export
+  # configuration, but should also be able to import/export
   # to/from yaml file.
   class ConfigFile
 
     # Initialize new ConfigFile. Uses supplied config_file or the default
     # '~/.runssh'. If file doesn't exist, it issues a warning and creates
     # a new empty one.
-    def initialize(config_file = DEFAULT_CONFIG)
+    def initialize(config_file=DEFAULT_CONFIG)
       @config_file = config_file
       if File.exists? config_file
         File.open(config_file) { |io| @config = Marshal.load(io) }
@@ -28,10 +28,11 @@ module RunSSHLib
     end
 
     # Add host definition to config file.
-    # `path`: An array of symbols that represent the path
-    #         for the host. e.g, [:client, :datacenter1].
-    # `name`: The name of the host definition as symbol.
-    # `host_def`: A HostDef instance.
+    # 
+    # path:: An array of symbols that represent the path
+    #        for the host. e.g, [:client, :datacenter1].
+    # name:: The name of the host definition as symbol.
+    # host_def:: A HostDef instance.
     def add_host_def(path, name, host_def)
       # sanity
       raise ConfigError.new('Invalid host definition') unless host_def.instance_of? HostDef
@@ -75,8 +76,8 @@ module RunSSHLib
     end
 
     # Returns the host definition in the specified path.
-    # `path` is an array of symbols which translates to nested hash keys.
-    # Raises ConfigError if not found or if path points to a group.
+    # path:: is an array of symbols which translates to nested hash keys.
+    # Raises:: ConfigError if not found or if path points to a group.
     def get_host(path)
       host = retrieve_path(path,
              %Q{host definition (#{path.join(' => ')}) doesn't exist!})
