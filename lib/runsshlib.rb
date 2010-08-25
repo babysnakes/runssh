@@ -63,10 +63,7 @@ module RunSSHLib
       # we need to separate the host name from the path
       # in order to get the key of the host definition.
       host = path.pop
-      groups = path.inject(@config) do |hsh, ky|
-        raise ConfigError.new("Invalid path!") unless hsh
-        hsh[ky]
-      end
+      groups = retrieve_path(path, "Invalid path!")
       if groups.include? host
         raise ConfigError.new("Cannot overwrite group with host definition") unless
               groups[host].instance_of? HostDef
@@ -81,12 +78,8 @@ module RunSSHLib
     # `path` is an array of symbols which translates to nested hash keys.
     # Raises ConfigError if not found or if path points to a group.
     def get_host(path)
-      host = path.inject(@config) do |hsh, ky|
-        raise ConfigError.new(
-              %Q{host definition (#{path.join(' => ')}) doesn't exist!}) unless hsh
-        hsh[ky]
-      end
-
+      host = retrieve_path(path,
+             %Q{host definition (#{path.join(' => ')}) doesn't exist!})
       if not host
         raise ConfigError.new(%Q{host definition (#{path.join(' => ')}) doesn't exist!})
       elsif host.instance_of? Hash
@@ -96,12 +89,9 @@ module RunSSHLib
       host
     end
 
+    # List all available sub groups inside path.
     def list_groups(path)
-      value = path.inject(@config) do |hsh, ky|
-        raise ConfigError.new('Invalid path!') unless hsh
-        hsh[ky]
-      end
-
+      value = retrieve_path(path, 'Invalid path!')
       if value.instance_of? Hash
         value.keys
       else
@@ -129,6 +119,13 @@ module RunSSHLib
       # create backup (File.copy always seems to overwrite existing file)
       File.copy(@config_file, @config_file + '.bak') if File.exists? @config_file
       File.open(@config_file, 'w') { |out| Marshal.dump(@config, out) }
+    end
+
+    def retrieve_path(path, error)
+      host = path.inject(@config) do |hsh, ky|
+        raise ConfigError.new(error) unless hsh
+        hsh[ky]
+      end
     end
   end
 
