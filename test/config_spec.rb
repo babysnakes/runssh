@@ -18,6 +18,7 @@ describe "RunSSH Configuration class" do
     @temp_file_bak = @temp_file + '.bak'
     @h1 = RunSSHLib::HostDef.new('a.b.c')
     @h2 = RunSSHLib::HostDef.new('b.b.c', 'meme')
+    @tmp_yml = File.join(Dir.tmpdir, 'tempyml')
   end
 
   it "should save a new empty configuration if none exists" do
@@ -228,12 +229,24 @@ describe "RunSSH Configuration class" do
     end
   end
 
+  it "should correctly export and import YAML files" do
+    yml = File.join(File.dirname(__FILE__), 'fixtures', 'runssh.yml')
+    c = RunSSHLib::ConfigFile.new(@temp_file)
+    c.import(yml)
+    c.export(@tmp_yml)
+    require 'yaml'
+    YAML.load_file(@tmp_yml).should == YAML.load_file(yml)
+  end
+
   after(:each) do
     if File.exists? @temp_file
       File.delete(@temp_file)
     end
     if File.exists? @temp_file_bak
       File.delete(@temp_file_bak)
+    end
+    if File.exists? @tmp_yml
+      File.delete(@tmp_yml)
     end
   end
 

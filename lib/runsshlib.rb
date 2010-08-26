@@ -28,7 +28,7 @@ module RunSSHLib
     end
 
     # Add host definition to config file.
-    # 
+    #
     # path:: An array of symbols that represent the path
     #        for the host. e.g, [:client, :datacenter1].
     # name:: The name of the host definition as symbol.
@@ -129,7 +129,7 @@ module RunSSHLib
     # Import config from YAML from the specified file.
     def export(file)
       require 'yaml'
-      File.open(file) { |out| YAML.dump(@config, out) }
+      File.open(file, 'w') { |out| YAML.dump(@config, out) }
     end
 
     private
