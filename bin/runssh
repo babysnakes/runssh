@@ -1,0 +1,7 @@
+#!/usr/bin/env ruby
+
+require 'rubygems'
+require 'runsshlib'
+
+cli = RunSSHLib::CLI.new
+cli.run

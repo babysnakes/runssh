@@ -1,8 +1,6 @@
 # Main RunSSHLib module.
 module RunSSHLib
 
-  DEFAULT_CONFIG = File.expand_path('~/.runssh')
-
   # Handles configuration file for the application.
   #
   # The configuration consists of nested hashes which keys either
@@ -16,7 +14,7 @@ module RunSSHLib
     # Initialize new ConfigFile. Uses supplied config_file or the default
     # '~/.runssh'. If file doesn't exist, it issues a warning and creates
     # a new empty one.
-    def initialize(config_file=DEFAULT_CONFIG)
+    def initialize(config_file)
       @config_file = config_file
       if File.exists? config_file
         File.open(config_file) { |io| @config = Marshal.load(io) }
@@ -146,6 +144,41 @@ module RunSSHLib
         raise ConfigError.new(error) unless hsh
         hsh[ky]
       end
+    end
+  end
+
+  class CLI
+    require 'trollop'
+
+    @commands = %w(shell add delete import export)
+
+    def run
+      @options = Trollop::options do
+        # TODO: This should be generated automatically somehow!!
+        banner <<-EOS
+Usage: runssh [global_options] COMMAND <path> [options]
+
+<path>: A space separated list of names (e.g, one two three)
+        For available completions append " ?" to the end of path.
+
+Available commands:
+  * shell  : Open ssh shell on remote host
+  * add    : Add host definition
+  * delete : Delete host definition
+  * import : Import configuration
+  * export : Export configuration
+
+For help on commands run:
+  runssh help COMMAND
+
+Global options:
+EOS
+        opt :config_file, "alternate config file",
+            :type => :string, :short => :f
+        stop_on_unknown
+      end
+      p @options
+      p ARGV
     end
   end
 
