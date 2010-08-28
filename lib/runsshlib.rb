@@ -150,21 +150,28 @@ module RunSSHLib
   class CLI
     require 'trollop'
 
-    @commands = %w(shell add delete import export)
+    COMMAND = %w(shell add del print import export)
 
+    # It all starts here.
     def run
-      @options = Trollop::options do
+      # 'runssh help' should produce main help
+      if ARGV == ['help']; ARGV.unshift '-h'; end
+
+      @global_options = Trollop::options do
         # TODO: This should be generated automatically somehow!!
         banner <<-EOS
 Usage: runssh [global_options] COMMAND <path> [options]
 
-<path>: A space separated list of names (e.g, one two three)
-        For available completions append " ?" to the end of path.
+COMMAND : One of the commands mentioned below. It's possible to
+          type only part of the command as long as it's not ambiguous.
+<path>  : A space separated list of names (e.g, one two three)
+          For available completions append " ?" to the end of path.
 
 Available commands:
   * shell  : Open ssh shell on remote host
   * add    : Add host definition
-  * delete : Delete host definition
+  * del    : Delete host definition
+  * print  : Print host definition
   * import : Import configuration
   * export : Export configuration
 
@@ -177,9 +184,39 @@ EOS
             :type => :string, :short => :f
         stop_on_unknown
       end
-      p @options
-      p ARGV
+
+      # workaround to enable 'help COMMAND' functionality.
+      if ARGV.first == 'help'; ARGV.shift; ARGV << '-h'; end
+
+      # lets see if a known command was requested
+      cmd = ARGV.shift
+      if COMMAND.include? cmd
+        parse_cmd(cmd)
+      else    # try to extract command
+        opts = COMMAND.select { |item| item =~ /^#{cmd}/ }
+        if opts.length == 1
+          parse_cmd(opts.first)
+        else
+          Trollop::die 'invalid command!'
+        end
+      end
+
     end
+
+    private
+
+    # parse subcommand. *Does not* handle null or invalid commands!
+    def parse_cmd(cmd)
+      case cmd
+      when 'shell'
+        @options = Trollop::options do
+          banner "connect to host"
+          opt :user, "override the login in the configuration",
+              :type => :string
+        end
+      end
+    end
+
   end
 
   # Indicates configuration error
