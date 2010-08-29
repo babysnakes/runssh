@@ -286,7 +286,7 @@ EOS
     end
 
     def run_add
-      @c.add_host_def(ARGV, @options[:config_name],
+      @c.add_host_def(ARGV, @options[:config_name].to_sym,
                       HostDef.new(@options[:host_name], @options[:user]))
     end
 
