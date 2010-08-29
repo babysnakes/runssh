@@ -105,6 +105,9 @@ describe "RunSSH Configuration class" do
       lambda { @c.update_host_def([:one, :two, :host], @h1) }.
               should raise_error(RunSSHLib::ConfigError,
                                  /Host definition doesn't exist/)
+      lambda { @c.update_host_def([:wrong, :path], @h1) }.
+              should raise_error(RunSSHLib::ConfigError, /Invalid path!/)
+
     end
 
     it "should refuse to accept invalid host definition" do

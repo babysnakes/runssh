@@ -65,6 +65,7 @@ module RunSSHLib
       # in order to get the key of the host definition.
       host = path.pop
       groups = retrieve_path(path, "Invalid path!")
+      raise ConfigError, 'Invalid path!' unless groups
       if groups.include? host
         raise ConfigError.new("Cannot overwrite group with host definition") unless
               groups[host].instance_of? HostDef
