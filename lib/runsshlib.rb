@@ -286,6 +286,8 @@ EOS
     end
 
     def run_add
+      @c.add_host_def(ARGV, @options[:config_name],
+                      HostDef.new(@options[:host_name], @options[:user]))
     end
 
     def run_del
@@ -298,6 +300,7 @@ EOS
     end
 
     def run_export
+      @c.export(@options[:output_file])
     end
 
   end
