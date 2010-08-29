@@ -162,7 +162,7 @@ module RunSSHLib
       @global_options = Trollop::options do
         # TODO: This should be generated automatically somehow!!
         banner <<-EOS
-Usage: runssh [global_options] COMMAND <path> [options]
+Usage: runssh [global_options] COMMAND [options] <path>
 
 COMMAND : One of the commands mentioned below. It's possible to
           type only part of the command as long as it's not ambiguous.
