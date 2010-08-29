@@ -295,7 +295,7 @@ EOS
 
     def run_print
       host = @c.get_host(ARGV)
-      output = "Host definition for: #{ARGV.last.to_s}",
+      output = "Host definition for: #{ARGV.last}",
                "    * host: #{host.name}",
                "    * user: #{host.login ? host.login : 'current user'}"
       puts output
