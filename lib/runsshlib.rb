@@ -292,6 +292,16 @@ EOS
     end
 
     def run_del
+      print "Are you sure you want to delete \"", ARGV.join(':'), "\" (y/n)? "
+      # if I don't clear ARGV gets fails. why?
+      path = ARGV.clone
+      ARGV.clear
+      answer = gets.chomp
+      if answer == 'y'
+        @c.delete_path(path)
+      else
+        puts 'canceled'
+      end
     end
 
     def run_print
