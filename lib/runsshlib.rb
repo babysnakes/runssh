@@ -297,6 +297,7 @@ EOS
     end
 
     def run_import
+      @c.import(@options[:input_file])
     end
 
     def run_export
