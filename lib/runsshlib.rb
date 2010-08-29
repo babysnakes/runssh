@@ -243,8 +243,6 @@ EOS
       when 'add'
         @options = Trollop::options do
           banner "add host definition. TODO"
-          opt :config_name, 'The name for the host definition (e.g, webserver1)',
-              :short => :c, :type => :string, :required => true
           opt :host_name, 'The name or address of the host (e.g, host.example.com)',
               :short => :n, :type => :string, :required => true
           opt :user, 'The user to connect as (optional)',
@@ -287,7 +285,9 @@ EOS
     end
 
     def run_add
-      @c.add_host_def(ARGV, @options[:config_name].to_sym,
+      # extract the host definition name 
+      host = ARGV.pop
+      @c.add_host_def(ARGV, host,
                       HostDef.new(@options[:host_name], @options[:user]))
     end
 
