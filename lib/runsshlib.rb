@@ -190,17 +190,18 @@ EOS
 
       # lets see if a known command was requested
       cmd = ARGV.shift
-      if COMMAND.include? cmd
-        parse_cmd(cmd)
-      else    # try to extract command
-        opts = COMMAND.select { |item| item =~ /^#{cmd}/ }
-        if opts.length == 1
-          parse_cmd(opts.first)
-        else
-          Trollop::die 'invalid command!'
+
+      unless COMMAND.include? cmd     # try to match command
+        opts = begin
+          COMMAND.select { |item| item =~ /^#{cmd}/ }
+        rescue RegexpError
+          Trollop::die 'invalid command'
         end
+        Trollop::die 'invalid command!' unless opts.length == 1
+        cmd = opts.first
       end
 
+      parse_cmd(cmd)
     end
 
     private
