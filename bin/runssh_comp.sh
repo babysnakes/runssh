@@ -15,7 +15,6 @@ function _runssh () {
     elif [ $COMP_CWORD -eq $COM_POSITION ]; then
         options="shell add del print import export"
     fi
-    echo "$COM_POSITION, $COMP_CWORD, $options" >result
     COMPREPLY=( $(compgen -W "${options}" -- ${cur}) )
     return 0
 }
