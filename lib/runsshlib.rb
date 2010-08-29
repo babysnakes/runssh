@@ -237,7 +237,7 @@ EOS
       when 'shell'
         @options = Trollop::options do
           banner "connect to host. TODO"
-          opt :user, "override the login in the configuration",
+          opt :login, "override the login in the configuration",
               :type => :string
         end
       when 'add'
@@ -282,7 +282,8 @@ EOS
 
     def run_shell
       host = @c.get_host(ARGV)
-      p host
+      s = SshBackend.new(host, @options)
+      s.shell
     end
 
     def run_add
@@ -309,6 +310,22 @@ EOS
       @c.export(@options[:output_file])
     end
 
+  end
+
+  # A class to handle ssh operations.
+  class SshBackend
+    # New backend with host/login details.
+    def initialize(host_def, overrides)
+      @host = host_def.name
+      @user = overrides[:login] ? overrides[:login] : host_def.login
+    end
+
+    # run shell on remote host.
+    def shell
+      command = "ssh #{@user ? %Q(-l #{@user}) : ''}  #{@host}"
+      exec command
+    end
+    
   end
 
   # Indicates configuration error
