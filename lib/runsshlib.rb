@@ -202,17 +202,17 @@ EOS
         Trollop::die 'invalid command!' unless opts.length == 1
         cmd = opts.first
       end
-      
+
       # indicate path completion request
       completion_requested = ARGV.delete('?')
 
       parse_subcommand(cmd)
-      
+
       # Now that we finished the parsing we can move to the workflow.
-      
+
       # Let's initial the configuration
       init_config
-      # now, since by now the ARGV should only hold path, let's 
+      # now, since by now the ARGV should only hold path, let's
       # convert it to symbols (this is what the config expects)
       ARGV.map! { |e| e.to_sym }
       # did the user request completions? if not run the approproate command.
@@ -220,35 +220,57 @@ EOS
         puts @c.list_groups(ARGV)
       else
         command_name = 'run_' + cmd
-        method(command_name.to_sym)
+        m = method(command_name.to_sym)
+        m.call
       end
+    rescue ConfigError => e
+      Trollop.die e.message
     end
 
     private
 
     # handles argument parsing for all subcomand. It doesn't contain
-    # any logic, nor does it handle errors. It just parses the 
+    # any logic, nor does it handle errors. It just parses the
     # arguments and put the result into @options.
     def parse_subcommand(cmd)
       case cmd
       when 'shell'
         @options = Trollop::options do
-          banner "connect to host"
+          banner "connect to host. TODO"
           opt :user, "override the login in the configuration",
               :type => :string
         end
       when 'add'
         @options = Trollop::options do
-          banner "add host definition"
+          banner "add host definition. TODO"
+          opt :config_name, 'The name for the host definition (e.g, webserver1)',
+              :short => :c, :type => :string, :required => true
+          opt :host_name, 'The name or address of the host (e.g, host.example.com)',
+              :short => :n, :type => :string, :required => true
+          opt :user, 'The user to connect as (optional)',
+              :short => :u, :type => :string
         end
       when 'del'
-        # handle del
+        @options = Trollop::options do
+          banner "Delete host definition. TODO"
+          opt :yes, 'Delete without verification'
+        end
       when 'print'
-        # handle print
+        @options = Trollop::options do
+          banner "Display host configuration. TODO"
+        end
       when 'import'
-        # handle import
+        @options = Trollop::options do
+          banner "Import YAML file. REPLACES CURRENT CONFIGURATION. TODO"
+          opt :input_file, 'The yaml file to import from',
+              :type => :string, :required => true
+        end
       when 'export'
-        # handle export
+        @options = Trollop::options do
+          banner "Export configuration to file"
+          opt :output_file, 'The output file',
+              :type => :string, :required => true
+        end
       end
     end
 
@@ -256,6 +278,26 @@ EOS
       config = @global_options[:config_file] ?
                @global_options[:config_file] : DEFAULT_CONFIG
       @c = ConfigFile.new(config)
+    end
+
+    def run_shell
+      host = @c.get_host(ARGV)
+      p host
+    end
+
+    def run_add
+    end
+
+    def run_del
+    end
+
+    def run_print
+    end
+
+    def run_import
+    end
+
+    def run_export
     end
 
   end
