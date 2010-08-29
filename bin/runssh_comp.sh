@@ -2,7 +2,6 @@ function _runssh () {
     local cur options COM_POSITION
     COMPREPLY=()
     cur="${COMP_WORDS[COMP_CWORD]}"
-    echo ${COMP_WORDS[1]} >result
     # where is the COMMAND part of the argument (are we using -f?)
     COM_POSITION=1
     if [ ${COMP_WORDS[1]} ]; then
