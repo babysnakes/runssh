@@ -153,7 +153,7 @@ module RunSSHLib
   class CLI
     require 'trollop'
 
-    COMMAND = %w(shell add del print import export)
+    COMMAND = %w(shell add del update print import export)
 
     # It all starts here.
     def run
@@ -249,6 +249,14 @@ EOS
           opt :user, 'The user to connect as (optional)',
               :short => :u, :type => :string
         end
+      when 'update'
+        @options = Trollop::options do
+          banner "Update host definition. TODO"
+          opt :host_name, 'The name or address of the host (e.g, host.example.com)',
+              :short => :n, :type => :string, :required => true
+          opt :user, 'The user to connect as (optional)',
+              :short => :u, :type => :string
+        end
       when 'del'
         @options = Trollop::options do
           banner "Delete host definition. TODO"
@@ -286,10 +294,15 @@ EOS
     end
 
     def run_add
-      # extract the host definition name 
+      # extract the host definition name
       host = ARGV.pop
       @c.add_host_def(ARGV, host,
                       HostDef.new(@options[:host_name], @options[:user]))
+    end
+
+    def run_update
+      @c.update_host_def(ARGV,
+                HostDef.new(@options[:host_name], @options[:user]))
     end
 
     def run_del
@@ -336,7 +349,7 @@ EOS
       command = "ssh #{@user ? %Q(-l #{@user}) : ''}  #{@host}"
       exec command
     end
-    
+
   end
 
   # Indicates configuration error

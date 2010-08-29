@@ -13,7 +13,7 @@ function _runssh () {
     if [ ${COMP_CWORD} -gt $COM_POSITION ]; then
         options=$(${COMP_WORDS[@]:0:COMP_CWORD} ? 2>/dev/null)
     elif [ $COMP_CWORD -eq $COM_POSITION ]; then
-        options="shell add del print import export"
+        options="shell add del update print import export"
     fi
     COMPREPLY=( $(compgen -W "${options}" -- ${cur}) )
     return 0
