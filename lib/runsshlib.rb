@@ -294,6 +294,11 @@ EOS
     end
 
     def run_print
+      host = @c.get_host(ARGV)
+      output = "Host definition for: #{ARGV.last.to_s}",
+               "    * host: #{host.name}",
+               "    * user: #{host.login ? host.login : 'current user'}"
+      puts output
     end
 
     def run_import
