@@ -1,6 +1,8 @@
 # Main RunSSHLib module.
 module RunSSHLib
 
+  DEFAULT_CONFIG = File.expand_path('~/.runssh')
+
   # Handles configuration file for the application.
   #
   # The configuration consists of nested hashes which keys either
@@ -200,14 +202,34 @@ EOS
         Trollop::die 'invalid command!' unless opts.length == 1
         cmd = opts.first
       end
+      
+      # indicate path completion request
+      completion_requested = ARGV.delete('?')
 
-      parse_cmd(cmd)
+      parse_subcommand(cmd)
+      
+      # Now that we finished the parsing we can move to the workflow.
+      
+      # Let's initial the configuration
+      init_config
+      # now, since by now the ARGV should only hold path, let's 
+      # convert it to symbols (this is what the config expects)
+      ARGV.map! { |e| e.to_sym }
+      # did the user request completions? if not run the approproate command.
+      if completion_requested
+        puts @c.list_groups(ARGV)
+      else
+        command_name = 'run_' + cmd
+        method(command_name.to_sym)
+      end
     end
 
     private
 
-    # parse subcommand. *Does not* handle null or invalid commands!
-    def parse_cmd(cmd)
+    # handles argument parsing for all subcomand. It doesn't contain
+    # any logic, nor does it handle errors. It just parses the 
+    # arguments and put the result into @options.
+    def parse_subcommand(cmd)
       case cmd
       when 'shell'
         @options = Trollop::options do
@@ -215,7 +237,25 @@ EOS
           opt :user, "override the login in the configuration",
               :type => :string
         end
+      when 'add'
+        @options = Trollop::options do
+          banner "add host definition"
+        end
+      when 'del'
+        # handle del
+      when 'print'
+        # handle print
+      when 'import'
+        # handle import
+      when 'export'
+        # handle export
       end
+    end
+
+    def init_config
+      config = @global_options[:config_file] ?
+               @global_options[:config_file] : DEFAULT_CONFIG
+      @c = ConfigFile.new(config)
     end
 
   end
