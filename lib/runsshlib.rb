@@ -224,7 +224,7 @@ EOS
         m = method(command_name.to_sym)
         m.call
       end
-    rescue ConfigError => e
+    rescue ConfigError, Errno::ENOENT => e
       Trollop.die e.message
     end
 
