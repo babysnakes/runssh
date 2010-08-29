@@ -327,7 +327,14 @@ EOS
     end
 
     def run_import
-      @c.import(@options[:input_file])
+      print "Importing a file OVERWRITES existing configuration. " \
+            "Are you sure (y/n)? "
+      answer = gets.chomp
+      if answer == 'y'
+        @c.import(@options[:input_file])
+      else
+        puts 'canceled'
+      end
     end
 
     def run_export
