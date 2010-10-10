@@ -237,13 +237,29 @@ EOS
       case cmd
       when 'shell'
         @options = Trollop::options do
-          banner "connect to host. TODO"
+          banner <<-EOS
+Usage: runssh [global_options] shell [options] <path>
+
+Connect to the specified host using ssh.
+
+<path> : See main help for description of path.
+
+Options:
+EOS
           opt :login, "override the login in the configuration",
               :type => :string
         end
       when 'add'
         @options = Trollop::options do
-          banner "add host definition. TODO"
+          banner <<-EOS
+Usage: runssh [global_options] add <path> [options]
+
+Add a new host definition at the supplied <path>. <path> must not exit!
+
+<path> : See main help for description of path.
+
+Options:
+EOS
           opt :host_name, 'The name or address of the host (e.g, host.example.com)',
               :short => :n, :type => :string, :required => true
           opt :user, 'The user to connect as (optional)',
@@ -251,7 +267,17 @@ EOS
         end
       when 'update'
         @options = Trollop::options do
-          banner "Update host definition. TODO"
+          banner <<-EOS
+Usage: runssh [global_options] update [options] <path>
+
+Update host definition specified by <path> with new settings. The host
+definition is completely replaced by the new definition (e.g, You can
+not specify only new host and expect the user to remain the old one).
+
+<path> : See main help for description of path.
+
+Options:
+EOS
           opt :host_name, 'The name or address of the host (e.g, host.example.com)',
               :short => :n, :type => :string, :required => true
           opt :user, 'The user to connect as (optional)',
@@ -259,22 +285,53 @@ EOS
         end
       when 'del'
         @options = Trollop::options do
-          banner "Delete host definition. TODO"
+          banner <<-EOS
+Usage: runssh [global_options] del [options] <path> 
+
+Delete host definitions or `empty` groups (e.g, groups that contained
+only one host definition which was deleted). You'll be prompted for 
+verification.
+
+<path> : See main help for description of path.
+
+Options:
+EOS
           opt :yes, 'Delete without verification'
         end
       when 'print'
         @options = Trollop::options do
-          banner "Display host configuration. TODO"
+          banner <<-EOS
+Usage: runssh [global_options] print <path>
+
+Print host configuration to the console.
+
+<path> : See main help for description of path.
+
+Options:
+EOS
         end
       when 'import'
         @options = Trollop::options do
-          banner "Import YAML file. REPLACES CURRENT CONFIGURATION. TODO"
+          banner <<-EOS
+Usage: runssh [global_options] import [options]
+
+Imports a new configuration.
+CAREFULL: This completely overrides the current configuration!
+
+Options:
+EOS
           opt :input_file, 'The yaml file to import from',
               :type => :string, :required => true
         end
       when 'export'
         @options = Trollop::options do
-          banner "Export configuration to file"
+          banner <<-EOS
+Usage runssh [global_options] export [options]
+
+Exports the configuration to a YAML file.
+
+Options
+EOS
           opt :output_file, 'The output file',
               :type => :string, :required => true
         end
