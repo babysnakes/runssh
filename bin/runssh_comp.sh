@@ -11,7 +11,8 @@ function _runssh () {
     fi
     # complete path or commands according to the position.
     if [ ${COMP_CWORD} -gt $COM_POSITION ]; then
-        options=$(${COMP_WORDS[@]:0:COMP_CWORD} ? 2>/dev/null)
+        options=$(${COMP_WORDS[@]:0:COMP_CWORD} ? 2>/dev/null) # BASH
+        # options=$(${COMP_WORDS[0,COMP_CWORD-1]} ? 2>/dev/null) # ZSH
     elif [ $COMP_CWORD -eq $COM_POSITION ]; then
         options="shell add del update print import export"
     fi
