@@ -4,3 +4,12 @@ Requirements:
 Development requirements:
 * rspec (1.3.0)
 * rcov (0.9.8)
+
+== TODO
+* Create a _proper_ zsh completion script.
+* Add scp capabilities
+* Add tunneling support:
+  1. Configured tunneling
+  2. tunneling defined on the command line.
+* Remote commands (e.g, with no login).
+* Maybe replace invoking ssh from the command line with some library.
