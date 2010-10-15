@@ -13,3 +13,4 @@ Development requirements:
   2. tunneling defined on the command line.
 * Remote commands (e.g, with no login).
 * Maybe replace invoking ssh from the command line with some library.
+* Automatic deletion of empty groups.

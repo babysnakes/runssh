@@ -32,8 +32,9 @@ end
 
 Spec::Rake::SpecTask.new do |t|
   t.spec_files = FileList.new('test/**/*.rb')
-  # t.warning = true
   t.rcov = true
+  # t.warning = true
+  # t.spec_opts = %w(--color -f s)
 end
 
 Rake::RDocTask.new do |rd|
