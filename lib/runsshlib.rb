@@ -165,6 +165,8 @@ module RunSSHLib
         banner <<-EOS
 Usage: runssh [global_options] COMMAND [options] <path>
 
+A utility to bookmark multiple ssh connections in heirarchial order.
+
 COMMAND : One of the commands mentioned below. It's possible to
           type only part of the command as long as it's not ambiguous.
 <path>  : A space separated list of names (e.g, one two three)
@@ -252,7 +254,7 @@ EOS
       when 'add'
         @options = Trollop::options do
           banner <<-EOS
-Usage: runssh [global_options] add <path> [options]
+Usage: runssh [global_options] add [options] <path>
 
 Add a new host definition at the supplied <path>. <path> must not exit!
 
@@ -301,7 +303,7 @@ EOS
       when 'print'
         @options = Trollop::options do
           banner <<-EOS
-Usage: runssh [global_options] print <path>
+Usage: runssh [global_options] print [options] <path>
 
 Print host configuration to the console.
 
