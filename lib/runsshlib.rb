@@ -205,6 +205,7 @@ Global options:
 EOS
         opt :config_file, "alternate config file",
             :type => :string, :short => :f
+        version "RunSSH version #{Version::STRING}"
         stop_on_unknown
       end
 
@@ -442,4 +443,12 @@ EOS
 
   # A placeholder for host definitions
   HostDef = Struct.new(:name, :login)
+
+  module Version
+    MAJOR = 0
+    MINOR = 1
+    BUILD = 0
+
+    STRING = [MAJOR, MINOR, BUILD].compact.join('.')
+  end
 end

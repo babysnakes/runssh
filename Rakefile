@@ -16,6 +16,7 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #
 
+require 'lib/runsshlib'
 require 'rubygems'
 require 'rake'
 require 'rake/rdoctask'
@@ -26,7 +27,7 @@ spec = Gem::Specification.new do |s|
   s.platform = Gem::Platform::RUBY
   s.summary = "CLI utility to bookmark multiple ssh connections with hierarchy."
   s.name = 'runssh'
-  s.version = 0.1
+  s.version = RunSSHLib::Version::STRING
   s.required_ruby_version = '~> 1.8.7'
   s.has_rdoc = true
   s.extra_rdoc_files = ['README.rdoc']
