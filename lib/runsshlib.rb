@@ -174,11 +174,44 @@ module RunSSHLib
     COMMAND = %w(shell add del update print import export)
 
     # It all starts here.
-    def run
+    def run(args)
       # 'runssh help' should produce main help
-      if ARGV == ['help']; ARGV.unshift '-h'; end
+      if args == ['help']; args.unshift '-h'; end
 
-      @global_options = Trollop::options do
+      @global_options = parse_args(args)
+
+      # workaround to enable 'help COMMAND' functionality.
+      if args.first == 'help'; args.shift; args << '-h'; end
+
+      # indicate path completion request
+      completion_requested = args.delete('?')
+
+      cmd = extract_subcommand(args)
+      @options = parse_subcommand(cmd)
+
+      ### Now that we finished the parsing we can move to the workflow.
+      # Let's initial the configuration
+      @c = init_config
+      # now, since by now the args should only hold path, let's
+      # convert it to symbols (this is what the config expects)
+      path = args.map { |e| e.to_sym }
+      # did the user request completions? if not run the approproate command.
+      if completion_requested
+        puts @c.list_groups(path)
+      else
+        command_name = 'run_' + cmd
+        m = method(command_name.to_sym)
+        m.call(path)
+      end
+    rescue ConfigError, InvalidSubCommandError, Errno::ENOENT => e
+      Trollop.die e.message
+    end
+
+    private
+
+    # Parses main arguments. Returns the output of Trollop::options
+    def parse_args(args)
+      Trollop::options(args) do
         # TODO: This should be generated automatically somehow!!
         banner <<-EOS
 Usage: runssh [global_options] COMMAND [options] <path>
@@ -208,48 +241,23 @@ EOS
         version "RunSSH version #{Version::STRING}"
         stop_on_unknown
       end
-
-      # workaround to enable 'help COMMAND' functionality.
-      if ARGV.first == 'help'; ARGV.shift; ARGV << '-h'; end
-
-      # lets see if a known command was requested
-      cmd = ARGV.shift
-
-      unless COMMAND.include? cmd     # try to match command
-        opts = begin
-          COMMAND.select { |item| item =~ /^#{cmd}/ }
-        rescue RegexpError
-          Trollop::die 'invalid command'
-        end
-        Trollop::die 'invalid command!' unless opts.length == 1
-        cmd = opts.first
-      end
-
-      # indicate path completion request
-      completion_requested = ARGV.delete('?')
-
-      parse_subcommand(cmd)
-
-      # Now that we finished the parsing we can move to the workflow.
-
-      # Let's initial the configuration
-      init_config
-      # now, since by now the ARGV should only hold path, let's
-      # convert it to symbols (this is what the config expects)
-      ARGV.map! { |e| e.to_sym }
-      # did the user request completions? if not run the approproate command.
-      if completion_requested
-        puts @c.list_groups(ARGV)
-      else
-        command_name = 'run_' + cmd
-        m = method(command_name.to_sym)
-        m.call
-      end
-    rescue ConfigError, Errno::ENOENT => e
-      Trollop.die e.message
     end
 
-    private
+    # Etracts the subcommand from args. Throws InvalidSubCommandError if
+    # invalid or ambigious subcommand
+    def extract_subcommand(args)
+      cmd = args.shift
+      if COMMAND.include? cmd
+        cmd
+      else
+        cmdopts = COMMAND.select { |item| item =~ /^#{cmd}/ }
+        raise InvalidSubCommandError, 'invalid command' unless
+              cmdopts.length == 1
+        cmdopts.first
+      end
+    rescue RegexpError
+      raise InvalidSubCommandError, 'invalid command'
+    end
 
     # handles argument parsing for all subcomand. It doesn't contain
     # any logic, nor does it handle errors. It just parses the
@@ -257,7 +265,7 @@ EOS
     def parse_subcommand(cmd)
       case cmd
       when 'shell'
-        @options = Trollop::options do
+        Trollop::options do
           banner <<-EOS
 Usage: runssh [global_options] shell [options] <path>
 
@@ -271,7 +279,7 @@ EOS
               :type => :string
         end
       when 'add'
-        @options = Trollop::options do
+        Trollop::options do
           banner <<-EOS
 Usage: runssh [global_options] add [options] <path>
 
@@ -287,7 +295,7 @@ EOS
               :short => :u, :type => :string
         end
       when 'update'
-        @options = Trollop::options do
+        Trollop::options do
           banner <<-EOS
 Usage: runssh [global_options] update [options] <path>
 
@@ -305,7 +313,7 @@ EOS
               :short => :u, :type => :string
         end
       when 'del'
-        @options = Trollop::options do
+        Trollop::options do
           banner <<-EOS
 Usage: runssh [global_options] del [options] <path>
 
@@ -320,7 +328,7 @@ EOS
           opt :yes, 'Delete without verification'
         end
       when 'print'
-        @options = Trollop::options do
+        Trollop::options do
           banner <<-EOS
 Usage: runssh [global_options] print [options] <path>
 
@@ -332,7 +340,7 @@ Options:
 EOS
         end
       when 'import'
-        @options = Trollop::options do
+        Trollop::options do
           banner <<-EOS
 Usage: runssh [global_options] import [options]
 
@@ -345,7 +353,7 @@ EOS
               :type => :string, :required => true
         end
       when 'export'
-        @options = Trollop::options do
+        Trollop::options do
           banner <<-EOS
 Usage runssh [global_options] export [options]
 
@@ -362,32 +370,30 @@ EOS
     def init_config
       config = @global_options[:config_file] ?
                @global_options[:config_file] : DEFAULT_CONFIG
-      @c = ConfigFile.new(config)
+      ConfigFile.new(config)
     end
 
-    def run_shell
-      host = @c.get_host(ARGV)
+    def run_shell(path)
+      host = @c.get_host(path)
       s = SshBackend.new(host, @options)
       s.shell
     end
 
-    def run_add
+    def run_add(path)
       # extract the host definition name
-      host = ARGV.pop
-      @c.add_host_def(ARGV, host,
+      host = path.pop
+      @c.add_host_def(path, host,
                       HostDef.new(@options[:host_name], @options[:user]))
     end
 
-    def run_update
-      @c.update_host_def(ARGV,
+    def run_update(path)
+      @c.update_host_def(path,
                 HostDef.new(@options[:host_name], @options[:user]))
     end
 
-    def run_del
-      print "Are you sure you want to delete \"", ARGV.join(':'), "\" (y/n)? "
-      # if I don't clear ARGV gets fails. why?
-      path = ARGV.clone
-      ARGV.clear
+    def run_del(path)
+      print "Are you sure you want to delete \"", path.join(':'), "\" (y/n)? "
+      path.clear
       answer = gets.chomp
       if answer == 'y'
         @c.delete_path(path)
@@ -396,15 +402,16 @@ EOS
       end
     end
 
-    def run_print
-      host = @c.get_host(ARGV)
-      output = "Host definition for: #{ARGV.last}",
+    def run_print(path)
+      host = @c.get_host(path)
+      output = "Host definition for: #{path.last}",
                "    * host: #{host.name}",
                "    * user: #{host.login ? host.login : 'current user'}"
       puts output
     end
 
-    def run_import
+    # we don't use path here, it's just for easier invocation.
+    def run_import(path)
       print "Importing a file OVERWRITES existing configuration. " \
             "Are you sure (y/n)? "
       answer = gets.chomp
@@ -415,10 +422,10 @@ EOS
       end
     end
 
-    def run_export
+    # we don't use path here, it's just for easier invocation
+    def run_export(path)
       @c.export(@options[:output_file])
     end
-
   end
 
   # A class to handle ssh operations.
@@ -438,8 +445,10 @@ EOS
   end
 
   # Indicates configuration error
-  class ConfigError < RuntimeError
-  end
+  class ConfigError < StandardError; end
+
+  # Indicates invalid command
+  class InvalidSubCommandError < StandardError; end
 
   # A placeholder for host definitions
   HostDef = Struct.new(:name, :login)

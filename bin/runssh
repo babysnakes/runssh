@@ -22,4 +22,4 @@ require 'rubygems'
 require 'runsshlib'
 
 cli = RunSSHLib::CLI.new
-cli.run
+cli.run(ARGV)

@@ -41,8 +41,7 @@ describe "The CLI interface" do
   end
 
   it "sould raise an error when invoked with invalid command" do
-    ARGV.unshift 'wrong'
-    lambda { @cli.run }.should raise_error(TestError, /invalid command/)
+    lambda { @cli.run(['wrong']) }.should raise_error(TestError, /invalid command/)
   end
 end
 
