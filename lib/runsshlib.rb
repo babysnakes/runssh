@@ -438,7 +438,7 @@ EOS
 
     # run shell on remote host.
     def shell
-      command = "ssh #{@user ? %Q(-l #{@user}) : ''}  #{@host}"
+      command = "ssh #{@user ? %Q(-l #{@user}) : ''} #{@host}"
       exec command
     end
 

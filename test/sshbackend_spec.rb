@@ -37,4 +37,31 @@ describe "SshBackend implementation" do
       s.instance_variable_get(:@user).should == 'me'
     end
   end
+
+  describe "shell" do
+    before(:each) do
+      @hd1 = RunSSHLib::HostDef.new('a.example.com')
+      @hd2 = RunSSHLib::HostDef.new('b.example.com', 'user')
+    end
+
+    it "should handle null user correctly" do
+      ssh = RunSSHLib::SshBackend.new(@hd1, {})
+      ssh.should_receive(:exec).with(/^ssh\s+a.example.com$/).and_return(nil)
+      ssh.shell
+    end
+
+    it "should handle existing user correctly" do
+      ssh = RunSSHLib::SshBackend.new(@hd2, {})
+      ssh.should_receive(:exec).with(/^ssh\s+-l\s+user\s+b.example.com$/).
+          and_return(nil)
+      ssh.shell
+    end
+
+    it "should use the overriding user instead of configured one" do
+      ssh = RunSSHLib::SshBackend.new(@hd2, {:login => 'another', })
+      ssh.should_receive(:exec).with(/^ssh\s+-l\s+another\s+b.example.com$/).
+          and_return(nil)
+      ssh.shell
+    end
+  end
 end
