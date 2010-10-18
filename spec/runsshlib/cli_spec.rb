@@ -19,13 +19,46 @@
 require 'lib/runsshlib'
 require 'spec_helper'
 
+# These tests are pretty ugly. too much mocking. I hope someday
+# to find a better solution for that.
 describe "The CLI interface" do
-  before(:all) do
+  before(:each) do
     @cli = RunSSHLib::CLI.new
   end
 
-  it "should raise an error when invoked with invalid command" do
-    Trollop.should_receive(:die).with(/invalid command/)
-    @cli.run(['wrong'])
+  describe "main parser" do
+    it "should print help when invokes with 'help'" do
+      @cli.should_receive(:parse_args).with(['-h']).
+           and_raise(TestSpacialError)
+      lambda { @cli.run(['help']) }.should raise_error(TestSpacialError)
+    end
+
+    it "should correctly process the -f argument" do
+      RunSSHLib::ConfigFile.should_receive(:new).with('test_file').
+                            and_raise(TestSpacialError)
+      lambda do
+        @cli.run(%w(-f test_file print test))
+      end.should raise_error(TestSpacialError)
+    end
+
+    it "should correctly process the `help command` scheme" do
+      Trollop.should_receive(:options).with(%w(help print ?)).and_return({:config_file => nil})
+      Trollop.should_receive(:options).with(['-h'])
+      @cli.run(%w(help print ?))
+    end
+
+    it "should correctly parse the `?` for completion" do
+      config = mock("ConfigFile")
+      @cli.should_receive(:init_config).and_return(config)
+      config.should_receive(:list_groups)
+      @cli.run(%w(print ?))
+    end
+  end
+
+  describe "SubCommands" do
+    it "should raise an error when invoked with invalid command" do
+      Trollop.should_receive(:die).with(/invalid command/)
+      @cli.run(['wrong'])
+    end
   end
 end

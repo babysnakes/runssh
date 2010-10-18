@@ -25,7 +25,7 @@ module RunSSHLib
     # It all starts here.
     def run(args)
       # 'runssh help' should produce main help
-      if args == ['help']; args.unshift '-h'; end
+      if args == ['help']; args.shift; args.unshift '-h'; end
 
       @global_options = parse_args(args)
 
@@ -36,7 +36,7 @@ module RunSSHLib
       completion_requested = args.delete('?')
 
       cmd = extract_subcommand(args)
-      @options = parse_subcommand(cmd)
+      @options = parse_subcommand(cmd, args)
 
       ### Now that we finished the parsing we can move to the workflow.
       # Let's initial the configuration
@@ -111,10 +111,10 @@ EOS
     # handles argument parsing for all subcomand. It doesn't contain
     # any logic, nor does it handle errors. It just parses the
     # arguments and put the result into @options.
-    def parse_subcommand(cmd)
+    def parse_subcommand(cmd, args)
       case cmd
       when 'shell'
-        Trollop::options do
+        Trollop::options(args) do
           banner <<-EOS
 Usage: runssh [global_options] shell [options] <path>
 
@@ -128,7 +128,7 @@ EOS
               :type => :string
         end
       when 'add'
-        Trollop::options do
+        Trollop::options(args) do
           banner <<-EOS
 Usage: runssh [global_options] add [options] <path>
 
@@ -144,7 +144,7 @@ EOS
               :short => :u, :type => :string
         end
       when 'update'
-        Trollop::options do
+        Trollop::options(args) do
           banner <<-EOS
 Usage: runssh [global_options] update [options] <path>
 
@@ -162,7 +162,7 @@ EOS
               :short => :u, :type => :string
         end
       when 'del'
-        Trollop::options do
+        Trollop::options(args) do
           banner <<-EOS
 Usage: runssh [global_options] del [options] <path>
 
@@ -177,7 +177,7 @@ EOS
           opt :yes, 'Delete without verification'
         end
       when 'print'
-        Trollop::options do
+        Trollop::options(args) do
           banner <<-EOS
 Usage: runssh [global_options] print [options] <path>
 
@@ -189,7 +189,7 @@ Options:
 EOS
         end
       when 'import'
-        Trollop::options do
+        Trollop::options(args) do
           banner <<-EOS
 Usage: runssh [global_options] import [options]
 
@@ -202,7 +202,7 @@ EOS
               :type => :string, :required => true
         end
       when 'export'
-        Trollop::options do
+        Trollop::options(args) do
           banner <<-EOS
 Usage runssh [global_options] export [options]
 
