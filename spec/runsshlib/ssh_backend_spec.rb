@@ -17,6 +17,7 @@
 #
 
 require 'lib/runsshlib'
+require 'spec_helper'
 
 describe "SshBackend implementation" do
   describe "when initializing" do

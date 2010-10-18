@@ -18,6 +18,7 @@
 
 require 'lib/runsshlib'
 require 'tmpdir'
+require 'spec_helper'
 
 describe "RunSSH Configuration class" do
 

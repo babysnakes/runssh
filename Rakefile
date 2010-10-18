@@ -50,7 +50,8 @@ Rake::GemPackageTask.new(spec) do |pkg|
 end
 
 RSpec::Core::RakeTask.new do |t|
-  # t.rcov = true # TODO: currently when enabling this rake breaks. why?
+  t.rcov = true
+  t.rcov_opts = %w(--exclude gems\/,spec\/)
   # t.warning = true # rspec produces too many warnings so it's commented.
 end
 

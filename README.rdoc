@@ -3,6 +3,7 @@
 
 == Development requirements:
 * rspec (2.0.0)
+* rcov (0.9.9)
 
 == License
 This program is distributed under the GPL v2 license.
