@@ -21,7 +21,7 @@ require 'rubygems'
 require 'rake'
 require 'rake/rdoctask'
 require 'rake/gempackagetask'
-require 'spec/rake/spectask'
+require 'rspec/core/rake_task'
 
 spec = Gem::Specification.new do |s|
   s.platform = Gem::Platform::RUBY
@@ -49,11 +49,9 @@ Rake::GemPackageTask.new(spec) do |pkg|
   pkg.need_tar = true
 end
 
-Spec::Rake::SpecTask.new do |t|
-  t.spec_files = FileList.new('spec/**/*.rb')
-  t.rcov = true
-  # t.warning = true
-  # t.spec_opts = %w(--color -f s)
+RSpec::Core::RakeTask.new do |t|
+  # t.rcov = true # TODO: currently when enabling this rake breaks. why?
+  # t.warning = true # rspec produces too many warnings so it's commented.
 end
 
 Rake::RDocTask.new do |rd|
