@@ -251,7 +251,7 @@ describe "RunSSH Configuration class" do
   end
 
   it "should correctly export and import YAML files" do
-    yml = File.join(File.dirname(__FILE__), 'fixtures', 'runssh.yml')
+    yml = File.join(File.dirname(__FILE__), '../fixtures', 'runssh.yml')
     c = RunSSHLib::ConfigFile.new(@temp_file)
     c.import(yml)
     c.export(@tmp_yml)

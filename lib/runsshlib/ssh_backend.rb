@@ -16,29 +16,21 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #
 
-require 'runsshlib/cli'
-require 'runsshlib/config_file'
-require 'runsshlib/ssh_backend'
-
-# Main RunSSHLib module.
 module RunSSHLib
 
-  DEFAULT_CONFIG = File.expand_path('~/.runssh')
+  # A class to handle ssh operations.
+  class SshBackend
+    # New backend with host/login details.
+    def initialize(host_def, overrides)
+      @host = host_def.name
+      @user = overrides[:login] ? overrides[:login] : host_def.login
+    end
 
-  # Indicates configuration error
-  class ConfigError < StandardError; end
+    # run shell on remote host.
+    def shell
+      command = "ssh #{@user ? %Q(-l #{@user}) : ''} #{@host}"
+      exec command
+    end
 
-  # Indicates invalid command
-  class InvalidSubCommandError < StandardError; end
-
-  # A placeholder for host definitions
-  HostDef = Struct.new(:name, :login)
-
-  module Version
-    MAJOR = 0
-    MINOR = 1
-    BUILD = 0
-
-    STRING = [MAJOR, MINOR, BUILD].compact.join('.')
   end
 end
