@@ -24,8 +24,8 @@ module RunSSHLib
 
     # It all starts here.
     def run(args)
-      # 'runssh help' should produce main help
-      if args == ['help']; args.shift; args.unshift '-h'; end
+      args.unshift '-h' if args.empty?
+      args.unshift '-h' if args == ['help']
 
       @global_options = parse_args(args)
 

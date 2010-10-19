@@ -18,21 +18,17 @@
 
 require 'lib/runsshlib'
 require 'spec_helper'
+require 'stringio'
 
 # These tests are pretty ugly. too much mocking. I hope someday
 # to find a better solution for that.
 describe "The CLI interface" do
   before(:each) do
     @cli = RunSSHLib::CLI.new
+    $stdout = StringIO.new
   end
 
   describe "main parser" do
-    it "should print help when invokes with 'help'" do
-      @cli.should_receive(:parse_args).with(['-h']).
-           and_raise(TestSpacialError)
-      lambda { @cli.run(['help']) }.should raise_error(TestSpacialError)
-    end
-
     it "should correctly process the -f argument" do
       RunSSHLib::ConfigFile.should_receive(:new).with('test_file').
                             and_raise(TestSpacialError)
@@ -52,6 +48,26 @@ describe "The CLI interface" do
       @cli.should_receive(:init_config).and_return(config)
       config.should_receive(:list_groups)
       @cli.run(%w(print ?))
+    end
+  end
+
+  describe "help" do
+    it "should be displayed when run with no arguments" do
+      @cli.should_not_receive(:extract_subcommand)
+      lambda do
+        @cli.run([])
+      end.should raise_error(SystemExit)
+    end
+
+    it "should be displayed when called as: runssh help" do
+      @cli.should_not_receive(:extract_subcommand)
+      lambda { @cli.run(%w(help)) }.should raise_error(SystemExit)
+    end
+
+    it "should be displayed when called for commend: runssh help command" do
+      lambda do
+        @cli.run(%w(-f somefile help print))
+      end.should raise_error(SystemExit)
     end
   end
 
