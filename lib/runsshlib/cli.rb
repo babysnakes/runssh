@@ -22,37 +22,38 @@ module RunSSHLib
 
     COMMAND = %w(shell add del update print import export)
 
-    # It all starts here.
-    def run(args)
+    # Initialize new CLI instance and parse the supplied
+    # arguments.
+    def initialize(args)
       args.unshift '-h' if args.empty?
       args.unshift '-h' if args == ['help']
-
       @global_options = parse_args(args)
 
       # workaround to enable 'help COMMAND' functionality.
       if args.first == 'help'; args.shift; args << '-h'; end
-
       # indicate path completion request
-      completion_requested = args.delete('?')
+      @completion_requested = args.delete('?')
 
-      cmd = extract_subcommand(args)
-      @options = parse_subcommand(cmd, args)
-
-      ### Now that we finished the parsing we can move to the workflow.
-      # Let's initial the configuration
+      @cmd = extract_subcommand(args)
+      @options = parse_subcommand(@cmd, args)
       @c = init_config
-      # now, since by now the args should only hold path, let's
-      # convert it to symbols (this is what the config expects)
-      path = args.map { |e| e.to_sym }
-      # did the user request completions? if not run the approproate command.
-      if completion_requested
-        puts @c.list_groups(path)
-      else
-        command_name = 'run_' + cmd
-        m = method(command_name.to_sym)
-        m.call(path)
-      end
+      # path in ConfigFile uses symbols and not strings
+      @path = args.map { |e| e.to_sym }
     rescue ConfigError, InvalidSubCommandError, Errno::ENOENT => e
+      Trollop.die e.message
+    end
+
+    # run
+    def run
+      # did the user request completions? if not run the approproate command.
+      if @completion_requested
+        puts @c.list_groups(@path)
+      else
+        command_name = 'run_' + @cmd
+        m = method(command_name.to_sym)
+        m.call(@path)
+      end
+    rescue ConfigError => e
       Trollop.die e.message
     end
 

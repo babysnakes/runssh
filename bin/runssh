@@ -21,5 +21,11 @@
 require 'rubygems'
 require 'runsshlib'
 
-cli = RunSSHLib::CLI.new
-cli.run(ARGV)
+# verify required versions
+gem 'trollop', "1.16.2"
+
+# let's clone and reset ARGV for future use
+args = ARGV.clone
+ARGV.clear
+cli = RunSSHLib::CLI.new(args)
+cli.run

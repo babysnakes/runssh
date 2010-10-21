@@ -20,61 +20,59 @@ require 'lib/runsshlib'
 require 'spec_helper'
 require 'stringio'
 
-# These tests are pretty ugly. too much mocking. I hope someday
-# to find a better solution for that.
 describe "The CLI interface" do
-  before(:each) do
-    @cli = RunSSHLib::CLI.new
-    $stdout = StringIO.new
+  # a shortcut to verify the help for print command
+  def match_print
+    @buffer.should match(/Print host configuration/)
   end
 
-  describe "main parser" do
+  before(:each) do
+    @buffer = ""
+    $stdout = StringIO.open(@buffer, 'w')
+  end
+
+  describe "when initialized" do
+    it "should display help when run with no arguments" do
+      expect { RunSSHLib::CLI.new([]) }.to raise_error(SystemExit)
+      @buffer.should match(/Available commands:/)
+    end
+
+    it "should display help when called with help as the only parameter" do
+      expect { RunSSHLib::CLI.new(['help']) }.to raise_error(SystemExit)
+      @buffer.should match(/Available commands:/)
+    end
+
     it "should correctly process the -f argument" do
-      RunSSHLib::ConfigFile.should_receive(:new).with('test_file').
-                            and_raise(TestSpacialError)
-      lambda do
-        @cli.run(%w(-f test_file print test))
-      end.should raise_error(TestSpacialError)
+      cli = RunSSHLib::CLI.new(%W(-f #{TMP_FILE} print test))
+      global_options = cli.instance_variable_get :@global_options
+      global_options[:config_file].should eql("#{TMP_FILE}")
+      cli.instance_variable_get(:@c).
+          instance_variable_get(:@config_file).
+          should eql("#{TMP_FILE}")
     end
 
     it "should correctly process the `help command` scheme" do
-      Trollop.should_receive(:options).with(%w(help print ?)).and_return({:config_file => nil})
-      Trollop.should_receive(:options).with(['-h'])
-      @cli.run(%w(help print ?))
+      expect do
+        RunSSHLib::CLI.new(%w(help print ?))
+      end.to raise_error(SystemExit)
+      match_print
     end
 
     it "should correctly parse the `?` for completion" do
-      config = mock("ConfigFile")
-      @cli.should_receive(:init_config).and_return(config)
-      config.should_receive(:list_groups)
-      @cli.run(%w(print ?))
-    end
-  end
-
-  describe "help" do
-    it "should be displayed when run with no arguments" do
-      @cli.should_not_receive(:extract_subcommand)
-      lambda do
-        @cli.run([])
-      end.should raise_error(SystemExit)
+      cli = RunSSHLib::CLI.new(%w(print ?))
+      cli.instance_variable_get(:@completion_requested).should be_true
     end
 
-    it "should be displayed when called as: runssh help" do
-      @cli.should_not_receive(:extract_subcommand)
-      lambda { @cli.run(%w(help)) }.should raise_error(SystemExit)
-    end
-
-    it "should be displayed when called for commend: runssh help command" do
-      lambda do
-        @cli.run(%w(-f somefile help print))
-      end.should raise_error(SystemExit)
-    end
-  end
-
-  describe "SubCommands" do
     it "should raise an error when invoked with invalid command" do
       Trollop.should_receive(:die).with(/invalid command/)
-      @cli.run(['wrong'])
+      cli = RunSSHLib::CLI.new(%W(-f #{TMP_FILE} wrong))
     end
+  end
+
+  # describe "when run" do
+  # end
+
+  after(:all) do
+    cleanup_tmp_file
   end
 end

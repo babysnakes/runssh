@@ -1,9 +1,12 @@
 require 'rspec'
+require 'tmpdir'
 
 Rspec.configure do |c|
   c.mock_with :rspec
 end
 
-# This is used in spacial mockings where I don't want
-# to continue parsing
-class TestSpacialError < StandardError; end
+TMP_FILE = File.join(Dir.tmpdir, 'tempfile')
+
+def cleanup_tmp_file
+  File.delete TMP_FILE if File.exists? TMP_FILE
+end
