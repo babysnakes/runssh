@@ -51,6 +51,11 @@ describe "The CLI interface" do
           should eql("#{TMP_FILE}")
     end
 
+    it "should display version when asked for" do
+      expect { RunSSHLib::CLI.new(['-v'])}.to exit_normaly
+      @buffer.should include(RunSSHLib::Version::STRING)
+    end
+
     it "should correctly process the `help command` scheme" do
       expect do
         RunSSHLib::CLI.new(%w(help print ?))
@@ -68,6 +73,15 @@ describe "The CLI interface" do
         RunSSHLib::CLI.new(%W(-f #{TMP_FILE} wrong))
       end.to exit_abnormaly
       @buffer.should match(/invalid command/)
+    end
+  end
+
+  describe "main help" do
+    it "should include a description of all subcommands" do
+      expect { RunSSHLib::CLI.new([]) }.to exit_normaly
+      RunSSHLib::CLI::COMMAND.each do |subcmd|
+        @buffer.should include("* #{subcmd}")
+      end
     end
   end
 

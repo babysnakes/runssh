@@ -77,6 +77,7 @@ Available commands:
   * shell  : Open ssh shell on remote host
   * add    : Add host definition
   * del    : Delete host definition
+  * update : Update host definition
   * print  : Print host definition
   * import : Import configuration
   * export : Export configuration
