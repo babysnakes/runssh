@@ -15,5 +15,6 @@ This program is distributed under the GPL v2 license.
   1. Configured tunneling
   2. tunneling defined on the command line.
 * Remote commands (e.g, with no login).
+* Rename (or move) host definition
 * Maybe replace invoking ssh from the command line with some library.
 * Automatic deletion of empty groups.
