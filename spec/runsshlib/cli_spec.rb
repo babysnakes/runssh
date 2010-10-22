@@ -15,7 +15,6 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #
-
 require 'lib/runsshlib'
 require 'spec_helper'
 require 'stringio'
@@ -29,16 +28,17 @@ describe "The CLI interface" do
   before(:each) do
     @buffer = ""
     $stdout = StringIO.open(@buffer, 'w')
+    $stderr = StringIO.open(@buffer, 'w')
   end
 
   describe "when initialized" do
     it "should display help when run with no arguments" do
-      expect { RunSSHLib::CLI.new([]) }.to raise_error(SystemExit)
+      expect { RunSSHLib::CLI.new([]) }.to exit_normaly
       @buffer.should match(/Available commands:/)
     end
 
     it "should display help when called with help as the only parameter" do
-      expect { RunSSHLib::CLI.new(['help']) }.to raise_error(SystemExit)
+      expect { RunSSHLib::CLI.new(['help']) }.to exit_normaly
       @buffer.should match(/Available commands:/)
     end
 
@@ -54,7 +54,7 @@ describe "The CLI interface" do
     it "should correctly process the `help command` scheme" do
       expect do
         RunSSHLib::CLI.new(%w(help print ?))
-      end.to raise_error(SystemExit)
+      end.to exit_normaly
       match_print
     end
 
@@ -64,8 +64,10 @@ describe "The CLI interface" do
     end
 
     it "should raise an error when invoked with invalid command" do
-      Trollop.should_receive(:die).with(/invalid command/)
-      cli = RunSSHLib::CLI.new(%W(-f #{TMP_FILE} wrong))
+      expect do
+        RunSSHLib::CLI.new(%W(-f #{TMP_FILE} wrong))
+      end.to exit_abnormaly
+      @buffer.should match(/invalid command/)
     end
   end
 
