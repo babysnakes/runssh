@@ -75,3 +75,9 @@ TMP_FILE = File.join(Dir.tmpdir, 'tempfile')
 def cleanup_tmp_file
   File.delete TMP_FILE if File.exists? TMP_FILE
 end
+
+def import_fixtures
+  yml = File.join(File.dirname(__FILE__), 'fixtures', 'runssh.yml')
+  c = RunSSHLib::ConfigFile.new(TMP_FILE)
+  c.import(yml)
+end
