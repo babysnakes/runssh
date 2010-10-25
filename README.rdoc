@@ -1,9 +1,17 @@
-== Requirements:
-* trollop (1.16.2)
+== Introduction
+A CLI utility to bookmark ssh connections with hierarchy and act upon
+these bookmarks. Currently only opens a shell.
 
-== Development requirements:
-* rspec (2.0.0)
-* rcov (0.9.9)
+For usage run _runssh_ without arguments.
+
+== requirements:
+(versions are specified in the gem definition in the Rakefile)
+
+Runtime:
+* Trollop
+Development:
+* rspec
+* rcov
 
 == License
 This program is distributed under the GPL v2 license.

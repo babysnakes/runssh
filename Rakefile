@@ -28,13 +28,15 @@ spec = Gem::Specification.new do |s|
   s.summary = "CLI utility to bookmark multiple ssh connections with hierarchy."
   s.name = 'runssh'
   s.version = RunSSHLib::Version::STRING
+  s.homepage = 'http://github.com/babysnakes/runssh'
   s.required_ruby_version = '~> 1.8.7'
   s.has_rdoc = true
   s.extra_rdoc_files = ['README.rdoc']
   s.author = 'Haim Ashkenazi'
   s.email = 'haim@babysnakes.org'
   s.add_dependency('trollop', '~> 1.16.2')
-  s.requirements << 'trollop'
+  s.add_development_dependency('rspec', "~> 2.0.1")
+  s.add_development_dependency('rcov', '~> 0.9.9')
   s.require_path = 'lib'
   s.executables << 'runssh'
   s.files = %w(README.rdoc gpl-2.0.txt) + Dir.glob("{lib,bin}/**/*")
