@@ -134,7 +134,27 @@ describe "The CLI interface" do
         # end
       end
 
-      describe "add"
+      describe "add" do
+        before(:each) do
+          @add_cli = RunSSHLib::CLI.new(%W(-f #{TMP_FILE} add -n host one two))
+        end
+
+        it "should parse 'a' add add" do
+          @add_cli.send(:extract_subcommand, ['a']).should eql('add')
+        end
+
+        it "should have all required arguments" do
+          options = @add_cli.instance_variable_get :@options
+          options.should have_key(:host_name)
+          options.should have_key(:user)
+        end
+
+        it "should invoke the add_host_def" do
+          @add_cli.instance_variable_get(:@c).should_receive(:add_host_def).
+                   with([:one], :two, RunSSHLib::HostDef.new('host'))
+          @add_cli.run
+        end
+      end
 
       describe "del"
 
