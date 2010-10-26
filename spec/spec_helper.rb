@@ -74,6 +74,8 @@ TMP_FILE = File.join(Dir.tmpdir, 'tempfile')
 
 def cleanup_tmp_file
   File.delete TMP_FILE if File.exists? TMP_FILE
+  bf = TMP_FILE + '.bak'
+  File.delete bf if File.exists? bf
 end
 
 def import_fixtures

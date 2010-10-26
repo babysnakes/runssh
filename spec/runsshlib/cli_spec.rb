@@ -181,7 +181,30 @@ describe "The CLI interface" do
         end
       end
 
-      describe "print"
+      describe "print" do
+        before(:each) do
+          @p_cli = RunSSHLib::CLI.new(%W(-f #{TMP_FILE} print cust2 dc internal somehost))
+        end
+
+        it "should parse 'p' as print" do
+          @p_cli.send(:extract_subcommand, ['p']).should eql('print')
+        end
+
+        it "should print correctly host definition with user" do
+          @p_cli.run
+          @buffer.should match(/host: a.example.com/)
+          @buffer.should match(/user: otheruser/)
+        end
+
+        it "should print correctly host definition without user" do
+          c = RunSSHLib::ConfigFile.new("#{TMP_FILE}")
+          c.add_host_def([:three, :four], :five, RunSSHLib::HostDef.new('anewhost'))
+          cli = RunSSHLib::CLI.new(%W(-f #{TMP_FILE} print three four five))
+          cli.run
+          @buffer.should match(/host: anewhost/)
+          @buffer.should match(/user: current user/)
+        end
+      end
 
       describe "import"
 
