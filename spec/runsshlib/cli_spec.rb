@@ -122,16 +122,16 @@ describe "The CLI interface" do
           options.should have_key(:login)
         end
 
-        # somehow this doesn't work. It shouldn't really run the "shell"
-        # method so it shouldn't exit.
-        # it "should correctly initialize SshBackend" do
-        #   mock_ssh_backend = double('SshBackend')
-        #   mock_ssh_backend.should_receive(:shell)
-        #   RunSSHLib::SshBackend.should_receive(:new).
-        #                         and_return(mock_ssh_backend)
-        #   cli = RunSSHLib::CLI.new(%W(-f #{TMP_FILE} shell cust2 dc somehost))
-        #   cli.run
-        # end
+        it "should correctly initialize SshBackend" do
+          somehost = RunSSHLib::HostDef.new('a.example.com', 'otheruser')
+          mock_ssh_backend = double('SshBackend')
+          mock_ssh_backend.should_receive(:shell)
+          RunSSHLib::SshBackend.should_receive(:new).
+                                with(somehost, {:login=>nil, :help=>false}).
+                                and_return(mock_ssh_backend)
+          cli = RunSSHLib::CLI.new(%W(-f #{TMP_FILE} shell cust2 dc internal somehost))
+          cli.run
+        end
       end
 
       describe "add" do
