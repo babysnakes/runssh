@@ -4,6 +4,23 @@ these bookmarks. Currently only opens a shell.
 
 For usage run _runssh_ without arguments.
 
+=== Bash Completion
+For bash completion I added a simple <tt>runssh_comp.sh</tt> file which completes
+the subcommands and the paths, but not the arguments. To use it, just copy
+it from your gem's +bin+ directory to <tt>/etc/bash-completion.d/</tt> (or wherever
+your bash-completion scripts are).
+
+=== Zsh Completion
+For zsh - Until I'll write a proper zsh completion file - I'm using bashcompinit
+to use the bash completion script. To use the bash completion file with zsh, copy
+the file to some place and switch the comments between line 14 and 15. Then add
+the following to your .zshrc file:
+	autoload bashcompinit
+	bashcompinit
+	source /path/to/modified/runssh_comp.sh
+This works for me, but I'm only starting with zsh so I hope it will work for you
+as well.
+
 == requirements:
 (versions are specified in the gem definition in the Rakefile)
 
