@@ -4,6 +4,11 @@ these bookmarks. Currently only opens a shell.
 
 For usage run _runssh_ without arguments.
 
+=== Installation
+You must have ruby[http://www.ruby-lang.org/] and 
+rubygems[http://rubygems.org/] installed and then run:
+	gem install runssh
+
 === Bash Completion
 For bash completion I added a simple <tt>runssh_comp.sh</tt> file which completes
 the subcommands and the paths, but not the arguments. To use it, just copy
