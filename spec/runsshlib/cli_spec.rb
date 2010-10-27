@@ -156,7 +156,42 @@ describe "The CLI interface" do
         end
       end
 
-      describe "del"
+      describe "del" do
+        before(:each) do
+          @d_cli = RunSSHLib::CLI.new(%W(-f #{TMP_FILE} del))
+          @d_cli.instance_variable_get(:@c).stub(:delete_path)
+        end
+
+        it "should parse 'd' as del" do
+          @d_cli.send(:extract_subcommand, ['d']).should eql('del')
+        end
+
+        it "should verify the deletion" do
+          @d_cli.should_receive(:verify_yn).with(/Are you sure/)
+          @d_cli.run
+        end
+
+        it "should perform the deletion upon confirmation" do
+          @d_cli.should_receive(:verify_yn).and_return(true)
+          @d_cli.instance_variable_get(:@c).should_receive(:delete_path)
+          @d_cli.run
+        end
+
+        it "should cancel the deletion if not confirmed" do
+          @d_cli.should_receive(:verify_yn).and_return(false)
+          @d_cli.instance_variable_get(:@c).should_not_receive(:delete_path)
+          @d_cli.run
+          @buffer.should match(/cancel/)
+        end
+
+        it "should pass the right path to delete_path" do
+          cli = RunSSHLib::CLI.new(%W(-f #{TMP_FILE} del one two three))
+          cli.stub(:verify_yn).and_return(true)
+          cli.instance_variable_get(:@c).should_receive(:delete_path).
+                                         with([:one, :two, :three])
+          cli.run
+        end
+      end
 
       describe "update" do
         before(:each) do
@@ -206,9 +241,90 @@ describe "The CLI interface" do
         end
       end
 
-      describe "import"
+      describe "import" do
+        before(:each) do
+          @i_cli = RunSSHLib::CLI.new(%W(-f #{TMP_FILE} import -i inputfile))
+          @i_cli.instance_variable_get(:@c).stub(:import)
+        end
 
-      describe "export"
+        it "should parse 'i' as import" do
+          @i_cli.send(:extract_subcommand, ['i']).should eql('import')
+        end
+
+        it "should have the right arguments" do
+          options = @i_cli.instance_variable_get :@options
+          options.include?(:input_file)
+        end
+
+        it "should verify the import with the user" do
+          @i_cli.should_receive(:verify_yn).with(/OVERWRITES/)
+          @i_cli.run
+        end
+
+        it "should run import upon confirmation" do
+          @i_cli.should_receive(:verify_yn).and_return(true)
+          @i_cli.instance_variable_get(:@c).should_receive(:import)
+          @i_cli.run
+        end
+
+        it "should cancel if not confirmed" do
+          @i_cli.should_receive(:verify_yn).and_return(false)
+          @i_cli.instance_variable_get(:@c).should_not_receive(:import)
+          @i_cli.run
+          @buffer.should match(/cancel/)
+        end
+
+        it "should pass the right argument to import" do
+          @i_cli.should_receive(:verify_yn).and_return(true)
+          @i_cli.instance_variable_get(:@c).should_receive(:import).
+                                            with('inputfile')
+          @i_cli.run
+        end
+      end
+
+      describe "export" do
+        before(:each) do
+          @e_cli = RunSSHLib::CLI.new(%W(-f #{TMP_FILE} export -o somefile))
+        end
+
+        it "should parse 'e' as export" do
+          @e_cli.send(:extract_subcommand, ['e']).should eql('export')
+        end
+
+        it "should run export with the right parameters" do
+          @e_cli.instance_variable_get(:@c).should_receive(:export).
+                                            with('somefile')
+          @e_cli.run
+        end
+      end
+    end
+
+    describe "verify_yn" do
+      before(:each) do
+        @verify_cli = RunSSHLib::CLI.new(%W(-f #{TMP_FILE} print))
+      end
+
+      it "should parse 'y' as true" do
+        stdin = "y\n"
+        $stdin = StringIO.open(stdin, 'r')
+        @verify_cli.send(:verify_yn, 'question').should be_true
+      end
+
+      it "should parse all other as false" do
+        tests = ["n", "\n", "Y\n", "maybe", "\n"]
+        tests.each do |test_phrase|
+          stdin = test_phrase
+          $stdin = StringIO.open(stdin, 'r')
+          @verify_cli.send(:verify_yn, 'question').should be_false
+        end
+      end
+
+      it "should add postfix to the question" do
+        stdin = "n"
+        $stdin = StringIO.open(stdin, 'r')
+        @verify_cli.send(:verify_yn, 'are you sure')
+        @buffer.should eql('are you sure (y/n)? ')
+      end
     end
   end
 
