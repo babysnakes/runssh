@@ -3,7 +3,7 @@ A CLI utility to bookmark ssh connections with hierarchy and act upon
 these bookmarks. Currently only opens a shell.
 
 === Installation
-You must have ruby[http://www.ruby-lang.org/] and 
+You must have ruby[http://www.ruby-lang.org/] and
 rubygems[http://rubygems.org/] installed and then run:
 	gem install runssh
 
@@ -29,7 +29,7 @@ For usage run _runssh_ without arguments.
 
 === Host Definition
 Host definition is a collection of attributes that help us define a host
-bookmark. As of version 0.1.0 only _hostname_ and <i>remote user</i> are supported, 
+bookmark. As of version 0.1.0 only _hostname_ and <i>remote user</i> are supported,
 but more attributes (e.g, tunnel definition) will be added on later versions.
 
 === Bookmarks
@@ -52,7 +52,7 @@ of bookmarks:
             ...
 
 You can decide to arrange your bookmarks by customers and/or location
-and/or internal/external addresses etc. To access a host definition you 
+and/or internal/external addresses etc. To access a host definition you
 specify the full path to that host. In the above example to access _host2_
 (e.g, print it's definition) run:
     runssh print customer1 location1 host2
@@ -71,8 +71,9 @@ This program is distributed under the GPL v2 license.
 
 == History
 
-[0.1.0]	Initial release. Simple bookmarks (host and user), 
+[0.1.0]	Initial release. Simple bookmarks (host and user),
         only _shell_ operation supported.
+[0.1.1] Improved docs.
 
 == TODO
 * Create a _proper_ zsh completion script.
