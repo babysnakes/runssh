@@ -2,8 +2,6 @@
 A CLI utility to bookmark ssh connections with hierarchy and act upon
 these bookmarks. Currently only opens a shell.
 
-For usage run _runssh_ without arguments.
-
 === Installation
 You must have ruby[http://www.ruby-lang.org/] and 
 rubygems[http://rubygems.org/] installed and then run:
@@ -26,6 +24,39 @@ the following to your .zshrc file:
 This works for me, but I'm only starting with zsh so I hope it will work for you
 as well.
 
+== Usage
+For usage run _runssh_ without arguments.
+
+=== Host Definition
+Host definition is a collection of attributes that help us define a host
+bookmark. As of version 0.1.0 only _hostname_ and <i>remote user</i> are supported, 
+but more attributes (e.g, tunnel definition) will be added on later versions.
+
+=== Bookmarks
+The bookmarks consists of a host definition inside nested groups. These
+groups could hold other groups or host definitions. Here is an example
+of bookmarks:
+
+    customer1:
+        location1:
+            host1
+            host2
+        location2:
+            host3
+            host4
+            sublocation:
+                host5
+    customer2:
+        office:
+            host1
+            ...
+
+You can decide to arrange your bookmarks by customers and/or location
+and/or internal/external addresses etc. To access a host definition you 
+specify the full path to that host. In the above example to access _host2_
+(e.g, print it's definition) run:
+    runssh print customer1 location1 host2
+
 == requirements:
 (versions are specified in the gem definition in the Rakefile)
 
@@ -37,6 +68,11 @@ Development:
 
 == License
 This program is distributed under the GPL v2 license.
+
+== History
+
+[0.1.0]	Initial release. Simple bookmarks (host and user), 
+        only _shell_ operation supported.
 
 == TODO
 * Create a _proper_ zsh completion script.

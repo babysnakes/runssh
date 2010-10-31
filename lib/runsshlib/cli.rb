@@ -67,11 +67,14 @@ module RunSSHLib
 Usage: runssh [global_options] COMMAND [options] <path>
 
 A utility to bookmark multiple ssh connections in heirarchial order.
+For a better understanding of host definitions and bookmarks, Read
+the provided README.rdoc or go to http://github.com/babysnakes/runssh.
 
 COMMAND : One of the commands mentioned below. It's possible to
           type only part of the command as long as it's not ambiguous.
-<path>  : A space separated list of names (e.g, one two three)
-          For available completions append " ?" to the end of path.
+<path>  : A space-separated list of names (e.g, one two three) that
+          leads to a host definition. For available completions
+          append " ?" to the end of path.
 
 Available commands:
   * shell  : Open ssh shell on remote host
@@ -134,7 +137,9 @@ EOS
           banner <<-EOS
 Usage: runssh [global_options] add [options] <path>
 
-Add a new host definition at the supplied <path>. <path> must not exit!
+Add a new host definition at the supplied <path>. <path> must not exist!
+A host definition can have a hostname (required) and a remote user
+(optional).
 
 <path> : See main help for description of path.
 
