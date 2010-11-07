@@ -53,7 +53,7 @@ of bookmarks:
 
 You can decide to arrange your bookmarks by customers and/or location
 and/or internal/external addresses etc. To access a host definition you
-specify the full path to that host. In the above example to access _host2_
+specify the full path to that host. In the above example to access <i>host2</i>
 (e.g, print it's definition) run:
     runssh print customer1 location1 host2
 
@@ -85,3 +85,20 @@ This program is distributed under the GPL v2 license.
 * Rename (or move) host definition
 * Maybe replace invoking ssh from the command line with some library.
 * Automatic deletion of empty groups.
+
+=== Tasks for 0.2
+* Add support for autotest
+* Use Highline for questions
+* Migrate to new ConfigFile:
+  1. Create a new _SshHostDef_ class
+  2. Add version to the config file (use "VERSION" key as string and not as symbol
+     so it won't interfere with the paths)
+  3. Create discovery of config version on initialization:
+     * If config file is un-versioned abort the application and suggest
+       running with <tt>--upgrade-config</tt> argument. 
+  4. Create a upgrade-config method for upgrading the configurations file:
+     * Inform the user of backup name
+     * Copy the original to backup.
+     * Convert all _HostDef_ instances to _SshHostDef_.
+     * Save configuration and inform the user.
+* Add support for SCP and remote commands.
