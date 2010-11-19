@@ -19,6 +19,7 @@
 require 'runsshlib/cli'
 require 'runsshlib/config_file'
 require 'runsshlib/ssh_backend'
+require 'highline'
 
 # Main RunSSHLib module.
 module RunSSHLib

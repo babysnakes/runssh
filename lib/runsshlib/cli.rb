@@ -248,8 +248,9 @@ EOS
     end
 
     def run_del(path)
-      question = "Are you sure you want to delete \"" + path.join(':') + "\""
-      if verify_yn(question)
+      question = "Are you sure you want to delete \"" + path.join(':') + "\"" +
+                 "? [yes/no] "
+      if HighLine.new.agree(question)
         @c.delete_path(path)
       else
         puts 'canceled'
@@ -267,8 +268,8 @@ EOS
     # we don't use path here, it's just for easier invocation.
     def run_import(path)
       question = "Importing a file OVERWRITES existing configuration. " +
-                 "Are you sure"
-      if verify_yn(question)
+                 "Are you sure? [yes/no] "
+      if HighLine.new.agree(question)
         @c.import(@options[:input_file])
       else
         puts 'canceled'
@@ -278,15 +279,6 @@ EOS
     # we don't use path here, it's just for easier invocation
     def run_export(path)
       @c.export(@options[:output_file])
-    end
-
-    # Verifies a presented question. If response is 'y' it returns
-    # true, else false.
-    #
-    # The supplied question should not include the (y/n)? postfix.
-    def verify_yn question
-      print question, " (y/n)? "
-      gets.chomp == 'y'
     end
   end
 end

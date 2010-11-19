@@ -62,6 +62,7 @@ specify the full path to that host. In the above example to access <i>host2</i>
 
 Runtime:
 * Trollop
+* HighLine
 Development:
 * rspec
 * rcov
@@ -91,7 +92,7 @@ This program is distributed under the GPL v2 license.
 
 === Tasks for 0.2
 * Add support for autotest ✓
-* Use Highline for questions
+* Use Highline for questions ✓
 * Migrate to new ConfigFile:
   1. Create a new _SshHostDef_ class
   2. Add version to the config file (use "VERSION" key as string and not as symbol

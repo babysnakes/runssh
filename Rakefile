@@ -37,6 +37,7 @@ spec = Gem::Specification.new do |s|
   s.author = 'Haim Ashkenazi'
   s.email = 'haim@babysnakes.org'
   s.add_dependency('trollop', '~> 1.16.2')
+  s.add_dependency('highline', '~> 1.6.1')
   s.add_development_dependency('rspec', "~> 2.1.0")
   s.add_development_dependency('rcov', '~> 0.9.9')
   s.add_development_dependency('autotest', '~> 4.4.4')
