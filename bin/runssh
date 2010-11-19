@@ -23,6 +23,7 @@ require 'runsshlib'
 
 # verify required versions
 gem 'trollop', "1.16.2"
+gem 'highline', '1.6.1'
 
 # let's clone and reset ARGV for future use
 args = ARGV.clone
