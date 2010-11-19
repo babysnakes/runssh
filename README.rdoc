@@ -101,4 +101,5 @@ This program is distributed under the GPL v2 license.
      * Copy the original to backup.
      * Convert all _HostDef_ instances to _SshHostDef_.
      * Save configuration and inform the user.
+* Add support for ssh gateway
 * Add support for SCP and remote commands.
