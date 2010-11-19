@@ -65,6 +65,9 @@ Runtime:
 Development:
 * rspec
 * rcov
+* autotest
+* autotest-fsevent
+* autotest-growl
 
 == License
 This program is distributed under the GPL v2 license.
@@ -87,7 +90,7 @@ This program is distributed under the GPL v2 license.
 * Automatic deletion of empty groups.
 
 === Tasks for 0.2
-* Add support for autotest
+* Add support for autotest ✓
 * Use Highline for questions
 * Migrate to new ConfigFile:
   1. Create a new _SshHostDef_ class
