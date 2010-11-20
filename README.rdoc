@@ -94,7 +94,7 @@ This program is distributed under the GPL v2 license.
 * Add support for autotest ✓
 * Use Highline for questions ✓
 * Migrate to new ConfigFile:
-  1. Create a new _SshHostDef_ class
+  1. Create a new _SshHostDef_ class ✓
   2. Add version to the config file (use "VERSION" key as string and not as symbol
      so it won't interfere with the paths)
   3. Create discovery of config version on initialization:
@@ -105,5 +105,6 @@ This program is distributed under the GPL v2 license.
      * Copy the original to backup.
      * Convert all _HostDef_ instances to _SshHostDef_.
      * Save configuration and inform the user.
+  5. Convert existing functionality with the new configuration.
 * Add support for ssh gateway
 * Add support for SCP and remote commands.
