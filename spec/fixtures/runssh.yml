@@ -1,4 +1,5 @@
 --- 
+VERSION: 1.0
 :cust1: 
   :dc1: 
     :host2: !ruby/struct:RunSSHLib::HostDef 

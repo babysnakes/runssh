@@ -95,8 +95,8 @@ This program is distributed under the GPL v2 license.
 * Use Highline for questions ✓
 * Migrate to new ConfigFile:
   1. Create a new _SshHostDef_ class ✓
-  2. Add version to the config file (use "VERSION" key as string and not as symbol
-     so it won't interfere with the paths)
+  2. Add version to the config file (use "VERSION" key as string and not as 
+     symbol (so it won't interfere with the paths) ✓
   3. Create discovery of config version on initialization:
      * If config file is un-versioned abort the application and suggest
        running with <tt>--upgrade-config</tt> argument. 

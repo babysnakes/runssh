@@ -27,6 +27,7 @@ module RunSSHLib
   # configuration, but should also be able to import/export
   # to/from yaml file.
   class ConfigFile
+    Version = 1.0 # Config version
 
     # Initialize new ConfigFile. Uses supplied config_file or the default
     # '~/.runssh'. If file doesn't exist, it issues a warning and creates
@@ -35,9 +36,12 @@ module RunSSHLib
       @config_file = config_file
       if File.exists? config_file
         File.open(config_file) { |io| @config = Marshal.load(io) }
+        raise ConfigVersionMismatchError, 'Missing VERSION' unless 
+              @config['VERSION']
       else
         # warn "Config file not found. It must be the first time you run this app..."
         @config = Hash.new
+        @config['VERSION'] = Version
         save
       end
     end

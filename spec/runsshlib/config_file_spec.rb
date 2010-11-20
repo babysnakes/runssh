@@ -42,7 +42,7 @@ describe "RunSSH Configuration class" do
 
   it "should save a new empty configuration if none exists" do
     RunSSHLib::ConfigFile.new(@temp_file)
-    read_config.should == {}
+    read_config.should == {'VERSION' => RunSSHLib::ConfigFile::Version}
   end
 
   it "should create a backup while saving" do
@@ -61,7 +61,19 @@ describe "RunSSH Configuration class" do
     b = RunSSHLib::ConfigFile.new(@temp_file)
     b.add_host_def([:one, :two, :three], :www, @h1)
     File.read(@temp_file).should_not == File.read(@temp_file_bak)
+  end
 
+  it "should raise ConfigVersionMismatchError if missing config version" do
+    # create an empty file to represent a config file without a version
+    File.open(@temp_file, 'w') { |out| Marshal.dump(Hash.new, out) }
+    expect {
+      RunSSHLib::ConfigFile.new(@temp_file)
+    }.to raise_error(RunSSHLib::ConfigVersionMismatchError, /Missing VERSION/)
+  end
+
+  it "should create new config files with the correct version" do
+    cf = RunSSHLib::ConfigFile.new(@temp_file)
+    read_config['VERSION'].should eql(RunSSHLib::ConfigFile::Version)
   end
 
   describe "when adding host" do
@@ -251,13 +263,17 @@ describe "RunSSH Configuration class" do
     end
   end
 
-  it "should correctly export and import YAML files" do
-    yml = File.join(File.dirname(__FILE__), '../fixtures', 'runssh.yml')
-    c = RunSSHLib::ConfigFile.new(@temp_file)
-    c.import(yml)
-    c.export(@tmp_yml)
-    require 'yaml'
-    YAML.load_file(@tmp_yml).should == YAML.load_file(yml)
+  describe "when importing" do
+    it "should not accept config from different config version"
+
+    it "should correctly export and import YAML files" do
+      yml = File.join(File.dirname(__FILE__), '../fixtures', 'runssh.yml')
+      c = RunSSHLib::ConfigFile.new(@temp_file)
+      c.import(yml)
+      c.export(@tmp_yml)
+      require 'yaml'
+      YAML.load_file(@tmp_yml).should == YAML.load_file(yml)
+    end
   end
 
   after(:each) do
