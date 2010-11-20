@@ -21,7 +21,7 @@ module RunSSHLib
     # 
     # [definition] A hash containing ssh options. _host_name_ is required.
     def initialize(definition)
-      raise ArgumentError unless definition[:host_name]
+      raise ArgumentError, "Missing hostname" unless definition[:host_name]
       @definition = definition
     end
   end

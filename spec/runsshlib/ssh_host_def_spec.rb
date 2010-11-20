@@ -23,7 +23,7 @@ describe 'SshHostDef' do
     it "should raise ArgumentError if not initialized with host_name" do
       expect {
         RunSSHLib::SshHostDef.new({:login => 'haim'})
-      }.to raise_error(ArgumentError)
+      }.to raise_error(ArgumentError, /Missing hostname/)
     end
     
     it "should initialize correctly if at least host_name exists" do
