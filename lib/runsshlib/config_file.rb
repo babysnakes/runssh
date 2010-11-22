@@ -120,7 +120,7 @@ module RunSSHLib
     def list_groups(path)
       value = retrieve_path(path, 'Invalid path!')
       if value.instance_of? Hash
-        value.keys
+        value.keys.reject { |i| i == 'VERSION' }
       else
         []
       end

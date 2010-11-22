@@ -272,6 +272,10 @@ describe "RunSSH Configuration class" do
       @c.list_groups([:one, :two]).should include(:three, :four)
       @c.list_groups([:one, :two, :three]).should include(:host, :www)
     end
+
+    it "should not return the VERSION as a group" do
+      @c.list_groups([]).should_not include('VERSION')
+    end
   end
 
   describe "when importing" do
