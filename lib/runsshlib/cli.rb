@@ -41,6 +41,16 @@ module RunSSHLib
       @path = args.map { |e| e.to_sym }
     rescue ConfigError, InvalidSubCommandError, Errno::ENOENT => e
       Trollop.die e.message
+    rescue OlderConfigVersionError => e
+      message = <<-EOM
+You seem to use older configuration version. Did you upgrade runssh?
+If so, please run <%= color('runssh [ -f config ] --update-version', :blue) %> in order to
+update your configuration to the current version.
+
+Your old configuration will be saved with the suffix <%= color(".#{e.message}", :underline) %>
+EOM
+      HighLine.new.say(message)
+      abort ''
     end
 
     # run

@@ -33,7 +33,8 @@ module RunSSHLib
   # Indicates invalid command
   class InvalidSubCommandError < StandardError; end
 
-  # Indicates config version mismatch
+  # Indicates older config version.
+  # message should contain only the older config version!
   class OlderConfigVersionError < StandardError; end
 
   # A placeholder for host definitions

@@ -32,12 +32,8 @@ describe "RunSSH Configuration class" do
                    RunSSHLib::HostDef.new('www.example.com', 'me'))
   end
 
-  def dump_config hsh
-    File.open(@temp_file, 'w') { |out| Marshal.dump(hsh, out) }
-  end
-
   before(:all) do
-    @temp_file = File.join(Dir.tmpdir, 'tempfile')
+    @temp_file = TMP_FILE
     @temp_file_bak = @temp_file + '.bak'
     @h1 = RunSSHLib::HostDef.new('a.b.c')
     @h2 = RunSSHLib::HostDef.new('b.b.c', 'meme')
@@ -73,7 +69,7 @@ describe "RunSSH Configuration class" do
       dump_config Hash.new
       expect {
         RunSSHLib::ConfigFile.new(@temp_file)
-      }.to raise_error(RunSSHLib::OlderConfigVersionError, /Missing VERSION/)
+      }.to raise_error(RunSSHLib::OlderConfigVersionError, 'none')
     end
 
     it "should raise ConfigError if version is higher then supported" do

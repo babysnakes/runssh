@@ -37,7 +37,7 @@ module RunSSHLib
       if File.exists? config_file
         File.open(config_file) { |io| @config = Marshal.load(io) }
         if ! @config['VERSION']
-          raise OlderConfigVersionError, 'Missing VERSION'
+          raise OlderConfigVersionError, 'none'
         elsif @config['VERSION'] > Version
           # This is for the future, to avoid reading more advanced
           # configuration version in an old runssh version

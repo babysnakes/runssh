@@ -99,7 +99,7 @@ This program is distributed under the GPL v2 license.
      symbol (so it won't interfere with the paths) ✓
   3. Create discovery of config version on initialization:
      * If config file is un-versioned abort the application and suggest
-       running with <tt>--upgrade-config</tt> argument. 
+       running with <tt>--update-config</tt> argument. ✓
   4. Create a upgrade-config method for upgrading the configurations file:
      * Inform the user of backup name
      * Copy the original to backup.

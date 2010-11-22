@@ -74,6 +74,15 @@ describe "The CLI interface" do
       end.to exit_abnormaly
       @buffer.should match(/invalid command/)
     end
+
+    it "should display right message upon older configuration error" do
+      dump_config Hash.new
+      expect do
+        cli = RunSSHLib::CLI.new(%W(-f #{TMP_FILE} print ?))
+      end.to exit_abnormaly
+      @buffer.should match(/--update-version/)
+      @buffer.should match(/.none/)
+    end
   end
 
   describe "main help" do
@@ -124,6 +133,7 @@ describe "The CLI interface" do
 
         it "should correctly initialize SshBackend" do
           somehost = RunSSHLib::HostDef.new('a.example.com', 'otheruser')
+          import_fixtures
           mock_ssh_backend = double('SshBackend')
           mock_ssh_backend.should_receive(:shell)
           RunSSHLib::SshBackend.should_receive(:new).
@@ -221,6 +231,7 @@ describe "The CLI interface" do
 
       describe "print" do
         before(:each) do
+          import_fixtures
           @p_cli = RunSSHLib::CLI.new(%W(-f #{TMP_FILE} print cust2 dc internal somehost))
         end
 
@@ -306,7 +317,7 @@ describe "The CLI interface" do
     end
   end
 
-  after(:all) do
+  after(:each) do
     cleanup_tmp_file
   end
 end

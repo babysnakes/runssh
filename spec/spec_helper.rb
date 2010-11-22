@@ -83,3 +83,7 @@ def import_fixtures
   c = RunSSHLib::ConfigFile.new(TMP_FILE)
   c.import(yml)
 end
+
+def dump_config hsh
+  File.open(TMP_FILE, 'w') { |out| Marshal.dump(hsh, out) }
+end
