@@ -34,7 +34,7 @@ module RunSSHLib
   class InvalidSubCommandError < StandardError; end
 
   # Indicates config version mismatch
-  class ConfigVersionMismatchError < StandardError; end
+  class OlderConfigVersionError < StandardError; end
 
   # A placeholder for host definitions
   HostDef = Struct.new(:name, :login)

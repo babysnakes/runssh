@@ -68,12 +68,12 @@ describe "RunSSH Configuration class" do
       File.read(@temp_file).should_not == File.read(@temp_file_bak)
     end
 
-    it "should raise ConfigVersionMismatchError if missing config version" do
+    it "should raise OlderConfigVersionError if missing config version" do
       # create an empty file to represent a config file without a version
       dump_config Hash.new
       expect {
         RunSSHLib::ConfigFile.new(@temp_file)
-      }.to raise_error(RunSSHLib::ConfigVersionMismatchError, /Missing VERSION/)
+      }.to raise_error(RunSSHLib::OlderConfigVersionError, /Missing VERSION/)
     end
 
     it "should raise ConfigError if version is higher then supported" do
