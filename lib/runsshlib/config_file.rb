@@ -36,8 +36,14 @@ module RunSSHLib
       @config_file = config_file
       if File.exists? config_file
         File.open(config_file) { |io| @config = Marshal.load(io) }
-        raise ConfigVersionMismatchError, 'Missing VERSION' unless 
-              @config['VERSION']
+        if ! @config['VERSION']
+          raise ConfigVersionMismatchError, 'Missing VERSION'
+        elsif @config['VERSION'] > Version
+          # This is for the future, to avoid reading more advanced
+          # configuration version in an old runssh version
+          error = "The configuration file is for a newer version of runssh!"
+          raise ConfigError, error
+        end
       else
         # warn "Config file not found. It must be the first time you run this app..."
         @config = Hash.new
@@ -139,14 +145,18 @@ module RunSSHLib
       save
     end
 
-    # Export config as YAML to the supplied file.
+    # Import config from YAML from the specified file.
     def import(file)
       require 'yaml'
-      @config = YAML.load_file(file)
+      config = YAML.load_file(file)
+      raise ConfigError, "The imported file is from a different version of " +
+                 "runssh (config: #{config['VERSION']})! aborting." unless
+                        config['VERSION'] == Version
+      @config = config
       save
     end
 
-    # Import config from YAML from the specified file.
+    # Export config as YAML to the supplied file.
     def export(file)
       require 'yaml'
       File.open(file, 'w') { |out| YAML.dump(@config, out) }
