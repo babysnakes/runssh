@@ -19,11 +19,12 @@
 require 'lib/runsshlib'
 require 'tmpdir'
 require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
+require 'yaml'
 
 describe "RunSSH Configuration class" do
 
-  def read_config
-    File.open(@temp_file) { |io| Marshal.load(io) }
+  def read_config from_file=@temp_file
+    File.open(from_file) { |io| Marshal.load(io) }
   end
 
   def initial_data
@@ -72,12 +73,21 @@ describe "RunSSH Configuration class" do
       }.to raise_error(RunSSHLib::OlderConfigVersionError, 'none')
     end
 
+    it "should accept older/no config version of old_version=true" do
+      dump_config Hash.new
+      RunSSHLib::ConfigFile.new(TMP_FILE, true).should be_instance_of(RunSSHLib::ConfigFile)
+    end
+
     it "should raise ConfigError if version is higher then supported" do
       hsh = Hash.new
       hsh['VERSION'] = 1.1
       dump_config hsh
       expect do
         RunSSHLib::ConfigFile.new(@temp_file)
+      end.to raise_error(RunSSHLib::ConfigError, /newer version of runssh!/)
+      # even if old_version=true
+      expect do
+        RunSSHLib::ConfigFile.new(@temp_file, true)
       end.to raise_error(RunSSHLib::ConfigError, /newer version of runssh!/)
     end
 
@@ -279,7 +289,6 @@ describe "RunSSH Configuration class" do
   end
 
   describe "when importing" do
-    require 'yaml'
     let(:yml) { File.join(File.dirname(__FILE__), '../fixtures', 'runssh.yml') }
 
     it "should not accept config from different config version" do
@@ -297,6 +306,53 @@ describe "RunSSH Configuration class" do
       c.import(yml)
       c.export(@tmp_yml)
       YAML.load_file(@tmp_yml).should == YAML.load_file(yml)
+    end
+  end
+
+  describe "when updating configuration version" do
+    let(:config_v_none) do
+      YAML.load_file(File.join(File.dirname(__FILE__), '..',
+                               'fixtures', 'runssh_v_none.yml'))
+    end
+    # let(:config_old) do
+    #   c = RunSSHLib::ConfigFile.new(TMP_FILE, true)
+    #   c.import(File.join(File.dirname(__FILE__), 'fixtures', 'runssh_v_none.yml'))
+    #   c
+    # end
+
+    it "'config_none_to_10' should correctly convert all old HostDef to SshHostDef" do
+      c = RunSSHLib::ConfigFile.new(TMP_FILE, true)
+      result = c.send(:config_none_to_10, config_v_none)
+      result[:cust1][:dc1][:host2].should be_instance_of(RunSSHLib::SshHostDef)
+      result[:cust1][:dc1][:host1].should be_instance_of(RunSSHLib::SshHostDef)
+      result[:cust1][:dc2][:host1].should be_instance_of(RunSSHLib::SshHostDef)
+    end
+
+    it "'update_config' should call config_none_to_10 with right parameters" do
+      dump_config(config_v_none)
+      c = RunSSHLib::ConfigFile.new(TMP_FILE, true)
+      c.should_receive(:config_none_to_10).with(config_v_none).and_return(Hash.new)
+      c.update_config
+    end
+
+    it "'update_config' should create backup with appropriate name" do
+      bf = TMP_FILE + '.none'
+      dump_config(config_v_none)
+      c = RunSSHLib::ConfigFile.new(TMP_FILE, true)
+      c.update_config
+      read_config(bf).should eql(config_v_none)
+    end
+
+    it "should correctly save the new configuration" do
+      dump_config(config_v_none)
+      c = RunSSHLib::ConfigFile.new(TMP_FILE, true)
+      c.update_config
+      new_config = RunSSHLib::ConfigFile.new(TMP_FILE)
+      cc = new_config.instance_variable_get(:@config)
+      cc['VERSION'].should eql(RunSSHLib::ConfigFile::Version)
+      cc[:cust1][:dc1][:host2].should be_instance_of(RunSSHLib::SshHostDef)
+      cc[:cust1][:dc1][:host1].should be_instance_of(RunSSHLib::SshHostDef)
+      cc[:cust1][:dc2][:host1].should be_instance_of(RunSSHLib::SshHostDef)
     end
   end
 

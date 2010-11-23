@@ -1,0 +1,19 @@
+---
+:cust1:
+  :dc1:
+    :host2: !ruby/struct:RunSSHLib::HostDef
+      name: b.host.com
+      login: user1
+    :host1: !ruby/struct:RunSSHLib::HostDef
+      name: a.host.com
+      login: user1
+  :dc2:
+    :host1: !ruby/struct:RunSSHLib::HostDef
+      name: c.host.com
+      login: user3
+:cust2:
+  :dc:
+    :internal:
+      :somehost: !ruby/struct:RunSSHLib::HostDef
+        name: a.example.com
+        login: otheruser

@@ -32,12 +32,12 @@ module RunSSHLib
     # Initialize new ConfigFile. Uses supplied config_file or the default
     # '~/.runssh'. If file doesn't exist, it issues a warning and creates
     # a new empty one.
-    def initialize(config_file)
+    def initialize(config_file, old_version=false)
       @config_file = config_file
       if File.exists? config_file
         File.open(config_file) { |io| @config = Marshal.load(io) }
         if ! @config['VERSION']
-          raise OlderConfigVersionError, 'none'
+          raise OlderConfigVersionError, 'none' unless old_version
         elsif @config['VERSION'] > Version
           # This is for the future, to avoid reading more advanced
           # configuration version in an old runssh version
@@ -162,6 +162,15 @@ module RunSSHLib
       File.open(file, 'w') { |out| YAML.dump(@config, out) }
     end
 
+    def update_config
+      require 'ftools'
+      new_config = config_none_to_10(@config)
+      File.move(@config_file, @config_file + '.none')
+      @config = new_config
+      @config['VERSION'] = Version
+      save
+    end
+
     private
 
     def save
@@ -176,6 +185,23 @@ module RunSSHLib
         raise ConfigError.new(error) unless hsh
         hsh[ky]
       end
+    end
+
+    # convert the config hash from version none (runssh 0.1) to version 1.0
+    # group is the hash that holds all the groups/hostdefs (@config).
+    def config_none_to_10 group
+      group.each do |key, value|
+        case
+        when value.instance_of?(RunSSHLib::HostDef)
+          hsh = Hash.new
+          hsh[:host_name] = value.name
+          hsh[:login] = value.login if value.login
+          group[key] = RunSSHLib::SshHostDef.new(hsh)
+        when value.instance_of?(Hash)
+          config_none_to_10(value)
+        end
+      end
+      group
     end
   end
 end

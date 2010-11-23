@@ -100,10 +100,10 @@ This program is distributed under the GPL v2 license.
   3. Create discovery of config version on initialization:
      * If config file is un-versioned abort the application and suggest
        running with <tt>--update-config</tt> argument. ✓
-  4. Create a upgrade-config method for upgrading the configurations file:
+  4. Create a update-config method for upgrading the configurations file:
      * Inform the user of backup name
-     * Copy the original to backup.
-     * Convert all _HostDef_ instances to _SshHostDef_.
+     * Copy the original to backup. ✓
+     * Convert all _HostDef_ instances to _SshHostDef_. ✓
      * Save configuration and inform the user.
   4. Make sure _VERSION_ is excluded form the listing of groups. ✓
   5. Convert existing functionality with the new configuration.
