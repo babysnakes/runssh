@@ -314,11 +314,6 @@ describe "RunSSH Configuration class" do
       YAML.load_file(File.join(File.dirname(__FILE__), '..',
                                'fixtures', 'runssh_v_none.yml'))
     end
-    # let(:config_old) do
-    #   c = RunSSHLib::ConfigFile.new(TMP_FILE, true)
-    #   c.import(File.join(File.dirname(__FILE__), 'fixtures', 'runssh_v_none.yml'))
-    #   c
-    # end
 
     it "'config_none_to_10' should correctly convert all old HostDef to SshHostDef" do
       c = RunSSHLib::ConfigFile.new(TMP_FILE, true)
@@ -353,6 +348,13 @@ describe "RunSSH Configuration class" do
       cc[:cust1][:dc1][:host2].should be_instance_of(RunSSHLib::SshHostDef)
       cc[:cust1][:dc1][:host1].should be_instance_of(RunSSHLib::SshHostDef)
       cc[:cust1][:dc2][:host1].should be_instance_of(RunSSHLib::SshHostDef)
+    end
+
+    after(:each) do
+      bf = TMP_FILE + '.none'
+      if File.exists? bf
+        File.delete(bf)
+      end
     end
   end
 
