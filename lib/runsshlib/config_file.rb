@@ -162,13 +162,21 @@ module RunSSHLib
       File.open(file, 'w') { |out| YAML.dump(@config, out) }
     end
 
+    # Spacial case - perform update to the configuration. This should
+    # later include handling of +all+ versions of the config!
+    #
+    # Returns the name of the backup file or nil if there was no need
+    # for backup.
     def update_config
+      return if @config['VERSION'] == Version
+      backup_file = @config_file + '.none'
       require 'ftools'
       new_config = config_none_to_10(@config)
-      File.move(@config_file, @config_file + '.none')
+      File.move(@config_file, backup_file)
       @config = new_config
       @config['VERSION'] = Version
       save
+      backup_file
     end
 
     private

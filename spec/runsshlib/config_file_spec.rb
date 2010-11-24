@@ -338,6 +338,19 @@ describe "RunSSH Configuration class" do
       read_config(bf).should eql(config_v_none)
     end
 
+    it "'update_config' should return the backup file for notifying the user" do
+      dump_config(config_v_none)
+      c = RunSSHLib::ConfigFile.new(TMP_FILE, true)
+      c.update_config.should eql(TMP_FILE + '.none')
+    end
+
+    it "'update_config' should return nil if there was no need for backup" do
+      hsh = {'VERSION' => RunSSHLib::ConfigFile::Version}
+      dump_config(hsh)
+      c = RunSSHLib::ConfigFile.new(TMP_FILE, true)
+      c.update_config.should be_nil
+    end
+
     it "should correctly save the new configuration" do
       dump_config(config_v_none)
       c = RunSSHLib::ConfigFile.new(TMP_FILE, true)
