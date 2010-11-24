@@ -28,6 +28,7 @@ module RunSSHLib
       args.unshift '-h' if args.empty?
       args.unshift '-h' if args == ['help']
       @global_options = parse_args(args)
+      return if @global_options[:update_config]
 
       # workaround to enable 'help COMMAND' functionality.
       if args.first == 'help'; args.shift; args << '-h'; end
@@ -55,8 +56,9 @@ EOM
 
     # run
     def run
-      # did the user request completions? if not run the approproate command.
-      if @completion_requested
+      if @global_options[:update_config]
+        run_update_config
+      elsif @completion_requested
         puts @c.list_groups(@path)
       else
         command_name = 'run_' + @cmd
@@ -102,6 +104,9 @@ Global options:
 EOS
         opt :config_file, "alternate config file",
             :type => :string, :short => :f
+        opt :update_config, "update configuration from previous version." +
+                            " this option should run without COMMAND",
+            :short => :U
         version "RunSSH version #{Version::STRING}"
         stop_on_unknown
       end
@@ -289,6 +294,24 @@ EOS
     # we don't use path here, it's just for easier invocation
     def run_export(path)
       @c.export(@options[:output_file])
+    end
+
+    # updating configurations
+    def run_update_config
+      config = @global_options[:config_file] || DEFAULT_CONFIG
+      c = ConfigFile.new(config, true)
+      result = c.update_config
+      if result
+        message = <<-EOM
+Your config file is now updated to the approproate version.
+Your old config file is copied to <%= color("#{result}", :blue) %>.
+EOM
+        HighLine.new.say(message)
+      elsif
+        message = "Your configuration seems to be at the appropriate version!" +
+                  " No update was performed."
+        HighLine.new.say(message)
+      end
     end
   end
 end

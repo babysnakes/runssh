@@ -18,6 +18,7 @@
 require 'lib/runsshlib'
 require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 require 'stringio'
+require 'yaml'
 
 describe "The CLI interface" do
   # a shortcut to verify the help for print command
@@ -83,6 +84,27 @@ describe "The CLI interface" do
       @buffer.should match(/--update-version/)
       @buffer.should match(/.none/)
     end
+
+    describe "with --update_config" do
+      let(:config_v_none) do
+        YAML.load_file(File.join(File.dirname(__FILE__), '..',
+                                 'fixtures', 'runssh_v_none.yml'))
+      end
+
+      it "should accept --update-config as argument" do
+        cli = RunSSHLib::CLI.new(%W(-f #{TMP_FILE} --update-config))
+      end
+
+      it "should not fail upon initialization if config is of older version" do
+        dump_config config_v_none
+        cli = RunSSHLib::CLI.new(%W(-f #{TMP_FILE} --update-config))
+      end
+
+      it "should not initialize @config object after initialization" do
+        cli = RunSSHLib::CLI.new(%W(-f #{TMP_FILE} --update-config))
+        cli.instance_variable_get(:@c).should be_nil
+      end
+    end
   end
 
   describe "main help" do
@@ -104,6 +126,41 @@ describe "The CLI interface" do
       cli.should_not_receive(:run_print)
       cli.instance_variable_get(:@c).should_receive(:list_groups).with([])
       cli.run
+    end
+
+    it "should run run_update_config when called with --update-config" do
+      @cli = RunSSHLib::CLI.new(%W(-f #{TMP_FILE} --update-config))
+      @cli.should_receive(:run_update_config)
+      @cli.run
+    end
+
+    context "update_config" do
+      let(:cf) { double('ConfigFile') }
+
+      it "should initialize ConfigFile with old_version=true and run update_config" do
+        cf.should_receive(:update_config)
+        RunSSHLib::ConfigFile.should_receive(:new).with(TMP_FILE, true).
+                              and_return(cf)
+        @cli = RunSSHLib::CLI.new(%W(-f #{TMP_FILE} --update-config))
+        @cli.run
+      end
+
+      it "should inform the user of success and backup file" do
+        backup_path = "/path/to/backup_file"
+        cf.should_receive(:update_config).and_return(backup_path)
+        RunSSHLib::ConfigFile.should_receive(:new).and_return(cf)
+        @cli = RunSSHLib::CLI.new(%W(-f #{TMP_FILE} --update-config))
+        @cli.run
+        @buffer.should include(backup_path)
+      end
+
+      it "should inform the user if no backup was required" do
+        cf.should_receive(:update_config).and_return(nil)
+        RunSSHLib::ConfigFile.should_receive(:new).and_return(cf)
+        @cli = RunSSHLib::CLI.new(%W(-f #{TMP_FILE} --update-config))
+        @cli.run
+        @buffer.should include("No update was performed")
+      end
     end
 
     describe "with subcommand" do
