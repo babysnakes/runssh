@@ -29,15 +29,16 @@ describe "RunSSH Configuration class" do
 
   def initial_data
     @c = RunSSHLib::ConfigFile.new(@temp_file)
-    @c.add_host_def([:one, :two, :three], :www,
-                   RunSSHLib::HostDef.new('www.example.com', 'me'))
+    host = {:host_name => 'www.example.com', :login => "me"}
+    @c.add_host_def([:one, :two, :three], :www, RunSSHLib::SshHostDef.new(host))
   end
 
   before(:all) do
     @temp_file = TMP_FILE
     @temp_file_bak = @temp_file + '.bak'
-    @h1 = RunSSHLib::HostDef.new('a.b.c')
-    @h2 = RunSSHLib::HostDef.new('b.b.c', 'meme')
+    @h1 = RunSSHLib::SshHostDef.new('a.b.c')
+    @h2 = RunSSHLib::SshHostDef.new(:host_name => 'b.b.c',
+                                    :login => 'meme')
     @tmp_yml = File.join(Dir.tmpdir, 'tempyml')
   end
 
@@ -128,8 +129,8 @@ describe "RunSSH Configuration class" do
       c.add_host_def([:one, :two], :h1, @h1)
       c.add_host_def([:three, :four], :h2, @h2)
       d = RunSSHLib::ConfigFile.new(@temp_file)
-      d.get_host([:one, :two, :h1]).should == @h1
-      d.get_host([:three, :four, :h2]).should == @h2
+      d.get_host([:one, :two, :h1]).should eql(@h1)
+      d.get_host([:three, :four, :h2]).should eql(@h2)
     end
 
     it "should correctly merge paths with common path" do

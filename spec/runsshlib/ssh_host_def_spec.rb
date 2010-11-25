@@ -73,4 +73,19 @@ describe 'SshHostDef' do
       RunSSHLib::SshHostDef.new('hostname').should eql(h2)
     end
   end
+
+  context "to_print" do
+    it "should run correctly without user" do
+      h = RunSSHLib::SshHostDef.new('myhostname')
+      p h.to_print
+      h.to_print.should match(/^.*host:.*myhostname\n.*login:.*current user$/)
+    end
+
+    it "should run correctly with user" do
+      h = RunSSHLib::SshHostDef.new({
+        :host_name => 'myhostname', :login => 'me'
+      })
+      h.to_print.should match(/^.*host:.*myhostname\n.*login:.*me$/)
+    end
+  end
 end

@@ -57,14 +57,14 @@ module RunSSHLib
     # path:: An array of symbols that represent the path
     #        for the host. e.g, [:client, :datacenter1].
     # name:: The name of the host definition as symbol.
-    # host_def:: A HostDef instance.
+    # host_def:: A SshHostDef instance.
     def add_host_def(path, name, host_def)
       # sanity
-      raise ConfigError.new('Invalid host definition') unless host_def.instance_of? HostDef
+      raise ConfigError.new('Invalid host definition') unless host_def.instance_of? SshHostDef
 
       k = path.inject(@config) do |hsh, key|
         if hsh.include? key
-          if hsh[key].instance_of? HostDef
+          if hsh[key].instance_of? SshHostDef
             raise ConfigError.new('Cannot override host definition with path!')
           end
           hsh[key]
@@ -84,7 +84,7 @@ module RunSSHLib
     def update_host_def(path, host_def)
       # sanity
       raise ConfigError.new('Invalid host definition!') if not
-            host_def.instance_of? HostDef
+            host_def.instance_of? SshHostDef
 
       # we need to separate the host name from the path
       # in order to get the key of the host definition.
@@ -93,7 +93,7 @@ module RunSSHLib
       raise ConfigError, 'Invalid path!' unless groups
       if groups.include? host
         raise ConfigError.new("Cannot overwrite group with host definition") unless
-              groups[host].instance_of? HostDef
+              groups[host].instance_of? SshHostDef
         groups[host] = host_def
       else
         raise ConfigError.new("Host definition doesn't exist!")
@@ -134,7 +134,7 @@ module RunSSHLib
       value = retrieve_path(path, 'Invalid path!')
       raise ConfigError.new('Invalid path!') unless value
 
-      if value[mykey].instance_of? HostDef or value[mykey] == {}
+      if value[mykey].instance_of? SshHostDef or value[mykey] == {}
         value.delete(mykey)
       elsif not value[mykey]
         raise ConfigError.new('Invalid path!')

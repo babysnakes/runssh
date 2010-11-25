@@ -45,7 +45,7 @@ module RunSSHLib
     rescue OlderConfigVersionError => e
       message = <<-EOM
 You seem to use older configuration version. Did you upgrade runssh?
-If so, please run <%= color('runssh [ -f config ] --update-version', :blue) %> in order to
+If so, please run <%= color('runssh [ -f config ] --update-config', :blue) %> in order to
 update your configuration to the current version.
 
 Your old configuration will be saved with the suffix <%= color(".#{e.message}", :underline) %>
@@ -162,8 +162,8 @@ Options:
 EOS
           opt :host_name, 'The name or address of the host (e.g, host.example.com)',
               :short => :n, :type => :string, :required => true
-          opt :user, 'The user to connect as (optional)',
-              :short => :u, :type => :string
+          opt :login, 'The user to connect as (optional)',
+              :type => :string
         end
       when 'update'
         Trollop::options(args) do
@@ -180,8 +180,8 @@ Options:
 EOS
           opt :host_name, 'The name or address of the host (e.g, host.example.com)',
               :short => :n, :type => :string, :required => true
-          opt :user, 'The user to connect as (optional)',
-              :short => :u, :type => :string
+          opt :login, 'The user to connect as (optional)',
+              :type => :string
         end
       when 'del'
         Trollop::options(args) do
@@ -253,13 +253,12 @@ EOS
     def run_add(path)
       # extract the host definition name
       host = path.pop
-      @c.add_host_def(path, host,
-                      HostDef.new(@options[:host_name], @options[:user]))
+      options = extract_definition @options
+      @c.add_host_def(path, host, SshHostDef.new(options))
     end
 
     def run_update(path)
-      @c.update_host_def(path,
-                HostDef.new(@options[:host_name], @options[:user]))
+      @c.update_host_def(path, SshHostDef.new(extract_definition @options))
     end
 
     def run_del(path)
@@ -274,10 +273,8 @@ EOS
 
     def run_print(path)
       host = @c.get_host(path)
-      output = "Host definition for: #{path.last}",
-               "    * host: #{host.name}",
-               "    * user: #{host.login ? host.login : 'current user'}"
-      puts output
+      puts "Host definition for: #{path.last}"
+      puts host.to_print
     end
 
     # we don't use path here, it's just for easier invocation.
@@ -294,6 +291,14 @@ EOS
     # we don't use path here, it's just for easier invocation
     def run_export(path)
       @c.export(@options[:output_file])
+    end
+
+    # extract keys relevant for definition of SshHostDef
+    def extract_definition options
+      valid_definition = [:host_name, :login]
+      options.reject do |key, value|
+        ! valid_definition.include?(key)
+      end
     end
 
     # updating configurations

@@ -81,7 +81,7 @@ describe "The CLI interface" do
       expect do
         cli = RunSSHLib::CLI.new(%W(-f #{TMP_FILE} print ?))
       end.to exit_abnormaly
-      @buffer.should match(/--update-version/)
+      @buffer.should match(/--update-config/)
       @buffer.should match(/.none/)
     end
 
@@ -189,7 +189,8 @@ describe "The CLI interface" do
         end
 
         it "should correctly initialize SshBackend" do
-          somehost = RunSSHLib::HostDef.new('a.example.com', 'otheruser')
+          somehost = RunSSHLib::SshHostDef.new(:host_name => 'a.example.com',
+                                               :login => 'otheruser')
           import_fixtures
           mock_ssh_backend = double('SshBackend')
           mock_ssh_backend.should_receive(:shell)
@@ -213,12 +214,14 @@ describe "The CLI interface" do
         it "should have all required arguments" do
           options = @add_cli.instance_variable_get :@options
           options.should have_key(:host_name)
-          options.should have_key(:user)
+          options.should have_key(:login)
         end
 
         it "should invoke the add_host_def" do
           @add_cli.instance_variable_get(:@c).should_receive(:add_host_def).
-                   with([:one], :two, RunSSHLib::HostDef.new('host'))
+                   with([:one], :two, RunSSHLib::SshHostDef.new({
+                     :host_name => 'host',:login => nil
+                   }))
           @add_cli.run
         end
       end
@@ -275,13 +278,15 @@ describe "The CLI interface" do
         it "should have all required argumants" do
           options = @update_cli.instance_variable_get :@options
           options.should have_key(:host_name)
-          options.should have_key(:user)
+          options.should have_key(:login)
         end
 
         it "should invoke update_host_def" do
           config = @update_cli.instance_variable_get :@c
           config.should_receive(:update_host_def).
-                 with([:root], RunSSHLib::HostDef.new('newhost'))
+                 with([:root], RunSSHLib::SshHostDef.new({
+                   :host_name => "newhost", :login => nil
+                 }))
           @update_cli.run
         end
       end
@@ -296,19 +301,10 @@ describe "The CLI interface" do
           @p_cli.send(:extract_subcommand, ['p']).should eql('print')
         end
 
-        it "should print correctly host definition with user" do
+        it "should print correctly host definition" do
           @p_cli.run
+          @buffer.should match(/Host definition for: somehost/)
           @buffer.should match(/host: a.example.com/)
-          @buffer.should match(/user: otheruser/)
-        end
-
-        it "should print correctly host definition without user" do
-          c = RunSSHLib::ConfigFile.new("#{TMP_FILE}")
-          c.add_host_def([:three, :four], :five, RunSSHLib::HostDef.new('anewhost'))
-          cli = RunSSHLib::CLI.new(%W(-f #{TMP_FILE} print three four five))
-          cli.run
-          @buffer.should match(/host: anewhost/)
-          @buffer.should match(/user: current user/)
         end
       end
 

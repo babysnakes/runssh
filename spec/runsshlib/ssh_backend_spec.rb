@@ -22,7 +22,8 @@ require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 describe "SshBackend implementation" do
   describe "when initializing" do
     before(:all) do
-      @h = RunSSHLib::HostDef.new('a.example.com', 'me')
+      @h = RunSSHLib::SshHostDef.new(:host_name => 'a.example.com',
+                                     :login => 'me')
       @o = {:login => 'you'}
     end
 
@@ -41,8 +42,9 @@ describe "SshBackend implementation" do
 
   describe "shell" do
     before(:each) do
-      @hd1 = RunSSHLib::HostDef.new('a.example.com')
-      @hd2 = RunSSHLib::HostDef.new('b.example.com', 'user')
+      @hd1 = RunSSHLib::SshHostDef.new('a.example.com')
+      @hd2 = RunSSHLib::SshHostDef.new(:host_name => 'b.example.com',
+                                    :login => 'user')
     end
 
     it "should handle null user correctly" do

@@ -42,5 +42,11 @@ module RunSSHLib
     def eql?(other)
       self == other
     end
+
+    def to_print
+      out = "    * host: #{definition[:host_name]}"
+      out << "\n    * login: #{definition[:login] || 'current user'}"
+      out
+    end
   end
 end

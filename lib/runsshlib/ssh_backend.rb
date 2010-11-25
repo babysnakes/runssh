@@ -22,8 +22,8 @@ module RunSSHLib
   class SshBackend
     # New backend with host/login details.
     def initialize(host_def, overrides)
-      @host = host_def.name
-      @user = overrides[:login] ? overrides[:login] : host_def.login
+      @host = host_def.definition[:host_name]
+      @user = overrides[:login] ? overrides[:login] : host_def.definition[:login]
     end
 
     # run shell on remote host.
