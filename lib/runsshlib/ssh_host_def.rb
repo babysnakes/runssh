@@ -38,10 +38,7 @@ module RunSSHLib
       return false unless other.instance_of? SshHostDef
       definition == other.definition
     end
-
-    def eql?(other)
-      self == other
-    end
+    alias_method :eql?, :==
 
     def to_print
       out = "    * host: #{definition[:host_name]}"
