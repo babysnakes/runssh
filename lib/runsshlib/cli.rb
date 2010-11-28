@@ -239,8 +239,7 @@ EOS
     end
 
     def init_config
-      config = @global_options[:config_file] ?
-               @global_options[:config_file] : DEFAULT_CONFIG
+      config = @global_options[:config_file] || DEFAULT_CONFIG
       ConfigFile.new(config)
     end
 
