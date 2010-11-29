@@ -18,17 +18,18 @@
 
 module RunSSHLib
 
-  # A class to handle ssh operations.
-  class SshBackend
-    # New backend with host/login details.
-    def initialize(host_def, overrides)
-      @host = host_def.definition[:host_name]
-      @user = overrides[:login] ? overrides[:login] : host_def.definition[:login]
-    end
+  # A collection of ssh procedures.
+  module SshBackend
+    module_function
 
     # run shell on remote host.
-    def shell
-      command = "ssh #{@user ? %Q(-l #{@user}) : ''} #{@host}"
+    # definition:: A Hash containing required data for
+    # making shell connection (e.g., :host_name, :login).
+    def shell(definition)
+      raise "no hostname" unless definition[:host_name] # should never happen
+      command = "ssh "
+      command << "-l #{definition[:login]} " if definition[:login]
+      command << "#{definition[:host_name]}"
       exec command
     end
 

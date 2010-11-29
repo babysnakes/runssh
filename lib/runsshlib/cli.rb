@@ -245,8 +245,7 @@ EOS
 
     def run_shell(path)
       host = @c.get_host(path)
-      s = SshBackend.new(host, @options)
-      s.shell
+      SshBackend.shell(host.definition.merge(@options))
     end
 
     def run_add(path)

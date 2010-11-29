@@ -188,16 +188,14 @@ describe "The CLI interface" do
           options.should have_key(:login)
         end
 
-        it "should correctly initialize SshBackend" do
-          somehost = RunSSHLib::SshHostDef.new(:host_name => 'a.example.com',
-                                               :login => 'otheruser')
+        it "should correctly call SshBackend.shell with merged definition" do
           import_fixtures
-          mock_ssh_backend = double('SshBackend')
-          mock_ssh_backend.should_receive(:shell)
-          RunSSHLib::SshBackend.should_receive(:new).
-                                with(somehost, {:login=>nil, :help=>false}).
-                                and_return(mock_ssh_backend)
-          cli = RunSSHLib::CLI.new(%W(-f #{TMP_FILE} shell cust2 dc internal somehost))
+          RunSSHLib::SshBackend.should_receive(:shell).
+                                with(hash_including(:host_name => "a.example.com",
+                                                    :login => "someuser")).
+                                and_return(nil)
+          cli = RunSSHLib::CLI.new(
+                %W(-f #{TMP_FILE} shell -l someuser cust2 dc internal somehost))
           cli.run
         end
       end

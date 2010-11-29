@@ -19,52 +19,31 @@
 require 'lib/runsshlib'
 require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 
-describe "SshBackend implementation" do
-  describe "when initializing" do
-    before(:all) do
-      @h = RunSSHLib::SshHostDef.new(:host_name => 'a.example.com',
-                                     :login => 'me')
-      @o = {:login => 'you'}
-    end
-
-    it "should override user in host definition with `overrides`" do
-      s = RunSSHLib::SshBackend.new(@h, @o)
-      s.instance_variable_get(:@host).should == 'a.example.com'
-      s.instance_variable_get(:@user).should == 'you'
-    end
-
-    it "should accept host definitions if no overrides" do
-      s = RunSSHLib::SshBackend.new(@h, {})
-      s.instance_variable_get(:@host).should == 'a.example.com'
-      s.instance_variable_get(:@user).should == 'me'
-    end
-  end
-
-  describe "shell" do
-    before(:each) do
-      @hd1 = RunSSHLib::SshHostDef.new('a.example.com')
-      @hd2 = RunSSHLib::SshHostDef.new(:host_name => 'b.example.com',
-                                    :login => 'user')
-    end
-
+describe RunSSHLib::SshBackend do
+  context "shell" do
     it "should handle null user correctly" do
-      ssh = RunSSHLib::SshBackend.new(@hd1, {})
-      ssh.should_receive(:exec).with(/^ssh\s+a.example.com$/).and_return(nil)
-      ssh.shell
+      data = {:host_name => "a"}
+      RunSSHLib::SshBackend.should_receive(:exec).
+                            with(/^ssh\s+#{data[:host_name]}$/).
+                            and_return(nil)
+      RunSSHLib::SshBackend.shell(data)
     end
 
-    it "should handle existing user correctly" do
-      ssh = RunSSHLib::SshBackend.new(@hd2, {})
-      ssh.should_receive(:exec).with(/^ssh\s+-l\s+user\s+b.example.com$/).
-          and_return(nil)
-      ssh.shell
+    it "should handle user correctly" do
+      data = {
+        :host_name => "a",
+        :login => "user"
+      }
+      RunSSHLib::SshBackend.should_receive(:exec).
+                            with(/^ssh\s+-l\s+#{data[:login]}\s+#{data[:host_name]}$/).
+                            and_return(nil)
+      RunSSHLib::SshBackend.shell(data)
     end
 
-    it "should use the overriding user instead of configured one" do
-      ssh = RunSSHLib::SshBackend.new(@hd2, {:login => 'another', })
-      ssh.should_receive(:exec).with(/^ssh\s+-l\s+another\s+b.example.com$/).
-          and_return(nil)
-      ssh.shell
+    it "should raise error if no :host_name in definition" do
+      expect do
+        RunSSHLib::SshBackend.shell({:login => 'me'})
+      end.to raise_error(RuntimeError, /no hostname/i)
     end
   end
 end
