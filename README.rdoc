@@ -86,6 +86,7 @@ This program is distributed under the GPL v2 license.
   1. Configured tunneling
   2. tunneling defined on the command line.
 * Remote commands (e.g, with no login).
+* Shell via gateway (connect to a firewall and from there open shell to the host).
 * Rename (or move) host definition
 * Maybe replace invoking ssh from the command line with some library.
 * Automatic deletion of empty groups.
@@ -95,7 +96,7 @@ This program is distributed under the GPL v2 license.
 * Use Highline for questions ✓
 * Migrate to new ConfigFile:
   1. Create a new _SshHostDef_ class ✓
-  2. Add version to the config file (use "VERSION" key as string and not as 
+  2. Add version to the config file (use "VERSION" key as string and not as
      symbol (so it won't interfere with the paths) ✓
   3. Create discovery of config version on initialization:
      * If config file is un-versioned abort the application and suggest
@@ -107,5 +108,4 @@ This program is distributed under the GPL v2 license.
      * Save configuration and inform the user. ✓
   4. Make sure _VERSION_ is excluded form the listing of groups. ✓
   5. Convert existing functionality with the new configuration. ✓
-* Add support for ssh gateway
-* Add support for SCP and remote commands.
+* Add support for SCP.
