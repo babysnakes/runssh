@@ -164,7 +164,7 @@ describe "The CLI interface" do
     end
 
     describe "with subcommand" do
-      describe "shell" do
+      context "shell" do
         before(:each) do
           @shell_cli = RunSSHLib::CLI.new(%W(-f #{TMP_FILE} shell))
         end
@@ -196,6 +196,18 @@ describe "The CLI interface" do
                                 and_return(nil)
           cli = RunSSHLib::CLI.new(
                 %W(-f #{TMP_FILE} shell -l someuser cust2 dc internal somehost))
+          cli.run
+        end
+
+        it "should correctly parse remote command (indicated by --)" do
+          import_fixtures
+          RunSSHLib::SshBackend.should_receive(:shell).
+                                with(hash_including(:remote_cmd => "ls -l /tmp")).
+                                and_return(nil)
+          cli = RunSSHLib::CLI.new(
+                %W(-f #{TMP_FILE} shell -l someuser cust2 dc internal somehost 
+                   -- ls -l /tmp)
+          )
           cli.run
         end
       end

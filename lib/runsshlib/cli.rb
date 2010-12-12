@@ -34,9 +34,14 @@ module RunSSHLib
       if args.first == 'help'; args.shift; args << '-h'; end
       # indicate path completion request
       @completion_requested = args.delete('?')
-
       @cmd = extract_subcommand(args)
       @options = parse_subcommand(@cmd, args)
+      # handle the case of remote command (indicated by --)
+      if ind = args.index("--")
+        rmt = args.slice!(ind, args.size - ind)
+        rmt.delete_at(0) # remove --
+        @options[:remote_cmd] = rmt.join(" ")
+      end
       @c = init_config
       # path in ConfigFile uses symbols and not strings
       @path = args.map { |e| e.to_sym }
@@ -136,16 +141,22 @@ EOS
       when 'shell'
         Trollop::options(args) do
           banner <<-EOS
-Usage: runssh [global_options] shell [options] <path>
+Usage: runssh [global_options] shell [options] <path> [-- <remote command>]
 
 Connect to the specified host using ssh.
 
 <path> : See main help for description of path.
 
+If you only want to run remote command instead of full shell, you can
+append "-- <remote command>" to the regular command. To list /tmp on a host
+bookmarked as "some host" run:
+runssh shell some host -- ls -l /tmp
+
 Options:
 EOS
           opt :login, "override the login in the configuration",
               :type => :string
+          stop_on "--"
         end
       when 'add'
         Trollop::options(args) do
