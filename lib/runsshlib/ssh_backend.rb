@@ -25,13 +25,16 @@ module RunSSHLib
     # run shell on remote host.
     # definition:: A Hash containing required data for
     # making shell connection (e.g., :host_name, :login).
+    #
+    # For running remote commands add to the _definition_ hash
+    # the entire remote command as a string with a +:remote_cmd+ key.
     def shell(definition)
       raise "no hostname" unless definition[:host_name] # should never happen
       command = "ssh "
       command << "-l #{definition[:login]} " if definition[:login]
       command << "#{definition[:host_name]}"
+      command << " -- #{definition[:remote_cmd]}" if definition[:remote_cmd]
       exec command
     end
-
   end
 end

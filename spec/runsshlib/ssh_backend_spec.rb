@@ -45,5 +45,17 @@ describe RunSSHLib::SshBackend do
         RunSSHLib::SshBackend.shell({:login => 'me'})
       end.to raise_error(RuntimeError, /no hostname/i)
     end
+
+    it "should handle correctly remote commands" do
+      data = {
+        :host_name => "a",
+        :login => "user",
+        :remote_cmd => "uptime"
+      }
+      RunSSHLib::SshBackend.should_receive(:exec).
+                            with(/^ssh\s+-l\s+#{data[:login]}\s+#{data[:host_name]}\s+--\s+uptime$/).
+                            and_return(nil)
+      RunSSHLib::SshBackend.shell(data)
+    end
   end
 end
