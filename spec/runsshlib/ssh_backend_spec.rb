@@ -21,6 +21,12 @@ require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 
 describe RunSSHLib::SshBackend do
   context "shell" do
+    let(:test_data) do
+      {:host_name => "a",
+       :login => "user",
+       :remote_cmd => "uptime"}
+    end
+
     it "should handle null user correctly" do
       data = {:host_name => "a"}
       RunSSHLib::SshBackend.should_receive(:exec).
@@ -47,13 +53,16 @@ describe RunSSHLib::SshBackend do
     end
 
     it "should handle correctly remote commands" do
-      data = {
-        :host_name => "a",
-        :login => "user",
-        :remote_cmd => "uptime"
-      }
       RunSSHLib::SshBackend.should_receive(:exec).
-                            with(/^ssh\s+-l\s+#{data[:login]}\s+#{data[:host_name]}\s+--\s+uptime$/).
+                            with(/^ssh\s+-l\s+#{test_data[:login]}\s+#{test_data[:host_name]}\s+--\s+"uptime"$/).
+                            and_return(nil)
+      RunSSHLib::SshBackend.shell(test_data)
+    end
+
+    it "should ignore empty remote commands" do
+      data = test_data.merge(:remote_cmd => "")
+      RunSSHLib::SshBackend.should_receive(:exec).
+                            with(/^ssh\s+-l\s+#{data[:login]}\s+#{data[:host_name]}$/).
                             and_return(nil)
       RunSSHLib::SshBackend.shell(data)
     end

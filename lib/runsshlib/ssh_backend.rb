@@ -33,7 +33,8 @@ module RunSSHLib
       command = "ssh "
       command << "-l #{definition[:login]} " if definition[:login]
       command << "#{definition[:host_name]}"
-      command << " -- #{definition[:remote_cmd]}" if definition[:remote_cmd]
+      command << %( -- "#{definition[:remote_cmd]}") if
+                 (definition[:remote_cmd] && (!definition[:remote_cmd].empty?))
       exec command
     end
   end
