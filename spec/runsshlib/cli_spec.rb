@@ -187,6 +187,18 @@ describe "The CLI interface" do
           options = @shell_cli.instance_variable_get :@options
           options.should have_key(:login)
         end
+        
+        it "should not overwrite nil arguments with saved ones when merging" do
+          import_fixtures
+          RunSSHLib::SshBackend.should_receive(:shell).
+                                with(hash_including(
+                                     :host_name => "a.example.com",
+                                     :login => "otheruser")).
+                                and_return(nil)
+          cli = RunSSHLib::CLI.new(
+                %W(-f #{TMP_FILE} shell cust2 dc internal somehost))
+          cli.run
+        end
 
         it "should correctly call SshBackend.shell with merged definition" do
           import_fixtures

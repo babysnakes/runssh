@@ -256,7 +256,14 @@ EOS
 
     def run_shell(path)
       host = @c.get_host(path)
-      SshBackend.shell(host.definition.merge(@options))
+      # only override if value exist
+      # TODO: this works only for some types (e.g, not boolean) but
+      # currently this is all we need. We may need to make it better
+      # later.
+      definition = host.definition.merge(@options) do |key, this, other|
+        other ? other : this
+      end
+      SshBackend.shell(definition)
     end
 
     def run_add(path)
