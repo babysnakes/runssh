@@ -43,7 +43,7 @@ module RunSSHLib
   module Version
     MAJOR = 0
     MINOR = 2
-    BUILD = '0.pre.3'
+    BUILD = '0.pre.4'
 
     STRING = [MAJOR, MINOR, BUILD].compact.join('.')
   end
