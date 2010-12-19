@@ -36,12 +36,6 @@ module RunSSHLib
       @completion_requested = args.delete('?')
       @cmd = extract_subcommand(args)
       @options = parse_subcommand(@cmd, args)
-      # handle the case of remote command (indicated by --)
-      if ind = args.index("--")
-        rmt = args.slice!(ind, args.size - ind)
-        rmt.delete_at(0) # remove --
-        @options[:remote_cmd] = rmt.join(" ")
-      end
       @c = init_config
       # path in ConfigFile uses symbols and not strings
       @path = args.map { |e| e.to_sym }
@@ -139,7 +133,7 @@ EOS
     def parse_subcommand(cmd, args)
       case cmd
       when 'shell'
-        Trollop::options(args) do
+        options = Trollop::options(args) do
           banner <<-EOS
 Usage: runssh [global_options] shell [options] <path> [-- <remote command>]
 
@@ -158,6 +152,13 @@ EOS
               :type => :string
           stop_on "--"
         end
+        # handle the case of remote command (indicated by --)
+        if ind = args.index("--")
+          rmt = args.slice!(ind, args.size - ind)
+          rmt.delete_at(0) # remove --
+          options[:remote_cmd] = rmt.join(" ")
+        end
+        options
       when 'add'
         Trollop::options(args) do
           banner <<-EOS
