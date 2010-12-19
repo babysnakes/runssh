@@ -170,9 +170,9 @@ module RunSSHLib
     def update_config
       return if @config['VERSION'] == Version
       backup_file = @config_file + '.none'
-      require 'ftools'
+      require 'fileutils'
       new_config = config_none_to_10(@config)
-      File.move(@config_file, backup_file)
+      FileUtils.move(@config_file, backup_file)
       @config = new_config
       @config['VERSION'] = Version
       save
@@ -182,9 +182,9 @@ module RunSSHLib
     private
 
     def save
-      require 'ftools'
+      require 'fileutils'
       # create backup (File.copy always seems to overwrite existing file)
-      File.copy(@config_file, @config_file + '.bak') if File.exists? @config_file
+      FileUtils.copy(@config_file, @config_file + '.bak') if File.exists? @config_file
       File.open(@config_file, 'w') { |out| Marshal.dump(@config, out) }
     end
 
