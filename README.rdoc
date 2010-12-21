@@ -58,17 +58,11 @@ specify the full path to that host. In the above example to access <i>host2</i>
     runssh print customer1 location1 host2
 
 == requirements:
-(versions are specified in the gem definition in the Rakefile)
-
-Runtime:
-* Trollop
-* HighLine
-Development:
-* rspec
-* rcov
-* autotest
-* autotest-fsevent
-* autotest-growl
+Dependencies (runtime and development) are specified in <i>runssh.gemspec</i>.
+When installing through gem, dependencies will be installed by default. For
+development, you need to install _bundler_ 1.0.x and run (inside the
+project directory):
+    bundle install
 
 == License
 This program is distributed under the GPL v2 license.
