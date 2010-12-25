@@ -34,6 +34,7 @@ describe "RunSSH Configuration class" do
   end
 
   before(:all) do
+    cleanup_tmp_file # make sure there are no leftovers
     @temp_file = TMP_FILE
     @temp_file_bak = @temp_file + '.bak'
     @h1 = RunSSHLib::SshHostDef.new('a.b.c')
