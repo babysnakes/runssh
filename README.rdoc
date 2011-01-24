@@ -74,6 +74,7 @@ This program is distributed under the GPL v2 license.
 [0.1.1] Improved docs.
 
 == TODO
+* Convert to use thor as parent for RunSSHLib::CLI
 * Create a _proper_ zsh completion script.
 * Add scp capabilities
 * Add tunneling support:
@@ -103,4 +104,3 @@ This program is distributed under the GPL v2 license.
   4. Make sure _VERSION_ is excluded form the listing of groups. ✓
   5. Convert existing functionality with the new configuration. ✓
 * Add support for remote command. ✓
-* Convert to use thor as parent for RunSSHLib::CLI
