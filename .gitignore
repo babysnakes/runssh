@@ -6,3 +6,4 @@ coverage/
 .rake_tasks*
 *.gem
 pkg/
+.rubyamp-config.yml
