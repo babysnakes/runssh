@@ -23,8 +23,9 @@ require 'rspec/core/rake_task'
 Bundler::GemHelper.install_tasks
 
 RSpec::Core::RakeTask.new do |t|
-  t.rcov = true
+  t.rcov = ENV['rcov'] == "true" ? true : false
   t.rcov_opts = %w(--exclude gems\/,spec\/)
+  t.name = :specs
   # t.warning = true # rspec produces too many warnings so it's commented.
 end
 

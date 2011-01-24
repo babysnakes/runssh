@@ -16,9 +16,9 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #
 
-require 'lib/runsshlib'
+require 'spec_helper'
+require 'runsshlib'
 require 'tmpdir'
-require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 require 'yaml'
 
 describe "RunSSH Configuration class" do
