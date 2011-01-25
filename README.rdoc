@@ -69,9 +69,20 @@ This program is distributed under the GPL v2 license.
 
 == History
 
-[0.1.0]	Initial release. Simple bookmarks (host and user),
-        only _shell_ operation supported.
-[0.1.1] Improved docs.
+=== 0.1.0
+* Initial release. Simple bookmarks (host and user),only _shell_ operation 
+  supported.
+
+=== 0.1.1
+* Improved docs.
+
+=== 0.2.0
+* New config file structure - with config file version discovery and update.
+* Some output improvements.
+* Added support for remote commands.
+* Rewrite of some of the elements. The next release will introduce further
+  rewrite.
+* Added support for ruby 1.9.2.
 
 == TODO
 * Convert to use thor as parent for RunSSHLib::CLI
@@ -85,22 +96,3 @@ This program is distributed under the GPL v2 license.
 * Rename (or move) host definition
 * Maybe replace invoking ssh from the command line with some library.
 * Automatic deletion of empty groups.
-
-=== Tasks for 0.2
-* Add support for autotest ✓
-* Use Highline for questions ✓
-* Migrate to new ConfigFile:
-  1. Create a new _SshHostDef_ class ✓
-  2. Add version to the config file (use "VERSION" key as string and not as
-     symbol (so it won't interfere with the paths) ✓
-  3. Create discovery of config version on initialization:
-     * If config file is un-versioned abort the application and suggest
-       running with <tt>--update-config</tt> argument. ✓
-  4. Create a update-config method for upgrading the configurations file:
-     * Inform the user of backup name. ✓
-     * Copy the original to backup. ✓
-     * Convert all _HostDef_ instances to _SshHostDef_. ✓
-     * Save configuration and inform the user. ✓
-  4. Make sure _VERSION_ is excluded form the listing of groups. ✓
-  5. Convert existing functionality with the new configuration. ✓
-* Add support for remote command. ✓
