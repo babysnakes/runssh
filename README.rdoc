@@ -84,6 +84,9 @@ This program is distributed under the GPL v2 license.
   rewrite.
 * Added support for ruby 1.9.2.
 
+=== 0.2.1
+* Fixed docs.
+
 == TODO
 * Convert to use thor as parent for RunSSHLib::CLI
 * Create a _proper_ zsh completion script.
