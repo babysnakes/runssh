@@ -33,9 +33,20 @@ module RunSSHLib
       command = "ssh "
       command << "-l #{definition[:login]} " if definition[:login]
       command << "#{definition[:host_name]}"
+      command << " -L #{normalize_tunnel_definition definition[:local_tunnel]} " if
+                 definition[:local_tunnel]
       command << %( -- "#{definition[:remote_cmd]}") if
                  (definition[:remote_cmd] && (!definition[:remote_cmd].empty?))
       exec command
+    end
+
+    # Accepts abbriviated or full definition of ssh tunnel definition
+    # and converts it to full tunnel definition. If only port is
+    # supplied (abbriviated form) it uses `localhost` as the hostname
+    # and the same port on both end of the tunnel definition.
+    def normalize_tunnel_definition(tunnel_definition)
+      tunnel_definition =~ /(^\d+$)/ ? "#{$1}:localhost:#{$1}" :
+                           tunnel_definition
     end
   end
 end

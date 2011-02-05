@@ -20,7 +20,7 @@ require 'spec_helper'
 require 'runsshlib'
 
 describe RunSSHLib::SshBackend do
-  context "shell" do
+  context "#shell" do
     let(:test_data) do
       {:host_name => "a",
        :login => "user",
@@ -65,6 +65,25 @@ describe RunSSHLib::SshBackend do
                             with(/^ssh\s+-l\s+#{data[:login]}\s+#{data[:host_name]}$/).
                             and_return(nil)
       RunSSHLib::SshBackend.shell(data)
+    end
+
+    it "should handle tunnels correctly" do
+      data = test_data.merge(:local_tunnel => "6000")
+      RunSSHLib::SshBackend.should_receive(:exec).
+                            with(/^ssh\s+.*\s-L\s+6000:localhost:6000.*/)
+      RunSSHLib::SshBackend.shell(data)
+    end
+  end
+
+  context "#normalize_tunnel_definition" do
+    it "converts abbreviated tunnel definition correctly" do
+      RunSSHLib::SshBackend.normalize_tunnel_definition("7070").should ==
+          "7070:localhost:7070"
+    end
+
+    it "return full tunnel definition as it is" do
+      RunSSHLib::SshBackend.normalize_tunnel_definition("7070:localhost:7070").
+          should == "7070:localhost:7070"
     end
   end
 end
