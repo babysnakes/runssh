@@ -87,20 +87,19 @@ This program is distributed under the GPL v2 license.
 === 0.2.1
 * Fixed docs.
 
+=== 0.2.2
+* Enabled overriding hostname when invoking shell (Could be used to
+  bookmark a host with changing addresses - e.g. in EC2)
+* Enabled definition of (local) ssh tunneling. Currently only in the
+  +shell+ command.
+
 == TODO
+* Refactor of RunSSHLib::CLI to avoid repetition of so many options between
+  _add_, _update_ and _shell_.
 * Create a _proper_ zsh completion script.
 * Add scp capabilities
-* Add tunneling support:
-  1. Configured tunneling
-  2. tunneling defined on the command line.
-* Remote commands (e.g, with no login).
+* Add support for bookmarking tunnels
 * Shell via gateway (connect to a firewall and from there open shell to the host).
 * Rename (or move) host definition
 * Maybe replace invoking ssh from the command line with some library.
 * Automatic deletion of empty groups.
-
-== Tasks for 0.2.2
-* Enable overriding hostname as well as other parameters (e.g. so it's possible
-  to create a template for connecting to Ubuntu on EC2)
-* Enable tunneling with shortcut (both full -L syntax and a shortcut:
-  -L 6000 for -L 6000:localhost:6000)
