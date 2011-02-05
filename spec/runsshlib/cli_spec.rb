@@ -187,7 +187,7 @@ describe "The CLI interface" do
           options = @shell_cli.instance_variable_get :@options
           options.should have_key(:login)
         end
-        
+
         it "should not overwrite nil arguments with saved ones when merging" do
           import_fixtures
           RunSSHLib::SshBackend.should_receive(:shell).
@@ -211,13 +211,22 @@ describe "The CLI interface" do
           cli.run
         end
 
+        it "should correctly allow overriding of hostname" do
+          import_fixtures
+          RunSSHLib::SshBackend.should_receive(:shell).
+                                with(hash_including(:host_name => "overridehost"))
+          cli = RunSSHLib::CLI.new(
+                %W(-f #{TMP_FILE} shell -n overridehost cust2 dc internal somehost))
+          cli.run
+        end
+
         it "should correctly parse remote command (indicated by --)" do
           import_fixtures
           RunSSHLib::SshBackend.should_receive(:shell).
                                 with(hash_including(:remote_cmd => "ls -l /tmp")).
                                 and_return(nil)
           cli = RunSSHLib::CLI.new(
-                %W(-f #{TMP_FILE} shell -l someuser cust2 dc internal somehost 
+                %W(-f #{TMP_FILE} shell -l someuser cust2 dc internal somehost
                    -- ls -l /tmp)
           )
           cli.run

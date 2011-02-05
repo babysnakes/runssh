@@ -150,6 +150,8 @@ Options:
 EOS
           opt :login, "override the login in the configuration",
               :type => :string
+          opt :host_name, 'override the name or address of the host',
+              :short => :n, :type => :string
           stop_on "--"
         end
         # handle the case of remote command (indicated by --)
