@@ -146,12 +146,19 @@ append "-- <remote command>" to the regular command. To list /tmp on a host
 bookmarked as "some host" run:
 runssh shell some host -- ls -l /tmp
 
+(Local) tunneling can be enabled with the -L options (correspond to
+ssh -L option). An abbreviated syntax could be used as the requested
+port if both ports are identical and host is localhost.
+e.g. -L 7070 is converted to -L 7070:localhost:7070
+
 Options:
 EOS
           opt :login, "override the login in the configuration",
               :type => :string
           opt :host_name, 'override the name or address of the host',
               :short => :n, :type => :string
+          opt :local_tunnel, "tunnel definition",
+              :short => :L, :type => :string
           stop_on "--"
         end
         # handle the case of remote command (indicated by --)

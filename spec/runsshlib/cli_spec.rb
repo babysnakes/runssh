@@ -186,6 +186,7 @@ describe "The CLI interface" do
         it "should have all required arguments" do
           options = @shell_cli.instance_variable_get :@options
           options.should have_key(:login)
+          options.should have_key(:local_tunnel)
         end
 
         it "should not overwrite nil arguments with saved ones when merging" do
