@@ -88,7 +88,6 @@ This program is distributed under the GPL v2 license.
 * Fixed docs.
 
 == TODO
-* Convert to use thor as parent for RunSSHLib::CLI
 * Create a _proper_ zsh completion script.
 * Add scp capabilities
 * Add tunneling support:
@@ -99,3 +98,9 @@ This program is distributed under the GPL v2 license.
 * Rename (or move) host definition
 * Maybe replace invoking ssh from the command line with some library.
 * Automatic deletion of empty groups.
+
+== Tasks for 0.2.2
+* Enable overriding hostname as well as other parameters (e.g. so it's possible
+  to create a template for connecting to Ubuntu on EC2)
+* Enable tunneling with shortcut (both full -L syntax and a shortcut:
+  -L 6000 for -L 6000:localhost:6000)
