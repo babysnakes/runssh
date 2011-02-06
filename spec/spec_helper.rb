@@ -19,6 +19,9 @@ require 'rspec'
 require 'tmpdir'
 $:.unshift(File.join(File.dirname(__FILE__), "..", "lib"))
 
+require 'simplecov'
+SimpleCov.start
+
 # got the idea from:
 # http://stackoverflow.com/questions/1480537/how-can-i-validate-exits-and-aborts-in-rspec
 module ExitCodeMatchers

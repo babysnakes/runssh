@@ -19,11 +19,6 @@ EOF
   s.required_ruby_version = '>= 1.8.7'
   s.add_dependency('trollop', '~> 1.16.2')
   s.add_dependency('highline', '~> 1.6.1')
-  s.add_development_dependency('rspec', "~> 2.1.0")
-  s.add_development_dependency('rcov', '~> 0.9.9')
-  s.add_development_dependency('autotest', '~> 4.4.4')
-  s.add_development_dependency('autotest-fsevent', '~> 0.2.3')
-  s.add_development_dependency('autotest-growl', '~> 0.2.6')
 
   s.has_rdoc          = true
   s.extra_rdoc_files  = ['README.rdoc']

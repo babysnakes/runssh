@@ -16,7 +16,6 @@ GEM
     autotest-growl (0.2.9)
     diff-lcs (1.1.2)
     highline (1.6.1)
-    rcov (0.9.9)
     rspec (2.1.0)
       rspec-core (~> 2.1.0)
       rspec-expectations (~> 2.1.0)
@@ -25,6 +24,9 @@ GEM
     rspec-expectations (2.1.0)
       diff-lcs (~> 1.1.2)
     rspec-mocks (2.1.0)
+    simplecov (0.3.9)
+      simplecov-html (>= 0.3.7)
+    simplecov-html (0.3.9)
     sys-uname (0.8.5)
     trollop (1.16.2)
 
@@ -32,11 +34,11 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  autotest (~> 4.4.4)
-  autotest-fsevent (~> 0.2.3)
-  autotest-growl (~> 0.2.6)
+  autotest (= 4.4.6)
+  autotest-fsevent (= 0.2.4)
+  autotest-growl (= 0.2.9)
   highline (~> 1.6.1)
-  rcov (~> 0.9.9)
   rspec (~> 2.1.0)
   runssh!
+  simplecov (~> 0.3.9)
   trollop (~> 1.16.2)
