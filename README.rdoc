@@ -103,3 +103,10 @@ This program is distributed under the GPL v2 license.
 * Rename (or move) host definition
 * Maybe replace invoking ssh from the command line with some library.
 * Automatic deletion of empty groups.
+
+== Tasks for 0.3
+* Add cucumber features and tidy up the rspec tests.
+* Refactor of RunSSHLib::CLI to avoid repetition of so many options between
+  _add_, _update_ and _shell_.
+* Add support for bookmarking tunnels
+* TBD
