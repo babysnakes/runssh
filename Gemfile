@@ -9,4 +9,5 @@ group :test do
   gem 'autotest', '4.4.6'
   gem 'autotest-fsevent', '0.2.4'
   gem 'autotest-growl', '0.2.9'
+  gem 'cucumber', "0.10.0"
 end
