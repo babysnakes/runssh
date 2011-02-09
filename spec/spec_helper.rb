@@ -16,7 +16,7 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #
 require 'rspec'
-require 'tmpdir'
+require %Q(#{File.join(File.dirname(__FILE__), "support", "utils")})
 $:.unshift(File.join(File.dirname(__FILE__), "..", "lib"))
 
 require 'simplecov'
@@ -72,22 +72,4 @@ end
 
 Rspec.configure do |c|
   c.mock_with :rspec
-end
-
-TMP_FILE = File.join(Dir.tmpdir, 'tempfile')
-
-def cleanup_tmp_file
-  File.delete TMP_FILE if File.exists? TMP_FILE
-  bf = TMP_FILE + '.bak'
-  File.delete bf if File.exists? bf
-end
-
-def import_fixtures
-  yml = File.join(File.dirname(__FILE__), 'fixtures', 'runssh.yml')
-  c = RunSSHLib::ConfigFile.new(TMP_FILE)
-  c.import(yml)
-end
-
-def dump_config hsh
-  File.open(TMP_FILE, 'w') { |out| Marshal.dump(hsh, out) }
 end

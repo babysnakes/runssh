@@ -16,26 +16,22 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #
 
-Given /^No database$/ do
-  cleanup_tmp_file
+require 'tmpdir'
+
+TMP_FILE = File.join(Dir.tmpdir, 'tempfile')
+
+def cleanup_tmp_file
+  File.delete TMP_FILE if File.exists? TMP_FILE
+  bf = TMP_FILE + '.bak'
+  File.delete bf if File.exists? bf
 end
 
-Given /^Existing database$/ do
-  dump_config Hash.new
+def import_fixtures
+  yml = File.join(File.dirname(__FILE__), '..', 'fixtures', 'runssh.yml')
+  c = RunSSHLib::ConfigFile.new(TMP_FILE)
+  c.import(yml)
 end
 
-When /^I bookmark host: "([^"]*)" as "([^"]*)"$/ do |host, path|
-  pending
-end
-
-Then /^A database should be created$/ do
-  pending
-end
-
-Then /^group: (".*") should point to (.*)$/ do |group, host|
-  pending
-end
-
-Then /^A backup database should be created with "([^"]*)" suffix$/ do |suffix|
-  pending
+def dump_config hsh
+  File.open(TMP_FILE, 'w') { |out| Marshal.dump(hsh, out) }
 end
