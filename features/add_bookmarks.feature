@@ -11,7 +11,7 @@ Feature: Adding bookmarks
     Given No database
     When I bookmark host: "some.host.com" as "group1 somehost"
     Then A database should be created
-    And group: "group1 somehost" should point to some.host.com
+    And group: "group1 somehost" should point to "some.host.com"
 
   Scenario: Automatic database backup
     Given Existing database
@@ -19,10 +19,12 @@ Feature: Adding bookmarks
     Then A backup database should be created with ".bak" suffix
 
   Scenario: Adding host
+    Given Empty database
     When I bookmark host: "somehost" as "group somehost"
-    Then group: "group1 somehost" should point to some.host.com
+    Then group: "group somehost" should point to "somehost"
 
   Scenario: Required hostname
+    Given Empty database
     When I bookmark host: "" as "group somehost"
     Then I should see a "hostname required" error
 

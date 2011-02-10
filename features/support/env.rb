@@ -17,3 +17,12 @@
 #
 
 require "#{File.expand_path('../../../spec/support/utils', __FILE__)}"
+$:.unshift(File.join(File.dirname(__FILE__), "..", "..", "lib"))
+
+Before do |scenario|
+  @test_args = %W(-f #{TMP_FILE})
+end
+
+After do |scenario|
+  cleanup_tmp_file
+end
