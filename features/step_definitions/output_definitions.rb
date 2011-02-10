@@ -16,7 +16,7 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #
 
-Then /^I should see a "([^"]*)" error$/ do |error|
+Then /^I should get a "([^"]*)" error$/ do |error|
   expect {
     cli = RunSSHLib::CLI.new(@args)
     cli.run

@@ -27,10 +27,10 @@ Feature: Adding bookmarks
   Scenario: Required hostname
     Given Empty database
     When I try to bookmark host: "" as "group somehost"
-    Then I should see a "option '-n' needs a parameter" error
+    Then I should get a "option '-n' needs a parameter" error
 
   @v_error
-  Scenario: Overwriting bookmark
+  Scenario: Overwriting bookmark is forbidden
     Given Bookmark "group subgroup" exists
     When I try to bookmark host: "host" as "group subgroup"
-    Then I should see a "path already exist!" error
+    Then I should get a "path already exist!" error
