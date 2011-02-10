@@ -17,9 +17,16 @@
 #
 
 Then /^I should see a "([^"]*)" error$/ do |error|
-  pending
+  expect {
+    cli = RunSSHLib::CLI.new(@args)
+    cli.run
+  }.to exit_abnormaly
+  @buf.should include(error)
 end
 
 Given /^Bookmark "([^"]*)" exists$/ do |group|
-  pending
+  args = @test_args + %W(add) + group.split.map { |s| s.to_sym } +
+         %W(-n somehost)
+  cli = RunSSHLib::CLI.new(args)
+  cli.run
 end

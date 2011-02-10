@@ -30,8 +30,15 @@ Given /^Empty database$/ do
 end
 
 When /^I bookmark host: "([^"]*)" as "([^"]*)"$/ do |host, path|
-  @cli = RunSSHLib::CLI.new(@test_args + %W(add -n #{host}) + path.split)
+  args = @test_args + %W(add) + path.split + %W(-n)
+  args += [host] unless host.empty? # otherwise it gets ""
+  @cli = RunSSHLib::CLI.new(args)
   @cli.run
+end
+
+When /^I try to bookmark host: "([^"]*)" as "([^"]*)"$/ do |host, path|
+  @args = @test_args + %W(add) + path.split + %W(-n)
+  @args += [host] unless host.empty? # otherwise it gets ""
 end
 
 Then /^A database should be created$/ do

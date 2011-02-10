@@ -23,12 +23,14 @@ Feature: Adding bookmarks
     When I bookmark host: "somehost" as "group somehost"
     Then group: "group somehost" should point to "somehost"
 
+  @v_error
   Scenario: Required hostname
     Given Empty database
-    When I bookmark host: "" as "group somehost"
-    Then I should see a "hostname required" error
+    When I try to bookmark host: "" as "group somehost"
+    Then I should see a "option '-n' needs a parameter" error
 
+  @v_error
   Scenario: Overwriting bookmark
     Given Bookmark "group subgroup" exists
-    When I bookmark host: "host" as "group subgroup"
-    Then I should see a "overwrite" error
+    When I try to bookmark host: "host" as "group subgroup"
+    Then I should see a "path already exist!" error

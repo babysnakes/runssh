@@ -23,6 +23,15 @@ Before do |scenario|
   @test_args = %W(-f #{TMP_FILE})
 end
 
+Before('@v_error') do |scenario|
+  @buf = ''
+  @old_buf, $stderr = $stderr, StringIO.open(@buf, 'w')
+end
+
+After ('@v_error') do |scenario|
+  $stderr = @old_buf
+end
+
 After do |scenario|
   cleanup_tmp_file
 end
