@@ -248,14 +248,6 @@ describe "The CLI interface" do
           options.should have_key(:host_name)
           options.should have_key(:login)
         end
-
-        it "should invoke the add_host_def" do
-          @add_cli.instance_variable_get(:@c).should_receive(:add_host_def).
-                   with([:one], :two, RunSSHLib::SshHostDef.new({
-                     :host_name => 'host',:login => nil
-                   }))
-          @add_cli.run
-        end
       end
 
       describe "del" do
