@@ -18,8 +18,10 @@
 
 Then /^I should get a "([^"]*)" error$/ do |error|
   expect {
-    cli = RunSSHLib::CLI.new(@args)
-    cli.run
+    capture_stderr do
+      cli = RunSSHLib::CLI.new(@args)
+      cli.run
+    end
   }.to exit_abnormaly
   @buf.should include(error)
 end

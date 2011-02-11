@@ -19,17 +19,16 @@
 require "#{File.expand_path('../../../spec/support/utils', __FILE__)}"
 $:.unshift(File.join(File.dirname(__FILE__), "..", "..", "lib"))
 
+def capture_stderr
+  @buf = ''
+  old_buf, $stderr = $stderr, StringIO.open(@buf, 'w')
+  yield
+ensure
+  $stderr = old_buf
+end
+
 Before do |scenario|
   @test_args = %W(-f #{TMP_FILE})
-end
-
-Before('@v_error') do |scenario|
-  @buf = ''
-  @old_buf, $stderr = $stderr, StringIO.open(@buf, 'w')
-end
-
-After ('@v_error') do |scenario|
-  $stderr = @old_buf
 end
 
 After do |scenario|
