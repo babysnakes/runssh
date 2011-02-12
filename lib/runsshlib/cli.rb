@@ -288,9 +288,12 @@ EOS
     end
 
     def run_del(path)
-      question = "Are you sure you want to delete \"" + path.join(':') + "\"" +
-                 "? [yes/no] "
-      if HighLine.new.agree(question)
+      unless @options[:yes]
+        question = %Q(Are you sure you want to delete "#{path.join(':')}") + 
+                   "? [yes/no] "
+        @options[:yes] = HighLine.new.agree(question)
+      end
+      if @options[:yes]
         @c.delete_path(path)
       else
         puts 'canceled'

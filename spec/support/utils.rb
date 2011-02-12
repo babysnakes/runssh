@@ -83,3 +83,17 @@ end
 def dump_config hsh
   File.open(TMP_FILE, 'w') { |out| Marshal.dump(hsh, out) }
 end
+
+# Checks whether a bookmark exists in TMP_FILE.
+# bookmark is a string representing a path. e.g,:
+# "some path to host"
+def bookmark_exist? bookmark
+  path = bookmark.split.map { |s| s.to_sym }
+  c = RunSSHLib::ConfigFile.new(TMP_FILE)
+  begin
+    result = c.send(:retrieve_path, path, "")
+    result ? true : false
+  rescue RunSSHLib::ConfigError => e
+    false
+  end
+end

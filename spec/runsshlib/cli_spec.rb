@@ -269,13 +269,13 @@ describe "The CLI interface" do
         end
 
         it "should perform the deletion upon confirmation" do
-          @hl.should_receive(:agree).and_return(true)
+          @hl.stub(:agree).and_return(true)
           @d_cli.instance_variable_get(:@c).should_receive(:delete_path)
           @d_cli.run
         end
 
         it "should cancel the deletion if not confirmed" do
-          @hl.should_receive(:agree).and_return(false)
+          @hl.stub(:agree).and_return(false)
           @d_cli.instance_variable_get(:@c).should_not_receive(:delete_path)
           @d_cli.run
           @buffer.should match(/cancel/)

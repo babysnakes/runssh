@@ -19,6 +19,9 @@
 require "#{File.expand_path('../../../spec/support/utils', __FILE__)}"
 $:.unshift(File.join(File.dirname(__FILE__), "..", "..", "lib"))
 
+# Runs the provided block and captures STDERROR
+# in the @buf instance variable for later comparison.
+# It restores STDERR to the default after it finishes.
 def capture_stderr
   @buf = ''
   old_buf, $stderr = $stderr, StringIO.open(@buf, 'w')
