@@ -7,13 +7,13 @@ Feature: Deleting bookmarks
     When I delete "one two three"
     And I confirm the prompt
     Then It should run successfully
-    And group "one two three" should not exist
+    And Bookmark "one two three" should not exist
 
   Scenario: Approving deletion with -y option
     Given Bookmark "one two three" exists
     When I delete "one two three" with confirmation
     Then It should run successfully
-    And group "one two three" should not exist
+    And Bookmark "one two three" should not exist
   
   Scenario: Cancel deletion upon dis-approving confirmation
     Given Bookmark "one two three" exists
@@ -38,7 +38,7 @@ Feature: Deleting bookmarks
     When I delete "one two"
     And I confirm the prompt
     Then It should run successfully
-    And group "one two" should not exist
+    And Bookmark "one two" should not exist
 
   Scenario: Refusing to delete non-empty groups
     Given Bookmark "one two three" exists

@@ -30,13 +30,6 @@ Given /^Empty database$/ do
 end
 
 When /^I bookmark host: "([^"]*)" as "([^"]*)"$/ do |host, path|
-  args = @test_args + %W(add) + path.split + %W(-n)
-  args += [host] unless host.empty? # otherwise it gets ""
-  @cli = RunSSHLib::CLI.new(args)
-  @cli.run
-end
-
-When /^I try to bookmark host: "([^"]*)" as "([^"]*)"$/ do |host, path|
   @args = @test_args + %W(add) + path.split + %W(-n)
   @args += [host] unless host.empty? # otherwise it gets ""
 end
@@ -45,7 +38,7 @@ Then /^A database should be created$/ do
   File.exist?(TMP_FILE).should be_true
 end
 
-Then /^group: "([^"]*)" should point to "([^"]*)"$/ do |group, host|
+Then /^Bookmark: "([^"]*)" should point to "([^"]*)"$/ do |group, host|
   cf = RunSSHLib::ConfigFile.new(TMP_FILE)
   h = cf.get_host(group.split.map { |e| e.to_sym })
   h.definition[:host_name].should == host
@@ -60,7 +53,7 @@ When /^I delete "([^"]*)"( with confirmation){0,1}$/ do |group, confirm|
   @args += ['-y'] if confirm
 end
 
-Then /^group "([^"]*)" should not exist$/ do |group|
+Then /^Bookmark "([^"]*)" should not exist$/ do |group|
   bookmark_exist?(group).should be_false
 end
 
@@ -74,4 +67,11 @@ Given /^Bookmark "([^"]*)" is an empty group$/ do |group|
   When %Q(I delete "#{host_path}") # What's left is an empty group
   And "I confirm the prompt"
   Then %Q(It should run successfully)
+end
+
+Given /^Bookmark "([^"]*)" exists$/ do |group|
+  args = @test_args + %W(add) + group.split.map { |s| s.to_sym } +
+         %W(-n somehost)
+  cli = RunSSHLib::CLI.new(args)
+  cli.run
 end

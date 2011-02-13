@@ -26,13 +26,6 @@ Then /^I should get a "([^"]*)" error$/ do |error|
   @buf.should include(error)
 end
 
-Given /^Bookmark "([^"]*)" exists$/ do |group|
-  args = @test_args + %W(add) + group.split.map { |s| s.to_sym } +
-         %W(-n somehost)
-  cli = RunSSHLib::CLI.new(args)
-  cli.run
-end
-
 Then /^I should be prompted with "([^"]*)"$/ do |output|
   capture(:stdout, 'n\n') {
     RunSSHLib::CLI.new(@args).run

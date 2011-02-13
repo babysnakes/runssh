@@ -10,25 +10,28 @@ Feature: Adding bookmarks
   Scenario: Automatically creating database
     Given No database
     When I bookmark host: "some.host.com" as "group1 somehost"
-    Then A database should be created
-    And group: "group1 somehost" should point to "some.host.com"
+    Then It should run successfully
+    And A database should be created
+    And Bookmark: "group1 somehost" should point to "some.host.com"
 
   Scenario: Automatic database backup
     Given Existing database
     When I bookmark host: "somehost" as "group somehost"
-    Then A backup database should be created with ".bak" suffix
+    Then It should run successfully
+    And A backup database should be created with ".bak" suffix
 
   Scenario: Adding host
     Given Empty database
     When I bookmark host: "somehost" as "group somehost"
-    Then group: "group somehost" should point to "somehost"
+    Then It should run successfully
+    And Bookmark: "group somehost" should point to "somehost"
 
   Scenario: Required hostname
     Given Empty database
-    When I try to bookmark host: "" as "group somehost"
+    When I bookmark host: "" as "group somehost"
     Then I should get a "option '-n' needs a parameter" error
 
   Scenario: Overwriting bookmark is forbidden
     Given Bookmark "group subgroup" exists
-    When I try to bookmark host: "host" as "group subgroup"
+    When I bookmark host: "host" as "group subgroup"
     Then I should get a "path already exist!" error
