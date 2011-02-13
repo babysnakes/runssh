@@ -68,7 +68,6 @@ end
 When /^Bookmark "([^"]*)" should contain:$/ do |group, options|
   host = get_host(group)
   options.rows.each do |row|
-    p row
     host.definition[row[0].to_sym].should == row[1]
   end
 end
