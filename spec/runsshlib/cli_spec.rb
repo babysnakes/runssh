@@ -250,46 +250,6 @@ describe "The CLI interface" do
         end
       end
 
-      describe "del" do
-        before(:each) do
-          @d_cli = RunSSHLib::CLI.new(%W(-f #{TMP_FILE} del))
-          @d_cli.instance_variable_get(:@c).stub(:delete_path)
-          @hl = double('HighLine')
-          HighLine.stub(:new) {@hl}
-          @hl.stub(:agree)
-        end
-
-        it "should parse 'd' as del" do
-          @d_cli.send(:extract_subcommand, ['d']).should eql('del')
-        end
-
-        it "should verify the deletion" do
-          @hl.should_receive(:agree).with(/Are you sure/)
-          @d_cli.run
-        end
-
-        it "should perform the deletion upon confirmation" do
-          @hl.stub(:agree).and_return(true)
-          @d_cli.instance_variable_get(:@c).should_receive(:delete_path)
-          @d_cli.run
-        end
-
-        it "should cancel the deletion if not confirmed" do
-          @hl.stub(:agree).and_return(false)
-          @d_cli.instance_variable_get(:@c).should_not_receive(:delete_path)
-          @d_cli.run
-          @buffer.should match(/cancel/)
-        end
-
-        it "should pass the right path to delete_path" do
-          cli = RunSSHLib::CLI.new(%W(-f #{TMP_FILE} del one two three))
-          @hl.should_receive(:agree).and_return(true)
-          cli.instance_variable_get(:@c).should_receive(:delete_path).
-                                         with([:one, :two, :three])
-          cli.run
-        end
-      end
-
       describe "update" do
         before(:each) do
           @update_cli = RunSSHLib::CLI.new(%W(-f #{TMP_FILE} update -n newhost root))
@@ -391,6 +351,17 @@ describe "The CLI interface" do
           @e_cli.run
         end
       end
+    end
+  end
+
+  context "Command abbreviation" do
+    before(:each) do
+      # we just need valid cli. Args are not important!
+      @ab_cli = RunSSHLib::CLI.new(%W(-f #{TMP_FILE} print))
+    end
+
+    it "should parse 'd' as del" do
+      @ab_cli.send(:extract_subcommand, ['d']).should eql('del')
     end
   end
 

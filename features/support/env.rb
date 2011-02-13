@@ -19,6 +19,9 @@
 require "#{File.expand_path('../../../spec/support/utils', __FILE__)}"
 $:.unshift(File.join(File.dirname(__FILE__), "..", "..", "lib"))
 
+require 'simplecov'
+SimpleCov.start
+
 # Captures the requested stream (:stdout or :stderr) and
 # returns the result as string. It also populates the @buf
 # instance variable with it so it can be accessed in case
