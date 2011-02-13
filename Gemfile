@@ -10,4 +10,5 @@ group :test do
   gem 'autotest-fsevent', '0.2.4'
   gem 'autotest-growl', '0.2.9'
   gem 'cucumber', "0.10.0"
+  gem 'rake', ">= 0.8.7"
 end
