@@ -19,13 +19,17 @@
 require "#{File.expand_path('../../../spec/support/utils', __FILE__)}"
 $:.unshift(File.join(File.dirname(__FILE__), "..", "..", "lib"))
 
-# Captures the provided stream (:stdout or :stderr) and
+# Captures the requested stream (:stdout or :stderr) and
 # returns the result as string. It also populates the @buf
 # instance variable with it so it can be accessed in case
 # of system exit (e.g. die).
+# The stdin parameter is the content of the stdin. It's 
+# required for any operation that reads from STDIN as the
+# default is empty.
 # Idea borrowed from the "Thor" gem (spec_help.rb).
-def capture(stream)
+def capture(stream, stdin='')
   begin
+    $stdin = StringIO.open(stdin, 'r')
     @buf = ''
     stream = stream.to_s
     eval "$#{stream} = StringIO.open(@buf, 'w')"
@@ -39,6 +43,7 @@ end
 
 Before do |scenario|
   @test_args = %W(-f #{TMP_FILE})
+  @input = ''
 end
 
 After do |scenario|

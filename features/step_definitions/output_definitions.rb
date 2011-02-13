@@ -18,7 +18,7 @@
 
 Then /^I should get a "([^"]*)" error$/ do |error|
   expect {
-    capture(:stderr) do
+    capture(:stderr, @input) do
       cli = RunSSHLib::CLI.new(@args)
       cli.run
     end
@@ -31,4 +31,28 @@ Given /^Bookmark "([^"]*)" exists$/ do |group|
          %W(-n somehost)
   cli = RunSSHLib::CLI.new(args)
   cli.run
+end
+
+Then /^I should be prompted with "([^"]*)"$/ do |output|
+  capture(:stdout, 'n\n') {
+    RunSSHLib::CLI.new(@args).run
+  }.should match(/#{output}/)
+end
+
+When /^I confirm the prompt$/ do
+  When %Q(I answer "yes" at the prompt)
+end
+
+When /^I answer "([^"]*)" at the prompt$/ do |input|
+  @input = input
+end
+
+Then /^It should run successfully$/ do
+  capture(:stdout, @input) do
+    RunSSHLib::CLI.new(@args).run
+  end
+end
+
+Then /^The output should include "([^"]*)"$/ do |output|
+  @buf.should match(/#{output}/)
 end

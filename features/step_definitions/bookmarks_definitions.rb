@@ -55,13 +55,23 @@ Then /^A backup database should be created with "([^"]*)" suffix$/ do |suffix|
   File.exist?(TMP_FILE + suffix).should be_true
 end
 
-When /^I delete "([^"]*)"$/ do |group|
-  args = @test_args + ['del'] + group.split
-  # we'll add automatic verification here
-  args += ['-y']
-  RunSSHLib::CLI.new(args).run
+When /^I delete "([^"]*)"( with confirmation){0,1}$/ do |group, confirm|
+  @args = @test_args + ['del'] + group.split
+  @args += ['-y'] if confirm
 end
 
 Then /^group "([^"]*)" should not exist$/ do |group|
   bookmark_exist?(group).should be_false
+end
+
+Then /^Bookmark "([^"]*)" should exist$/ do |group|
+  bookmark_exist?(group).should be_true
+end
+
+Given /^Bookmark "([^"]*)" is an empty group$/ do |group|
+  host_path = group + " somehost"
+  Given %Q(Bookmark "#{host_path}" exists)
+  When %Q(I delete "#{host_path}") # What's left is an empty group
+  And "I confirm the prompt"
+  Then %Q(It should run successfully)
 end
