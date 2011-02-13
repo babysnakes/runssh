@@ -19,15 +19,22 @@
 require "#{File.expand_path('../../../spec/support/utils', __FILE__)}"
 $:.unshift(File.join(File.dirname(__FILE__), "..", "..", "lib"))
 
-# Runs the provided block and captures STDERROR
-# in the @buf instance variable for later comparison.
-# It restores STDERR to the default after it finishes.
-def capture_stderr
-  @buf = ''
-  old_buf, $stderr = $stderr, StringIO.open(@buf, 'w')
-  yield
-ensure
-  $stderr = old_buf
+# Captures the provided stream (:stdout or :stderr) and
+# returns the result as string. It also populates the @buf
+# instance variable with it so it can be accessed in case
+# of system exit (e.g. die).
+# Idea borrowed from the "Thor" gem (spec_help.rb).
+def capture(stream)
+  begin
+    @buf = ''
+    stream = stream.to_s
+    eval "$#{stream} = StringIO.open(@buf, 'w')"
+    yield
+  ensure
+    eval("$#{stream} = #{stream.upcase}")
+  end
+
+  @buf
 end
 
 Before do |scenario|

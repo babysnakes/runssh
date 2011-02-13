@@ -18,7 +18,7 @@
 
 Then /^I should get a "([^"]*)" error$/ do |error|
   expect {
-    capture_stderr do
+    capture(:stderr) do
       cli = RunSSHLib::CLI.new(@args)
       cli.run
     end
