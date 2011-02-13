@@ -29,28 +29,17 @@ Given /^Empty database$/ do
   dump_config 'VERSION' => RunSSHLib::ConfigFile::Version
 end
 
-When /^I bookmark host: "([^"]*)" as "([^"]*)"$/ do |host, path|
-  @args = @test_args + %W(add) + path.split + %W(-n)
-  @args += [host] unless host.empty? # otherwise it gets ""
-end
-
 Then /^A database should be created$/ do
   File.exist?(TMP_FILE).should be_true
 end
 
 Then /^Bookmark: "([^"]*)" should point to "([^"]*)"$/ do |group, host|
-  cf = RunSSHLib::ConfigFile.new(TMP_FILE)
-  h = cf.get_host(group.split.map { |e| e.to_sym })
+  h = get_host(group)
   h.definition[:host_name].should == host
 end
 
 Then /^A backup database should be created with "([^"]*)" suffix$/ do |suffix|
   File.exist?(TMP_FILE + suffix).should be_true
-end
-
-When /^I delete "([^"]*)"( with confirmation){0,1}$/ do |group, confirm|
-  @args = @test_args + ['del'] + group.split
-  @args += ['-y'] if confirm
 end
 
 Then /^Bookmark "([^"]*)" should not exist$/ do |group|
@@ -74,4 +63,12 @@ Given /^Bookmark "([^"]*)" exists$/ do |group|
          %W(-n somehost)
   cli = RunSSHLib::CLI.new(args)
   cli.run
+end
+
+When /^Bookmark "([^"]*)" should contain:$/ do |group, options|
+  host = get_host(group)
+  options.rows.each do |row|
+    p row
+    host.definition[row[0].to_sym].should == row[1]
+  end
 end

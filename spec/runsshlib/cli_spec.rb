@@ -234,22 +234,6 @@ describe "The CLI interface" do
         end
       end
 
-      describe "add" do
-        before(:each) do
-          @add_cli = RunSSHLib::CLI.new(%W(-f #{TMP_FILE} add -n host one two))
-        end
-
-        it "should parse 'a' as add" do
-          @add_cli.send(:extract_subcommand, ['a']).should eql('add')
-        end
-
-        it "should have all required arguments" do
-          options = @add_cli.instance_variable_get :@options
-          options.should have_key(:host_name)
-          options.should have_key(:login)
-        end
-      end
-
       describe "update" do
         before(:each) do
           @update_cli = RunSSHLib::CLI.new(%W(-f #{TMP_FILE} update -n newhost root))
@@ -362,6 +346,10 @@ describe "The CLI interface" do
 
     it "should parse 'd' as del" do
       @ab_cli.send(:extract_subcommand, ['d']).should eql('del')
+    end
+
+    it "should parse 'a' as add" do
+      @ab_cli.send(:extract_subcommand, ['a']).should eql('add')
     end
   end
 

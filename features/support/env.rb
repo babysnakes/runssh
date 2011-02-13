@@ -26,7 +26,7 @@ SimpleCov.start
 # returns the result as string. It also populates the @buf
 # instance variable with it so it can be accessed in case
 # of system exit (e.g. die).
-# The stdin parameter is the content of the stdin. It's 
+# The stdin parameter is the content of the stdin. It's
 # required for any operation that reads from STDIN as the
 # default is empty.
 # Idea borrowed from the "Thor" gem (spec_help.rb).
@@ -42,6 +42,14 @@ def capture(stream, stdin='')
   end
 
   @buf
+end
+
+# retrive host definition from the database.
+# group is a string containing the path like in parameters for
+# command line.
+def get_host(group)
+  cf = RunSSHLib::ConfigFile.new(TMP_FILE)
+  cf.get_host(group.split.map { |e| e.to_sym })
 end
 
 Before do |scenario|

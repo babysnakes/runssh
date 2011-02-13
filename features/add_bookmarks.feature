@@ -14,6 +14,19 @@ Feature: Adding bookmarks
     And A database should be created
     And Bookmark: "group1 somehost" should point to "some.host.com"
 
+  Scenario: All available options
+    Given Empty database
+    When I run the "add" command with:
+      | option | argument      |
+      |        | one two three |
+      | -n     | some.host     |
+      | -l     | mylogin       |
+    Then It should run successfully
+    And Bookmark "one two three" should contain:
+      | name      | value     |
+      | host_name | some.host |
+      | login     | mylogin   |
+
   Scenario: Automatic database backup
     Given Existing database
     When I bookmark host: "somehost" as "group somehost"
