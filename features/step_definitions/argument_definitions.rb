@@ -17,14 +17,14 @@
 #
 
 When /^I run the "([^"]*)" command with:$/ do |command, options|
-  @args = @test_args + [command]
+  @args = @test_args << command
   options.hashes.each do |hsh|
     case hsh[:option]
     when ""
       @args += hsh[:argument].split
     else
-      @args += [hsh[:option]]
-      @args += [hsh[:argument]]
+      @args << hsh[:option]
+      @args << hsh[:argument]
     end
   end
 end
