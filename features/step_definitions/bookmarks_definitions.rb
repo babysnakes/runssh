@@ -59,10 +59,19 @@ Given /^Bookmark "([^"]*)" is an empty group$/ do |group|
 end
 
 Given /^Bookmark "([^"]*)" exists$/ do |group|
-  args = @test_args + %W(add) + group.split.map { |s| s.to_sym } +
-         %W(-n somehost)
-  cli = RunSSHLib::CLI.new(args)
-  cli.run
+  steps %Q{
+    Given Bookmark "#{group}" exist with:
+      | name      | value     |
+      | host-name | some.host |
+  }
+end
+
+Given /^Bookmark "([^"]*)" exist with:$/ do |group, options|
+  args = @test_args + %W(add) + group.split
+  options.rows.each do |row|
+    args << "--#{row[0]}" << row[1]
+  end
+  RunSSHLib::CLI.new(args).run
 end
 
 When /^Bookmark "([^"]*)" should contain:$/ do |group, options|

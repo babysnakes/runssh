@@ -21,6 +21,7 @@ $:.unshift(File.join(File.dirname(__FILE__), "..", "..", "lib"))
 
 require 'simplecov'
 SimpleCov.start
+require 'cucumber/rspec/doubles'
 
 # Captures the requested stream (:stdout or :stderr) and
 # returns the result as string. It also populates the @buf

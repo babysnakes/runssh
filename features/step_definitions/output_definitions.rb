@@ -49,3 +49,14 @@ end
 Then /^The output should include "([^"]*)"$/ do |output|
   @buf.should match(/#{output}/)
 end
+
+Then /^It should execute "([^"]*)"$/ do |command|
+  RunSSHLib::SshBackend.stub(:exec) do |command, *args|
+    output = command
+    output + args.join(" ") unless args.empty?
+    puts output
+  end
+  capture(:stdout) {
+    RunSSHLib::CLI.new(@args).run
+  }.should match(/^#{command}\n$/)
+end
