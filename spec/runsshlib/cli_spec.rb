@@ -165,30 +165,6 @@ describe "The CLI interface" do
 
     describe "with subcommand" do
       context "shell" do
-        before(:each) do
-          @shell_cli = RunSSHLib::CLI.new(%W(-f #{TMP_FILE} shell))
-        end
-
-        it "should require a path" do
-          expect { @shell_cli.run }.to exit_abnormaly
-          @buffer.should include("not host definition")
-        end
-
-        it "should execute the run_shell method" do
-          @shell_cli.should_receive(:run_shell)
-          @shell_cli.run
-        end
-
-        it "should parse 's' as shell" do
-          @shell_cli.send(:extract_subcommand, %w(s root)).should eql('shell')
-        end
-
-        it "should have all required arguments" do
-          options = @shell_cli.instance_variable_get :@options
-          options.should have_key(:login)
-          options.should have_key(:local_tunnel)
-        end
-
         it "should not overwrite nil arguments with saved ones when merging" do
           import_fixtures
           RunSSHLib::SshBackend.should_receive(:shell).
@@ -209,27 +185,6 @@ describe "The CLI interface" do
                                 and_return(nil)
           cli = RunSSHLib::CLI.new(
                 %W(-f #{TMP_FILE} shell -l someuser cust2 dc internal somehost))
-          cli.run
-        end
-
-        it "should correctly allow overriding of hostname" do
-          import_fixtures
-          RunSSHLib::SshBackend.should_receive(:shell).
-                                with(hash_including(:host_name => "overridehost"))
-          cli = RunSSHLib::CLI.new(
-                %W(-f #{TMP_FILE} shell -n overridehost cust2 dc internal somehost))
-          cli.run
-        end
-
-        it "should correctly parse remote command (indicated by --)" do
-          import_fixtures
-          RunSSHLib::SshBackend.should_receive(:shell).
-                                with(hash_including(:remote_cmd => "ls -l /tmp")).
-                                and_return(nil)
-          cli = RunSSHLib::CLI.new(
-                %W(-f #{TMP_FILE} shell -l someuser cust2 dc internal somehost
-                   -- ls -l /tmp)
-          )
           cli.run
         end
       end
@@ -350,6 +305,10 @@ describe "The CLI interface" do
 
     it "should parse 'a' as add" do
       @ab_cli.send(:extract_subcommand, ['a']).should eql('add')
+    end
+
+    it "should parse 's' as shell" do
+      @ab_cli.send(:extract_subcommand, %w(s root)).should eql('shell')
     end
   end
 

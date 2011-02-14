@@ -38,3 +38,10 @@ When /^I delete "([^"]*)"( with confirmation){0,1}$/ do |group, confirm|
   @args = @test_args + ['del'] + group.split
   @args += ['-y'] if confirm
 end
+
+When /^Running "([^"]*)" without path$/ do |subcommand|
+  steps %Q{
+    When I run the "#{subcommand}" command with:
+      | option | argument |
+  }
+end
