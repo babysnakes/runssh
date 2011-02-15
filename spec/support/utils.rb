@@ -67,6 +67,7 @@ module ExitCodeMatchers
 end
 
 TMP_FILE = File.join(Dir.tmpdir, 'tempfile')
+YML_FIXTURE = File.expand_path('../../fixtures/runssh.yml', __FILE__)
 
 def cleanup_tmp_file
   File.delete TMP_FILE if File.exists? TMP_FILE
@@ -75,9 +76,8 @@ def cleanup_tmp_file
 end
 
 def import_fixtures
-  yml = File.join(File.dirname(__FILE__), '..', 'fixtures', 'runssh.yml')
   c = RunSSHLib::ConfigFile.new(TMP_FILE)
-  c.import(yml)
+  c.import(YML_FIXTURE)
 end
 
 def dump_config hsh

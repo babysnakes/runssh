@@ -291,10 +291,8 @@ describe "RunSSH Configuration class" do
   end
 
   describe "when importing" do
-    let(:yml) { File.join(File.dirname(__FILE__), '../fixtures', 'runssh.yml') }
-
     it "should not accept config from different config version" do
-      y = YAML.load_file(yml)
+      y = YAML.load_file(YML_FIXTURE)
       y['VERSION'] = 2.0
       File.open(@tmp_yml, 'w') { |out| YAML.dump(y, out) }
       expect do
@@ -305,9 +303,9 @@ describe "RunSSH Configuration class" do
 
     it "should correctly export and import YAML files" do
       c = RunSSHLib::ConfigFile.new(@temp_file)
-      c.import(yml)
+      c.import(YML_FIXTURE)
       c.export(@tmp_yml)
-      YAML.load_file(@tmp_yml).should == YAML.load_file(yml)
+      YAML.load_file(@tmp_yml).should == YAML.load_file(YML_FIXTURE)
     end
   end
 
