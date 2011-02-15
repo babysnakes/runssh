@@ -45,3 +45,7 @@ When /^Running "([^"]*)" without path$/ do |subcommand|
       | option | argument |
   }
 end
+
+When /^I import yml file$/ do
+  @args = @test_args + %W(import -i #{YML_FIXTURE})
+end
