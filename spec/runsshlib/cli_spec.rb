@@ -231,50 +231,6 @@ describe "The CLI interface" do
         end
       end
 
-      describe "import" do
-        before(:each) do
-          @i_cli = RunSSHLib::CLI.new(%W(-f #{TMP_FILE} import -i inputfile))
-          @i_cli.instance_variable_get(:@c).stub(:import)
-          @hl = double('HighLine')
-          HighLine.stub(:new) {@hl}
-          @hl.stub(:agree)
-        end
-
-        it "should parse 'i' as import" do
-          @i_cli.send(:extract_subcommand, ['i']).should eql('import')
-        end
-
-        it "should have the right arguments" do
-          options = @i_cli.instance_variable_get :@options
-          options.include?(:input_file)
-        end
-
-        it "should verify the import with the user" do
-          @hl.should_receive(:agree).with(/OVERWRITES/)
-          @i_cli.run
-        end
-
-        it "should run import upon confirmation" do
-          @hl.should_receive(:agree).and_return(true)
-          @i_cli.instance_variable_get(:@c).should_receive(:import)
-          @i_cli.run
-        end
-
-        it "should cancel if not confirmed" do
-          @hl.should_receive(:agree).and_return(false)
-          @i_cli.instance_variable_get(:@c).should_not_receive(:import)
-          @i_cli.run
-          @buffer.should match(/cancel/)
-        end
-
-        it "should pass the right argument to import" do
-          @hl.should_receive(:agree).and_return(true)
-          @i_cli.instance_variable_get(:@c).should_receive(:import).
-                                            with('inputfile')
-          @i_cli.run
-        end
-      end
-
       describe "export" do
         before(:each) do
           @e_cli = RunSSHLib::CLI.new(%W(-f #{TMP_FILE} export -o somefile))
@@ -309,6 +265,10 @@ describe "The CLI interface" do
 
     it "should parse 's' as shell" do
       @ab_cli.send(:extract_subcommand, %w(s root)).should eql('shell')
+    end
+
+    it "should parse 'i' as import" do
+      @ab_cli.send(:extract_subcommand, ['i']).should eql('import')
     end
   end
 

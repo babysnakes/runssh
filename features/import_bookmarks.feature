@@ -5,6 +5,11 @@ Feature: Importing Bookmarks
   This is currently a lacking feature as the import mechanism
   OVERWRITES the existing database!.
 
+  Scenario: Warning before overwriting database
+    Given Existing database
+    When I import yml file
+    Then I should be prompted with "Importing a file OVERWRITES existing configuration"
+
   Scenario: Importing databas and approving import
     When I import yml file
     And I answer "yes" at the prompt
@@ -28,9 +33,3 @@ Feature: Importing Bookmarks
     And I answer "no" at the prompt
     Then It should run successfully
     And Bookmark "cust1 dc1 host1" should not exist
-
-  Scenario: Warning before overwriting database
-    Given Existing database
-    When I import yml file
-    Then I should be prompted with "Importing a file OVERWRITES existing configuration"
-

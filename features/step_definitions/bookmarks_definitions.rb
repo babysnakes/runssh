@@ -80,7 +80,3 @@ When /^Bookmark "([^"]*)" should contain:$/ do |group, options|
     host.definition[row[0].to_sym].should == row[1]
   end
 end
-
-When /^I import existing database$/ do
-  @args = @test_args + %W(import -i #{TMP_FILE})
-end
