@@ -15,17 +15,17 @@ Feature: Importing Bookmarks
     And I answer "yes" at the prompt
     Then It should run successfully
     And Bookmark "cust1 dc1 host1" should contain:
-      |name|value|
-      |host_name|a.host.com|
-      |login|user1|
+      | name      | value      |
+      | host_name | a.host.com |
+      | login     | user1      |
     And Bookmark "cust1 dc1 host2" should contain:
-      |name|value|
-      |host_name|b.host.com|
-      |login|user1|
+      | name      | value      |
+      | host_name | b.host.com |
+      | login     | user1      |
     And Bookmark "cust1 dc2 host1" should contain:
-      |name|value|
-      |host_name|c.host.com|
-      |login|user3|
+      | name      | value      |
+      | host_name | c.host.com |
+      | login     | user3      |
 
   Scenario: Cancel import on prompt
     Given Existing database
