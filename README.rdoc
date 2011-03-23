@@ -109,5 +109,6 @@ This program is distributed under the GPL v2 license.
 * Add cucumber features and tidy up the rspec tests.
 * Refactor of RunSSHLib::CLI to avoid repetition of so many options between
   _add_, _update_ and _shell_.
-* Add support for bookmarking tunnels
+* Add support for bookmarking tunnels.
+* Add support for pseudo-tty (-t) option for remote command invocation.
 * TBD
