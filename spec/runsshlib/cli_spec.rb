@@ -189,31 +189,6 @@ describe "The CLI interface" do
         end
       end
 
-      describe "update" do
-        before(:each) do
-          @update_cli = RunSSHLib::CLI.new(%W(-f #{TMP_FILE} update -n newhost root))
-        end
-
-        it "should parse 'u' as update" do
-          @update_cli.send(:extract_subcommand, ['u']).should eql('update')
-        end
-
-        it "should have all required argumants" do
-          options = @update_cli.instance_variable_get :@options
-          options.should have_key(:host_name)
-          options.should have_key(:login)
-        end
-
-        it "should invoke update_host_def" do
-          config = @update_cli.instance_variable_get :@c
-          config.should_receive(:update_host_def).
-                 with([:root], RunSSHLib::SshHostDef.new({
-                   :host_name => "newhost", :login => nil
-                 }))
-          @update_cli.run
-        end
-      end
-
       describe "print" do
         before(:each) do
           import_fixtures
@@ -269,6 +244,10 @@ describe "The CLI interface" do
 
     it "should parse 'i' as import" do
       @ab_cli.send(:extract_subcommand, ['i']).should eql('import')
+    end
+
+    it "should parse 'u' as update" do
+      @ab_cli.send(:extract_subcommand, ['u']).should eql('update')
     end
   end
 
