@@ -189,23 +189,6 @@ describe "The CLI interface" do
         end
       end
 
-      describe "print" do
-        before(:each) do
-          import_fixtures
-          @p_cli = RunSSHLib::CLI.new(%W(-f #{TMP_FILE} print cust2 dc internal somehost))
-        end
-
-        it "should parse 'p' as print" do
-          @p_cli.send(:extract_subcommand, ['p']).should eql('print')
-        end
-
-        it "should print correctly host definition" do
-          @p_cli.run
-          @buffer.should match(/Host definition for: somehost/)
-          @buffer.should match(/host: a.example.com/)
-        end
-      end
-
       describe "export" do
         before(:each) do
           @e_cli = RunSSHLib::CLI.new(%W(-f #{TMP_FILE} export -o somefile))
@@ -248,6 +231,10 @@ describe "The CLI interface" do
 
     it "should parse 'u' as update" do
       @ab_cli.send(:extract_subcommand, ['u']).should eql('update')
+    end
+
+    it "should parse 'p' as print" do
+      @ab_cli.send(:extract_subcommand, ['p']).should eql('print')
     end
   end
 
