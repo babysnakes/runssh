@@ -21,13 +21,40 @@ module RunSSHLib
   class CLI
 
     COMMAND = %w(shell add del update print import export)
+    MAIN_HELP = <<-EOS
+Usage: runssh [global_options] COMMAND [options] <path>
+
+A utility to bookmark multiple ssh connections in heirarchial order.
+For a better understanding of host definitions and bookmarks, Read
+the provided README.rdoc or go to http://github.com/babysnakes/runssh.
+
+COMMAND : One of the commands mentioned below. It's possible to
+      type only part of the command as long as it's not ambiguous.
+<path>  : A space-separated list of names (e.g, one two three) that
+      leads to a host definition. For available completions
+      append " ?" to the end of path.
+
+Available commands:
+* shell  : Open ssh shell on remote host
+* add    : Add host definition
+* del    : Delete host definition
+* update : Update host definition
+* print  : Print host definition
+* import : Import configuration
+* export : Export configuration
+
+For help on commands run:
+runssh help COMMAND
+
+Global options:
+EOS
 
     # Initialize new CLI instance and parse the supplied
     # arguments.
     def initialize(args)
       args.unshift '-h' if args.empty?
-      args.unshift '-h' if args == ['help']
       @global_options = parse_args(args)
+      exit_with_help if args == ['help']
       return if @global_options[:update_config]
 
       # workaround to enable 'help COMMAND' functionality.
@@ -74,33 +101,7 @@ EOM
     def parse_args(args)
       Trollop::options(args) do
         # TODO: This should be generated automatically somehow!!
-        banner <<-EOS
-Usage: runssh [global_options] COMMAND [options] <path>
-
-A utility to bookmark multiple ssh connections in heirarchial order.
-For a better understanding of host definitions and bookmarks, Read
-the provided README.rdoc or go to http://github.com/babysnakes/runssh.
-
-COMMAND : One of the commands mentioned below. It's possible to
-          type only part of the command as long as it's not ambiguous.
-<path>  : A space-separated list of names (e.g, one two three) that
-          leads to a host definition. For available completions
-          append " ?" to the end of path.
-
-Available commands:
-  * shell  : Open ssh shell on remote host
-  * add    : Add host definition
-  * del    : Delete host definition
-  * update : Update host definition
-  * print  : Print host definition
-  * import : Import configuration
-  * export : Export configuration
-
-For help on commands run:
-  runssh help COMMAND
-
-Global options:
-EOS
+        banner MAIN_HELP
         opt :config_file, "alternate config file",
             :type => :string, :short => :f
         opt :update_config, "update configuration from previous version." +
@@ -289,7 +290,7 @@ EOS
 
     def run_del(path)
       unless @options[:yes]
-        question = %Q(Are you sure you want to delete "#{path.join(':')}") + 
+        question = %Q(Are you sure you want to delete "#{path.join(':')}") +
                    "? [yes/no] "
         @options[:yes] = HighLine.new.agree(question)
       end
@@ -345,6 +346,16 @@ EOM
         message = "Your configuration seems to be at the appropriate version!" +
                   " No update was performed."
         HighLine.new.say(message)
+      end
+    end
+    
+    # help needed out of trollop::parse loop
+    def exit_with_help
+      p = Trollop::Parser.new do
+        banner MAIN_HELP
+      end
+      Trollop::with_standard_exception_handling p do
+        raise Trollop::HelpNeeded
       end
     end
   end
