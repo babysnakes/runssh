@@ -46,6 +46,14 @@ Then /^It should run successfully$/ do
   end
 end
 
+Then /^It should exit normally$/ do
+  expect {
+    capture(:stdout, @input) do
+      cli = RunSSHLib::CLI.new(@args).run
+    end
+  }.to exit_normaly
+end
+
 Then /^The output should include "([^"]*)"$/ do |output|
   @buf.should match(/#{output}/)
 end

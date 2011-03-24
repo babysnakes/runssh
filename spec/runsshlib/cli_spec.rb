@@ -33,16 +33,6 @@ describe "The CLI interface" do
   end
 
   describe "when initialized" do
-    it "should display help when run with no arguments" do
-      expect { RunSSHLib::CLI.new([]) }.to exit_normaly
-      @buffer.should match(/Available commands:/)
-    end
-
-    it "should display help when called with help as the only parameter" do
-      expect { RunSSHLib::CLI.new(['help']) }.to exit_normaly
-      @buffer.should match(/Available commands:/)
-    end
-
     it "should correctly process the -f argument" do
       cli = RunSSHLib::CLI.new(%W(-f #{TMP_FILE} print test))
       global_options = cli.instance_variable_get :@global_options

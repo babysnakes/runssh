@@ -17,7 +17,8 @@
 #
 
 When /^I run the "([^"]*)" command with:$/ do |command, options|
-  @args = @test_args << command
+  @args = @test_args
+  @args << command unless (command.nil? or command.empty?)
   options.hashes.each do |hsh|
     case hsh[:option]
     when ""
@@ -27,6 +28,10 @@ When /^I run the "([^"]*)" command with:$/ do |command, options|
       @args << hsh[:argument]
     end
   end
+end
+
+When /^I run without arguments$/ do
+  @args = []
 end
 
 When /^I bookmark host: "([^"]*)" as "([^"]*)"$/ do |host, path|
