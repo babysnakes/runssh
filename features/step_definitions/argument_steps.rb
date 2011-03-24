@@ -49,3 +49,7 @@ end
 When /^I import yml file$/ do
   @args = @test_args + %W(import -i #{YML_FIXTURE})
 end
+
+When /^I export the database$/ do
+  @args = @test_args << 'export' << '-o' << TMP_YML
+end

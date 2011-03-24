@@ -188,22 +188,6 @@ describe "The CLI interface" do
           cli.run
         end
       end
-
-      describe "export" do
-        before(:each) do
-          @e_cli = RunSSHLib::CLI.new(%W(-f #{TMP_FILE} export -o somefile))
-        end
-
-        it "should parse 'e' as export" do
-          @e_cli.send(:extract_subcommand, ['e']).should eql('export')
-        end
-
-        it "should run export with the right parameters" do
-          @e_cli.instance_variable_get(:@c).should_receive(:export).
-                                            with('somefile')
-          @e_cli.run
-        end
-      end
     end
   end
 
@@ -235,6 +219,10 @@ describe "The CLI interface" do
 
     it "should parse 'p' as print" do
       @ab_cli.send(:extract_subcommand, ['p']).should eql('print')
+    end
+
+    it "should parse 'e' as export" do
+      @ab_cli.send(:extract_subcommand, ['e']).should eql('export')
     end
   end
 

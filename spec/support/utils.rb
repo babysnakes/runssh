@@ -67,12 +67,14 @@ module ExitCodeMatchers
 end
 
 TMP_FILE = File.join(Dir.tmpdir, 'tempfile')
+TMP_YML = TMP_FILE + '.yml'
 YML_FIXTURE = File.expand_path('../../fixtures/runssh.yml', __FILE__)
 
 def cleanup_tmp_file
   File.delete TMP_FILE if File.exists? TMP_FILE
   bf = TMP_FILE + '.bak'
   File.delete bf if File.exists? bf
+  File.delete TMP_YML if File.exists? TMP_YML
 end
 
 def import_fixtures

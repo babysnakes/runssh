@@ -60,3 +60,7 @@ Then /^It should execute "(.*)"$/ do |command|
     RunSSHLib::CLI.new(@args).run
   }.should match(/^#{command}\s*\n$/)
 end
+
+Then /^The output file should contain "([^"]*)"$/ do |output|
+  File.read(TMP_YML).should include(output)
+end
