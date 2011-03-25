@@ -21,11 +21,6 @@ require 'stringio'
 require 'yaml'
 
 describe "The CLI interface" do
-  # a shortcut to verify the help for print command
-  def match_print
-    @buffer.should match(/Print host configuration/)
-  end
-
   before(:each) do
     @buffer = ""
     $stdout = StringIO.open(@buffer, 'w')
@@ -37,21 +32,13 @@ describe "The CLI interface" do
       cli = RunSSHLib::CLI.new(%W(-f #{TMP_FILE} print test))
       global_options = cli.instance_variable_get :@global_options
       global_options[:config_file].should eql("#{TMP_FILE}")
-      cli.instance_variable_get(:@c).
-          instance_variable_get(:@config_file).
-          should eql("#{TMP_FILE}")
     end
 
     it "should display version when asked for" do
-      expect { RunSSHLib::CLI.new(['-v'])}.to exit_normaly
-      @buffer.should include(RunSSHLib::Version::STRING)
-    end
-
-    it "should correctly process the `help command` scheme" do
-      expect do
-        RunSSHLib::CLI.new(%w(help print ?))
-      end.to exit_normaly
-      match_print
+      expect {
+        capture(:stdout) { RunSSHLib::CLI.new(['-v']) }
+      }.to exit_normaly
+      @buf.should include(RunSSHLib::Version::STRING)
     end
 
     it "should correctly parse the `?` for completion" do
@@ -61,33 +48,37 @@ describe "The CLI interface" do
 
     it "should raise an error when invoked with invalid command" do
       expect do
-        RunSSHLib::CLI.new(%W(-f #{TMP_FILE} wrong))
+        capture(:stderr) {
+          RunSSHLib::CLI.new(%W(-f #{TMP_FILE} wrong))
+        }
       end.to exit_abnormaly
-      @buffer.should match(/invalid command/)
+      @buf.should match(/invalid command/)
     end
 
     it "should display right message upon older configuration error" do
       dump_config Hash.new
       expect do
-        cli = RunSSHLib::CLI.new(%W(-f #{TMP_FILE} print ?))
+        capture(:stdout) {
+          RunSSHLib::CLI.new(%W(-f #{TMP_FILE} print ?))
+        }
       end.to exit_abnormaly
-      @buffer.should match(/--update-config/)
-      @buffer.should match(/.none/)
+      @buf.should match(/--update-config/)
+      @buf.should match(/.none/)
     end
 
-    describe "with --update_config" do
+    context "with --update_config" do
       let(:config_v_none) do
         YAML.load_file(File.join(File.dirname(__FILE__), '..',
                                  'fixtures', 'runssh_v_none.yml'))
       end
 
       it "should accept --update-config as argument" do
-        cli = RunSSHLib::CLI.new(%W(-f #{TMP_FILE} --update-config))
+        RunSSHLib::CLI.new(%W(-f #{TMP_FILE} --update-config))
       end
 
       it "should not fail upon initialization if config is of older version" do
         dump_config config_v_none
-        cli = RunSSHLib::CLI.new(%W(-f #{TMP_FILE} --update-config))
+        RunSSHLib::CLI.new(%W(-f #{TMP_FILE} --update-config))
       end
 
       it "should not initialize @config object after initialization" do
@@ -98,10 +89,12 @@ describe "The CLI interface" do
   end
 
   describe "main help" do
-    it "should include a description of all subcommands" do
-      expect { RunSSHLib::CLI.new([]) }.to exit_normaly
+    it "includes a description of all subcommands" do
+      expect {
+        capture(:stdout) { RunSSHLib::CLI.new([]) }
+      }.to exit_normaly
       RunSSHLib::CLI::COMMAND.each do |subcmd|
-        @buffer.should include("* #{subcmd}")
+        @buf.should include("* #{subcmd}")
       end
     end
   end
@@ -111,11 +104,12 @@ describe "The CLI interface" do
       import_fixtures
     end
 
-    it "should parse display completions and exit if requested" do
-      cli = RunSSHLib::CLI.new(%W(-f #{TMP_FILE} print ?))
-      cli.should_not_receive(:run_print)
-      cli.instance_variable_get(:@c).should_receive(:list_groups).with([])
-      cli.run
+    it "displays completions and exit if requested" do
+      capture(:stdout) {
+        RunSSHLib::CLI.new(%W(-f #{TMP_FILE} print ?)).run
+      }
+      @buf.should include("cust1")
+      @buf.should include("cust2")
     end
 
     it "should run run_update_config when called with --update-config" do

@@ -23,28 +23,6 @@ require 'simplecov'
 SimpleCov.start
 require 'cucumber/rspec/doubles'
 
-# Captures the requested stream (:stdout or :stderr) and
-# returns the result as string. It also populates the @buf
-# instance variable with it so it can be accessed in case
-# of system exit (e.g. die).
-# The stdin parameter is the content of the stdin. It's
-# required for any operation that reads from STDIN as the
-# default is empty.
-# Idea borrowed from the "Thor" gem (spec_help.rb).
-def capture(stream, stdin='')
-  begin
-    $stdin = StringIO.open(stdin, 'r')
-    @buf = ''
-    stream = stream.to_s
-    eval "$#{stream} = StringIO.open(@buf, 'w')"
-    yield
-  ensure
-    eval("$#{stream} = #{stream.upcase}")
-  end
-
-  @buf
-end
-
 # retrive host definition from the database.
 # group is a string containing the path like in parameters for
 # command line.

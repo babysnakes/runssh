@@ -66,6 +66,28 @@ module ExitCodeMatchers
   end
 end
 
+# Captures the requested stream (:stdout or :stderr) and
+# returns the result as string. It also populates the @buf
+# instance variable with it so it can be accessed in case
+# of system exit (e.g. die).
+# The stdin parameter is the content of the stdin. It's
+# required for any operation that reads from STDIN as the
+# default is empty.
+# Idea borrowed from the "Thor" gem (spec_help.rb).
+def capture(stream, stdin='')
+  begin
+    $stdin = StringIO.open(stdin, 'r')
+    @buf = ''
+    stream = stream.to_s
+    eval "$#{stream} = StringIO.open(@buf, 'w')"
+    yield
+  ensure
+    eval("$#{stream} = #{stream.upcase}")
+  end
+
+  @buf
+end
+
 TMP_FILE = File.join(Dir.tmpdir, 'tempfile')
 TMP_YML = TMP_FILE + '.yml'
 YML_FIXTURE = File.expand_path('../../fixtures/runssh.yml', __FILE__)
