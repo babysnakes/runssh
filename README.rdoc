@@ -70,7 +70,7 @@ This program is distributed under the GPL v2 license.
 == History
 
 === 0.1.0
-* Initial release. Simple bookmarks (host and user),only _shell_ operation 
+* Initial release. Simple bookmarks (host and user),only _shell_ operation
   supported.
 
 === 0.1.1
@@ -93,6 +93,11 @@ This program is distributed under the GPL v2 license.
 * Enabled definition of (local) ssh tunneling. Currently only in the
   +shell+ command.
 
+=== 0.3
+* CLI Tests refactorings:
+  * Created cucumber features.
+  * Fixed tests to test features and not implementations.
+
 == TODO
 * Refactor of RunSSHLib::CLI to avoid repetition of so many options between
   _add_, _update_ and _shell_.
@@ -106,7 +111,7 @@ This program is distributed under the GPL v2 license.
 
 == Tasks for 0.3
 * Use Simplecov instead of rcov ✓
-* Add cucumber features and tidy up the rspec tests.
+* Add cucumber features and tidy up the rspec tests. ✓
 * Refactor of RunSSHLib::CLI to avoid repetition of so many options between
   _add_, _update_ and _shell_.
 * Add support for bookmarking tunnels.

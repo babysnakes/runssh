@@ -77,7 +77,6 @@ describe 'SshHostDef' do
   context "to_print" do
     it "should run correctly without user" do
       h = RunSSHLib::SshHostDef.new('myhostname')
-      p h.to_print
       h.to_print.should match(/^.*host:.*myhostname\n.*login:.*current user$/)
     end
 

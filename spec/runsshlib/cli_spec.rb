@@ -21,13 +21,7 @@ require 'stringio'
 require 'yaml'
 
 describe "The CLI interface" do
-  before(:each) do
-    @buffer = ""
-    $stdout = StringIO.open(@buffer, 'w')
-    $stderr = StringIO.open(@buffer, 'w')
-  end
-
-  describe "when initialized" do
+  context "argument parser" do
     it "should correctly process the -f argument" do
       cli = RunSSHLib::CLI.new(%W(-f #{TMP_FILE} print test))
       global_options = cli.instance_variable_get :@global_options
@@ -55,40 +49,17 @@ describe "The CLI interface" do
       @buf.should match(/invalid command/)
     end
 
-    it "should display right message upon older configuration error" do
-      dump_config Hash.new
-      expect do
-        capture(:stdout) {
-          RunSSHLib::CLI.new(%W(-f #{TMP_FILE} print ?))
-        }
-      end.to exit_abnormaly
-      @buf.should match(/--update-config/)
-      @buf.should match(/.none/)
-    end
-
-    context "with --update_config" do
-      let(:config_v_none) do
-        YAML.load_file(File.join(File.dirname(__FILE__), '..',
-                                 'fixtures', 'runssh_v_none.yml'))
-      end
-
-      it "should accept --update-config as argument" do
-        RunSSHLib::CLI.new(%W(-f #{TMP_FILE} --update-config))
-      end
-
-      it "should not fail upon initialization if config is of older version" do
-        dump_config config_v_none
-        RunSSHLib::CLI.new(%W(-f #{TMP_FILE} --update-config))
-      end
-
-      it "should not initialize @config object after initialization" do
-        cli = RunSSHLib::CLI.new(%W(-f #{TMP_FILE} --update-config))
-        cli.instance_variable_get(:@c).should be_nil
-      end
+    it "displays completions and exit if requested" do
+      import_fixtures
+      capture(:stdout) {
+        RunSSHLib::CLI.new(%W(-f #{TMP_FILE} print ?)).run
+      }
+      @buf.should include("cust1")
+      @buf.should include("cust2")
     end
   end
 
-  describe "main help" do
+  context "help" do
     it "includes a description of all subcommands" do
       expect {
         capture(:stdout) { RunSSHLib::CLI.new([]) }
@@ -99,79 +70,73 @@ describe "The CLI interface" do
     end
   end
 
-  describe "when run" do
-    before(:all) do
-      import_fixtures
+  context "update_config" do
+    before(:each) do
+      dump_config Hash.new
     end
 
-    it "displays completions and exit if requested" do
+    it "displays an appropriate message when configuration version is invalid" do
+      expect {
+        capture(:stdout) {
+          RunSSHLib::CLI.new(%W(-f #{TMP_FILE} shell))
+        }
+      }.to exit_abnormaly
+      @buf.should match(/--update-config/)
+      @buf.should match(/.none/)
+    end
+
+    it "upgrades the configuration" do
       capture(:stdout) {
-        RunSSHLib::CLI.new(%W(-f #{TMP_FILE} print ?)).run
+        RunSSHLib::CLI.new(%W(-f #{TMP_FILE} --update-config)).run
       }
-      @buf.should include("cust1")
-      @buf.should include("cust2")
+      config = RunSSHLib::CLI.new(%W(-f #{TMP_FILE} print ?)).instance_variable_get(:@c)
+      config.instance_variable_get(:@config)['VERSION'].should == RunSSHLib::ConfigFile::Version
     end
 
-    it "should run run_update_config when called with --update-config" do
-      @cli = RunSSHLib::CLI.new(%W(-f #{TMP_FILE} --update-config))
-      @cli.should_receive(:run_update_config)
-      @cli.run
+    it "informs the user of success and backup file" do
+      capture(:stdout) {
+        RunSSHLib::CLI.new(%W(-f #{TMP_FILE} --update-config)).run
+      }
+      @buf.should include "updated to the approproate version"
+      @buf.should include "#{TMP_FILE}.none"
     end
 
-    context "update_config" do
-      let(:cf) { double('ConfigFile') }
+    it "informs the user if run with --update-config and no update is required" do
+      # we're running this twice to make sure we have a valid config file
+      # remember that we create invalid config file in the before method
+      capture(:stdout) {
+        RunSSHLib::CLI.new(%W(-f #{TMP_FILE} --update-config)).run
+      }
+      capture(:stdout) {
+        RunSSHLib::CLI.new(%W(-f #{TMP_FILE} --update-config)).run
+      }
+      @buf.should include "Your configuration seems to be at the appropriate version"
+      @buf.should include "No update was performed"
+    end
+  end
 
-      it "should initialize ConfigFile with old_version=true and run update_config" do
-        cf.should_receive(:update_config)
-        RunSSHLib::ConfigFile.should_receive(:new).with(TMP_FILE, true).
-                              and_return(cf)
-        @cli = RunSSHLib::CLI.new(%W(-f #{TMP_FILE} --update-config))
-        @cli.run
-      end
-
-      it "should inform the user of success and backup file" do
-        backup_path = "/path/to/backup_file"
-        cf.should_receive(:update_config).and_return(backup_path)
-        RunSSHLib::ConfigFile.should_receive(:new).and_return(cf)
-        @cli = RunSSHLib::CLI.new(%W(-f #{TMP_FILE} --update-config))
-        @cli.run
-        @buffer.should include(backup_path)
-      end
-
-      it "should inform the user if no backup was required" do
-        cf.should_receive(:update_config).and_return(nil)
-        RunSSHLib::ConfigFile.should_receive(:new).and_return(cf)
-        @cli = RunSSHLib::CLI.new(%W(-f #{TMP_FILE} --update-config))
-        @cli.run
-        @buffer.should include("No update was performed")
-      end
+  describe "shell subcommand" do
+    it "should not overwrite nil arguments with saved ones when merging" do
+      import_fixtures
+      RunSSHLib::SshBackend.should_receive(:shell).
+                            with(hash_including(
+                                 :host_name => "a.example.com",
+                                 :login => "otheruser")).
+                            and_return(nil)
+      cli = RunSSHLib::CLI.new(
+            %W(-f #{TMP_FILE} shell cust2 dc internal somehost))
+      cli.run
     end
 
-    describe "with subcommand" do
-      context "shell" do
-        it "should not overwrite nil arguments with saved ones when merging" do
-          import_fixtures
-          RunSSHLib::SshBackend.should_receive(:shell).
-                                with(hash_including(
-                                     :host_name => "a.example.com",
-                                     :login => "otheruser")).
-                                and_return(nil)
-          cli = RunSSHLib::CLI.new(
-                %W(-f #{TMP_FILE} shell cust2 dc internal somehost))
-          cli.run
-        end
-
-        it "should correctly call SshBackend.shell with merged definition" do
-          import_fixtures
-          RunSSHLib::SshBackend.should_receive(:shell).
-                                with(hash_including(:host_name => "a.example.com",
-                                                    :login => "someuser")).
-                                and_return(nil)
-          cli = RunSSHLib::CLI.new(
-                %W(-f #{TMP_FILE} shell -l someuser cust2 dc internal somehost))
-          cli.run
-        end
-      end
+    it "should correctly call SshBackend.shell with merged definition" do
+      import_fixtures
+      RunSSHLib::SshBackend.should_receive(:shell).
+                            with(hash_including(:host_name => "a.example.com",
+                                                :login => "someuser")).
+                            and_return(nil)
+      cli = RunSSHLib::CLI.new(
+            %W(-f #{TMP_FILE} shell -l someuser cust2 dc internal somehost))
+      cli.run
     end
   end
 
