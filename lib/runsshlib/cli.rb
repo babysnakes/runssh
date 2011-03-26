@@ -77,7 +77,7 @@ update your configuration to the current version.
 Your old configuration will be saved with the suffix <%= color(".#{e.message}", :underline) %>
 EOM
       HighLine.new.say(message)
-      abort ''
+      exit 1
     end
 
     # run
