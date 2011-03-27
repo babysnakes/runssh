@@ -128,14 +128,32 @@ EOM
       raise InvalidSubCommandError, 'invalid command'
     end
 
-    # handles argument parsing for all subcomand. It doesn't contain
-    # any logic, nor does it handle errors. It just parses the
-    # arguments and put the result into @options.
+    # route argument parsing for all subcomand.
     def parse_subcommand(cmd, args)
       case cmd
       when 'shell'
-        options = Trollop::options(args) do
-          banner <<-EOS
+        parse_shell args
+      when 'add', 'update'
+        parse_add_update cmd, args
+      when 'del'
+        parse_del args
+      when 'print'
+        parse_print args
+      when 'import'
+        parse_import args
+      when 'export'
+        parse_export args
+      end
+    end
+
+    def init_config
+      config = @global_options[:config_file] || DEFAULT_CONFIG
+      ConfigFile.new(config)
+    end
+
+    def parse_shell(args)
+      options = Trollop::options(args) do
+        banner <<-EOS
 Usage: runssh [global_options] shell [options] <path> [-- <remote command>]
 
 Connect to the specified host using ssh.
@@ -154,24 +172,27 @@ e.g. -L 7070 is converted to -L 7070:localhost:7070
 
 Options:
 EOS
-          opt :login, "override the login in the configuration",
-              :type => :string
-          opt :host_name, 'override the name or address of the host',
-              :short => :n, :type => :string
-          opt :local_tunnel, "tunnel definition (see description above)",
-              :short => :L, :type => :string
-          stop_on "--"
-        end
-        # handle the case of remote command (indicated by --)
-        if ind = args.index("--")
-          rmt = args.slice!(ind, args.size - ind)
-          rmt.delete_at(0) # remove --
-          options[:remote_cmd] = rmt.join(" ")
-        end
-        options
-      when 'add'
-        Trollop::options(args) do
-          banner <<-EOS
+        opt :login, "override the login in the configuration",
+            :type => :string
+        opt :host_name, 'override the name or address of the host',
+            :short => :n, :type => :string
+        opt :local_tunnel, "tunnel definition (see description above)",
+            :short => :L, :type => :string
+        stop_on "--"
+      end
+      # handle the case of remote command (indicated by --)
+      if ind = args.index("--")
+        rmt = args.slice!(ind, args.size - ind)
+        rmt.delete_at(0) # remove --
+        options[:remote_cmd] = rmt.join(" ")
+      end
+      options
+    end
+
+    def parse_add_update(cmd, args)
+      case cmd
+      when "add"
+        help = <<-EOH
 Usage: runssh [global_options] add [options] <path>
 
 Add a new host definition at the supplied <path>. <path> must not exist!
@@ -181,15 +202,9 @@ A host definition can have a hostname (required) and a remote user
 <path> : See main help for description of path.
 
 Options:
-EOS
-          opt :host_name, 'The name or address of the host (e.g, host.example.com)',
-              :short => :n, :type => :string, :required => true
-          opt :login, 'The user to connect as (optional)',
-              :type => :string
-        end
-      when 'update'
-        Trollop::options(args) do
-          banner <<-EOS
+EOH
+      when "update"
+        help = <<-EOH
 Usage: runssh [global_options] update [options] <path>
 
 Update host definition specified by <path> with new settings. The host
@@ -199,15 +214,20 @@ not specify only new host and expect the user to remain the old one).
 <path> : See main help for description of path.
 
 Options:
-EOS
-          opt :host_name, 'The name or address of the host (e.g, host.example.com)',
-              :short => :n, :type => :string, :required => true
-          opt :login, 'The user to connect as (optional)',
-              :type => :string
-        end
-      when 'del'
-        Trollop::options(args) do
-          banner <<-EOS
+EOH
+      end
+      Trollop::options(args) do
+        banner help
+        opt :host_name, 'The name or address of the host (e.g, host.example.com)',
+            :short => :n, :type => :string, :required => true
+        opt :login, 'The user to connect as (optional)',
+            :type => :string
+      end
+    end
+
+    def parse_del(args)
+      Trollop::options(args) do
+        banner <<-EOS
 Usage: runssh [global_options] del [options] <path>
 
 Delete host definitions or `empty` groups (e.g, groups that contained
@@ -218,11 +238,13 @@ verification.
 
 Options:
 EOS
-          opt :yes, 'Delete without verification'
-        end
-      when 'print'
-        Trollop::options(args) do
-          banner <<-EOS
+        opt :yes, 'Delete without verification'
+      end
+    end
+
+    def parse_print(args)
+      Trollop::options(args) do
+        banner <<-EOS
 Usage: runssh [global_options] print [options] <path>
 
 Print host configuration to the console.
@@ -231,10 +253,12 @@ Print host configuration to the console.
 
 Options:
 EOS
-        end
-      when 'import'
-        Trollop::options(args) do
-          banner <<-EOS
+      end
+    end
+
+    def parse_import(args)
+      Trollop::options(args) do
+        banner <<-EOS
 Usage: runssh [global_options] import [options]
 
 Imports a new configuration.
@@ -242,27 +266,23 @@ CAREFULL: This completely overrides the current configuration!
 
 Options:
 EOS
-          opt :input_file, 'The yaml file to import from',
-              :type => :string, :required => true
-        end
-      when 'export'
-        Trollop::options(args) do
-          banner <<-EOS
+        opt :input_file, 'The yaml file to import from',
+            :type => :string, :required => true
+      end
+    end
+
+    def parse_export(args)
+      Trollop::options(args) do
+        banner <<-EOS
 Usage runssh [global_options] export [options]
 
 Exports the configuration to a YAML file.
 
 Options
 EOS
-          opt :output_file, 'The output file',
-              :type => :string, :required => true
-        end
+        opt :output_file, 'The output file',
+            :type => :string, :required => true
       end
-    end
-
-    def init_config
-      config = @global_options[:config_file] || DEFAULT_CONFIG
-      ConfigFile.new(config)
     end
 
     def run_shell(path)
@@ -348,7 +368,7 @@ EOM
         HighLine.new.say(message)
       end
     end
-    
+
     # help needed out of trollop::parse loop
     def exit_with_help
       p = Trollop::Parser.new do
