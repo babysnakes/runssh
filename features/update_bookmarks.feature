@@ -11,21 +11,22 @@ Feature: Updating bookmarks
       | host-name | some.host |
       | login     | somelogin |
     When I run the "update" command with:
-      | option | argument        |
-      |        | one two three   |
-      | -n     | some.other.host |
-      | -l     | otherlogin      |
+      | option | argument            |
+      |        | one two three       |
+      | -n     | some.other.host     |
+      | -l     | otherlogin          |
+      | -L     | 8080:localhost:8080 |
     Then It should run successfully
     And Bookmark "one two three" should contain:
-      | name      | value           |
-      | host_name | some.other.host |
-      | login     | otherlogin      |
+      | name         | value               |
+      | host_name    | some.other.host     |
+      | login        | otherlogin          |
+      | local_tunnel | 8080:localhost:8080 |
 
   Scenario: Fails when updating non-existing bookmark
     Given Empty database
     When I run the "update" command with:
-      |option|argument|
-      | | one two |
-      |-n | somehost|
+      | option | argument |
+      |        | one two  |
+      | -n     | somehost |
     Then I should get a "Error: Invalid path!" error
-

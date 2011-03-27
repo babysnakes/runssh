@@ -94,16 +94,15 @@ This program is distributed under the GPL v2 license.
   +shell+ command.
 
 === 0.3
+* It's possible to bookmark (local) tunnels.
+* Some code refactoring (CLI class).
 * CLI Tests refactorings:
   * Created cucumber features.
   * Fixed tests to test features and not implementations.
 
 == TODO
-* Refactor of RunSSHLib::CLI to avoid repetition of so many options between
-  _add_, _update_ and _shell_.
 * Create a _proper_ zsh completion script.
 * Add scp capabilities
-* Add support for bookmarking tunnels
 * Shell via gateway (connect to a firewall and from there open shell to the host).
 * Rename (or move) host definition
 * Maybe replace invoking ssh from the command line with some library.
@@ -113,7 +112,7 @@ This program is distributed under the GPL v2 license.
 * Use Simplecov instead of rcov ✓
 * Add cucumber features and tidy up the rspec tests. ✓
 * Refactor of RunSSHLib::CLI to avoid repetition of so many options between
-  _add_, _update_ and _shell_.
-* Add support for bookmarking tunnels.
+  _add_, _update_ and _shell_. ✓
+* Add support for bookmarking tunnels. ✓
 * Add support for pseudo-tty (-t) option for remote command invocation.
 * TBD

@@ -17,15 +17,17 @@ Feature: Adding bookmarks
   Scenario: All available options
     Given Empty database
     When I run the "add" command with:
-      | option | argument      |
-      |        | one two three |
-      | -n     | some.host     |
-      | -l     | mylogin       |
+      | option | argument            |
+      |        | one two three       |
+      | -n     | some.host           |
+      | -l     | mylogin             |
+      | -L     | 8080:localhost:8080 |
     Then It should run successfully
     And Bookmark "one two three" should contain:
-      | name      | value     |
-      | host_name | some.host |
-      | login     | mylogin   |
+      | name         | value               |
+      | host_name    | some.host           |
+      | login        | mylogin             |
+      | local_tunnel | 8080:localhost:8080 |
 
   Scenario: Automatic database backup
     Given Existing database

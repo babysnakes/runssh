@@ -25,6 +25,16 @@ Feature: Connect to other hosts by ssh
       |        | one two three |
     Then It should execute "ssh -l someuser some.host"
 
+  Scenario: Connect to bookmark with abbreviated tunneling
+    Given Bookmark "one two three" exist with:
+      | name         | value     |
+      | host-name    | some.host |
+      | local-tunnel | 8080      |
+    When I run the "shell" command with:
+      | option | argument      |
+      |        | one two three |
+    Then It should execute "ssh some.host -L 8080:localhost:8080"
+
   Scenario: Connect to bookmark with custom tunnel definition
     Given Bookmark "one two three" exist with:
       | name      | value     |

@@ -201,6 +201,11 @@ A host definition can have a hostname (required) and a remote user
 
 <path> : See main help for description of path.
 
+(Local) tunneling can be added with the -L options (correspond to
+ssh -L option). An abbreviated syntax could be used as the requested
+port if both ports are identical and host is localhost.
+e.g. -L 7070 is converted to -L 7070:localhost:7070
+
 Options:
 EOH
       when "update"
@@ -213,6 +218,11 @@ not specify only new host and expect the user to remain the old one).
 
 <path> : See main help for description of path.
 
+(Local) tunneling can be added with the -L options (correspond to
+ssh -L option). An abbreviated syntax could be used as the requested
+port if both ports are identical and host is localhost.
+e.g. -L 7070 is converted to -L 7070:localhost:7070
+
 Options:
 EOH
       end
@@ -222,6 +232,8 @@ EOH
             :short => :n, :type => :string, :required => true
         opt :login, 'The user to connect as (optional)',
             :type => :string
+        opt :local_tunnel, "tunnel definition (see description above)",
+            :short => :L, :type => :string
       end
     end
 
@@ -345,7 +357,7 @@ EOS
 
     # extract keys relevant for definition of SshHostDef
     def extract_definition options
-      valid_definition = [:host_name, :login]
+      valid_definition = [:host_name, :login, :local_tunnel]
       options.reject do |key, value|
         ! valid_definition.include?(key)
       end
