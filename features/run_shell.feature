@@ -61,7 +61,7 @@ Feature: Connect to other hosts by ssh
       | -n     | other.host | ssh -l mylogin other.host   |
       | -l     | otherlogin | ssh -l otherlogin some.host |
 
-    Scenarios: Remote commands
+    Scenarios: Quote remote commands (e.g., to avoid wrong parsing of '&')
       | option | argument       | command                                        |
       | --     | ls             | ssh -l mylogin some.host -- \"ls\"             |
       | --     | ls && ls /tmp/ | ssh -l mylogin some.host -- \"ls && ls /tmp/\" |

@@ -158,7 +158,7 @@ EOS
               :type => :string
           opt :host_name, 'override the name or address of the host',
               :short => :n, :type => :string
-          opt :local_tunnel, "tunnel definition",
+          opt :local_tunnel, "tunnel definition (see description above)",
               :short => :L, :type => :string
           stop_on "--"
         end
