@@ -164,6 +164,8 @@ If you only want to run remote command instead of full shell, you can
 append "-- <remote command>" to the regular command. To list /tmp on a host
 bookmarked as "some host" run:
 runssh shell some host -- ls -l /tmp
+Remote command enables pseudo terminal (ssh -t) by default. To disable
+use -T.
 
 (Local) tunneling can be enabled with the -L options (correspond to
 ssh -L option). An abbreviated syntax could be used as the requested
@@ -178,6 +180,8 @@ EOS
             :short => :n, :type => :string
         opt :local_tunnel, "tunnel definition (see description above)",
             :short => :L, :type => :string
+        opt :no_pseudo_terminal, 'disable pseudo terminal ' \
+            '(effective only with remote command)', :short => :T
         stop_on "--"
       end
       # handle the case of remote command (indicated by --)

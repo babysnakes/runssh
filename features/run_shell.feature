@@ -61,20 +61,24 @@ Feature: Connect to other hosts by ssh
       | host-name | some.host |
       | login     | mylogin   |
     When I run the "shell" command with:
-      | option   | argument      |
-      |          | one two three |
-      | <option> | <argument>    |
+      | option  | argument        |
+      |         | one two three   |
+      | <empty> | <all_arguments> |
     Then It should execute "<command>"
 
     Scenarios: Overriding arguments
-      | option | argument   | command                     |
-      | -n     | other.host | ssh -l mylogin other.host   |
-      | -l     | otherlogin | ssh -l otherlogin some.host |
+      | empty | all_arguments | command                     |
+      |       | -n other.host | ssh -l mylogin other.host   |
+      |       | -l otherlogin | ssh -l otherlogin some.host |
 
-    Scenarios: Quote remote commands (e.g., to avoid wrong parsing of '&')
-      | option | argument       | command                                        |
-      | --     | ls             | ssh -l mylogin some.host -- \"ls\"             |
-      | --     | ls && ls /tmp/ | ssh -l mylogin some.host -- \"ls && ls /tmp/\" |
+    Scenarios: Remote command pseudo terminal and quoting (e.g., to avoid wrong parsing of '&')
+      | empty | all_arguments     | command                                           |
+      |       | -- ls             | ssh -t -l mylogin some.host -- \"ls\"             |
+      |       | -- ls && ls /tmp/ | ssh -t -l mylogin some.host -- \"ls && ls /tmp/\" |
+
+    Scenarios: Disable pseudo terminal on remote command
+      | empty | all_arguments | command                               |
+      |       | -T -- ls      | ssh -l mylogin some.host -- \"ls\" |
 
   Scenario: Display error if no bookmark given
     When Running "shell" without path

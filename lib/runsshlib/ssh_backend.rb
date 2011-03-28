@@ -30,13 +30,14 @@ module RunSSHLib
     # the entire remote command as a string with a +:remote_cmd+ key.
     def shell(definition)
       raise "no hostname" unless definition[:host_name] # should never happen
+      rmtcmd_flag = (definition[:remote_cmd] && (!definition[:remote_cmd].empty?))
       command = "ssh "
+      command << "-t " if (rmtcmd_flag && (!definition[:no_pseudo_terminal]))
       command << "-l #{definition[:login]} " if definition[:login]
       command << "#{definition[:host_name]}"
       command << " -L #{normalize_tunnel_definition definition[:local_tunnel]} " if
                  definition[:local_tunnel]
-      command << %( -- "#{definition[:remote_cmd]}") if
-                 (definition[:remote_cmd] && (!definition[:remote_cmd].empty?))
+      command << %( -- "#{definition[:remote_cmd]}") if rmtcmd_flag
       exec command
     end
 

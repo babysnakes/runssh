@@ -95,6 +95,8 @@ This program is distributed under the GPL v2 license.
 
 === 0.3
 * It's possible to bookmark (local) tunnels.
+* Remote command are run with pseudo terminal (ssh -t) by default. Can be
+  disabled with -T.
 * Some code refactoring (CLI class).
 * CLI Tests refactorings:
   * Created cucumber features.
@@ -114,5 +116,5 @@ This program is distributed under the GPL v2 license.
 * Refactor of RunSSHLib::CLI to avoid repetition of so many options between
   _add_, _update_ and _shell_. ✓
 * Add support for bookmarking tunnels. ✓
-* Add support for pseudo-tty (-t) option for remote command invocation.
+* Add support for pseudo-tty (-t) option for remote command invocation. ✓
 * TBD

@@ -54,9 +54,17 @@ describe RunSSHLib::SshBackend do
 
     it "should handle correctly remote commands" do
       RunSSHLib::SshBackend.should_receive(:exec).
-                            with(/^ssh\s+-l\s+#{test_data[:login]}\s+#{test_data[:host_name]}\s+--\s+"uptime"$/).
+                            with(/^ssh\s+-t\s-l\s+#{test_data[:login]}\s+#{test_data[:host_name]}\s+--\s+"uptime"$/).
                             and_return(nil)
       RunSSHLib::SshBackend.shell(test_data)
+    end
+    
+    it "should not enable pseudo terminal with remote command if run with -T" do
+      data = test_data.merge(:no_pseudo_terminal => true)
+      RunSSHLib::SshBackend.should_receive(:exec).
+                            with(/^ssh\s+-l\s+#{test_data[:login]}\s+#{test_data[:host_name]}\s+--\s+"uptime"$/).
+                            and_return(nil)
+      RunSSHLib::SshBackend.shell(data)
     end
 
     it "should ignore empty remote commands" do
