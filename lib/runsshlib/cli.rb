@@ -29,10 +29,10 @@ For a better understanding of host definitions and bookmarks, Read
 the provided README.rdoc or go to http://github.com/babysnakes/runssh.
 
 COMMAND : One of the commands mentioned below. It's possible to
-      type only part of the command as long as it's not ambiguous.
+          type only part of the command as long as it's not ambiguous.
 <path>  : A space-separated list of names (e.g, one two three) that
-      leads to a host definition. For available completions
-      append " ?" to the end of path.
+          leads to a host definition. For available completions
+          append " ?" to the end of path.
 
 Available commands:
 * shell  : Open ssh shell on remote host
