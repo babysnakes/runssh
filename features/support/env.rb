@@ -20,7 +20,9 @@ require "#{File.expand_path('../../../spec/support/utils', __FILE__)}"
 $:.unshift(File.join(File.dirname(__FILE__), "..", "..", "lib"))
 
 require 'simplecov'
-SimpleCov.start
+SimpleCov.start do
+  add_group "Sources", "/lib/"
+end
 require 'cucumber/rspec/doubles'
 
 # retrive host definition from the database.

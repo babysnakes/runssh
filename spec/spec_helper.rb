@@ -20,7 +20,9 @@ require %Q(#{File.join(File.dirname(__FILE__), "support", "utils")})
 $:.unshift(File.join(File.dirname(__FILE__), "..", "lib"))
 
 require 'simplecov'
-SimpleCov.start
+SimpleCov.start do
+  add_group "Sources", "/lib/"
+end
 
 Rspec.configure do |c|
   c.mock_with :rspec
