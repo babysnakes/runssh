@@ -117,4 +117,6 @@ This program is distributed under the GPL v2 license.
   _add_, _update_ and _shell_. ✓
 * Add support for bookmarking tunnels. ✓
 * Add support for pseudo-tty (-t) option for remote command invocation. ✓
-* TBD
+* Enable unsafe option for deleting host key from known_hosts file with
+  proper warnings.
+* Go over documentation and make sure they're up to date.
