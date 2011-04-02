@@ -7,16 +7,12 @@ Feature: Print bookmarks
       | name      | value     |
       | host-name | some.host |
       | login     | myuser    |
-    When I run the "print" command with:
-      | option | argument |
-      |        | one two  |
+    When I run the "print" command with "one two"
     Then It should run successfully
     And The output should include "host: some.host"
     And The output should include "login: myuser"
 
   Scenario: Invalid bookmark
     Given Empty database
-    When I run the "print" command with:
-      | option | argument |
-      |        | one two  |
+    When I run the "print" command with "one two"
     Then I should get a "Error: host definition (one => two) doesn't exist" error

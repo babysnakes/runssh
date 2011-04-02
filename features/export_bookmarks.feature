@@ -4,14 +4,12 @@ Feature: Export bookmarks
 
   The export feature dumps the database into YAML file. This file
   could be edited and later imported into the database.
-  
+
   Scenario: Missing required output file argument
     Given Existing database
-    When I run the "export" command with:
-      |option|argument|
-      | |one two|
+    When I run the "export" command with "one two"
     Then I should get a "Error: option --output-file must be specified" error
-  
+
   Scenario: Exporting bookmarks
     Given Bookmark "one two" exist with:
       |name|value|

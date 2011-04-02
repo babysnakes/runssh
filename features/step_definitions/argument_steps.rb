@@ -16,18 +16,10 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #
 
-When /^I run the "([^"]*)" command with:$/ do |command, options|
+When /^I run the "([^"]*)" command with "([^"]*)"$/ do |command, options|
   @args = @test_args
   @args << command unless (command.nil? or command.empty?)
-  options.hashes.each do |hsh|
-    case hsh[:option]
-    when ""
-      @args += hsh[:argument].split
-    else
-      @args << hsh[:option]
-      @args << hsh[:argument]
-    end
-  end
+  @args += options.split
 end
 
 When /^I run without arguments$/ do
@@ -46,8 +38,7 @@ end
 
 When /^Running "([^"]*)" without path$/ do |subcommand|
   steps %Q{
-    When I run the "#{subcommand}" command with:
-      | option | argument |
+    When I run the "#{subcommand}" command with ""
   }
 end
 

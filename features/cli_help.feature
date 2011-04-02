@@ -10,16 +10,13 @@ Feature: Cli help
     And The output should include "Available commands:"
 
   Scenario: Running with 'help' subcommand (and no further arguments)
-    When I run the "help" command with:
-      | option | argument |
+    When I run the "help" command with ""
     Then It should exit normally
     And The output should include "Usage: runssh \[global_options\] COMMAND \[options\] <path>"
     And The output should include "Available commands:"
 
   Scenario Outline: Subcommand help
-    When I run the "help" command with:
-      | option | argument     |
-      |        | <subcommand> |
+    When I run the "help" command with "<subcommand>"
     Then It should exit normally
     And The output should include "<output>"
 
