@@ -104,7 +104,7 @@ This program is distributed under the GPL v2 license.
 
 == TODO
 * Create a _proper_ zsh completion script.
-* Add scp capabilities
+* Add scp capabilities.
 * Shell via gateway (connect to a firewall and from there open shell to the host).
 * Rename (or move) host definition
 * Maybe replace invoking ssh from the command line with some library.
@@ -119,4 +119,5 @@ This program is distributed under the GPL v2 license.
 * Add support for pseudo-tty (-t) option for remote command invocation. ✓
 * Enable unsafe option for deleting host key from known_hosts file with
   proper warnings.
+* ssh-copy-id capabilities.
 * Go over documentation and make sure they're up to date.
