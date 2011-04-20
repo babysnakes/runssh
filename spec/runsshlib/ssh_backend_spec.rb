@@ -20,6 +20,32 @@ require 'spec_helper'
 require 'runsshlib'
 
 describe RunSSHLib::SshBackend do
+
+  describe "KnownHostsUtils" do
+    let(:ckhu) {
+      RunSSHLib::SshBackend::KnownHostsUtils
+    }
+
+    it "initializes with ~/.ssh/known_hosts file by default" do
+      khu = ckhu.new
+      khu.instance_variable_get(:@known_hosts_file).should == File.expand_path('~/.ssh/known_hosts')
+    end
+
+    it "accepts custom known_hosts file" do
+      khu = ckhu.new(KNOWN_HOSTS_FILE)
+      khu.instance_variable_get(:@known_hosts_file).should == KNOWN_HOSTS_FILE
+    end
+
+    it "deletes the correct line number" do
+      File.open(KNOWN_HOSTS_FILE, 'w') do |io|
+        io.write("some bogus line\nline to delete\nlast line\n")
+      end
+      khu = ckhu.new(KNOWN_HOSTS_FILE)
+      khu.delete_line_from_known_hosts_file(2)
+      IO.read(KNOWN_HOSTS_FILE).should == "some bogus line\nlast line\n"
+    end
+  end
+
   context "#shell" do
     let(:test_data) do
       {:host_name => "a",
@@ -58,7 +84,7 @@ describe RunSSHLib::SshBackend do
                             and_return(nil)
       RunSSHLib::SshBackend.shell(test_data)
     end
-    
+
     it "should not enable pseudo terminal with remote command if run with -T" do
       data = test_data.merge(:no_pseudo_terminal => true)
       RunSSHLib::SshBackend.should_receive(:exec).

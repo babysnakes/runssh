@@ -20,6 +20,21 @@ module RunSSHLib
 
   # A collection of ssh procedures.
   module SshBackend
+
+    class KnownHostsUtils
+      attr_reader :known_hosts_file
+
+      def initialize(known_hosts_file=File.expand_path('~/.ssh/known_hosts'))
+        @known_hosts_file = known_hosts_file
+      end
+
+      def delete_line_from_known_hosts_file(line_number)
+        `sed -i -e "#{line_number}d" #{@known_hosts_file}`
+        raise 'Error deleting line from known_hosts file! See output for details' unless
+              $? == 0
+      end
+    end
+
     module_function
 
     # run shell on remote host.

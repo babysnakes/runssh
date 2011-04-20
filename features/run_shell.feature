@@ -68,3 +68,12 @@ Feature: Connect to other hosts by ssh
   Scenario: Display error if no bookmark given
     When Running "shell" without path
     Then I should get a "not host definition!" error
+
+  Scenario: Experimental support for deleting conflicting host keys
+    Given Bookmark "some host" exist with:
+      | name      | value     |
+      | host-name | some.host |
+    And Conflicting key for "some.host" exists in known_hosts file
+    When I run the "shell" command with "some host --insecure-host-key 1"
+    And I confirm the prompt
+    Then The conflicting line for "some host" should be removed

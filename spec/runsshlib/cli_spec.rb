@@ -138,6 +138,42 @@ describe "The CLI interface" do
             %W(-f #{TMP_FILE} shell -l someuser cust2 dc internal somehost))
       cli.run
     end
+
+    context "insecure-host-key" do
+      let (:cli) {
+        RunSSHLib::CLI.new(%W(-f #{TMP_FILE} shell --insecure-host-key 1 some host))
+      }
+      let(:khud) { double('RunSSHLib::SshBackend::KnownHostsUtils') }
+      let(:input) { 'no' }
+
+      before(:each) do
+        stub_ssh_exec
+        create_known_hosts_file 'some.host'
+        RunSSHLib::CLI.new(%W(-f #{TMP_FILE} add some host -n some.host))
+        RunSSHLib::SshBackend::KnownHostsUtils.should_receive(:new).and_return(khud)
+        khud.should_receive(:known_hosts_file).and_return(KNOWN_HOSTS_FILE)
+      end
+
+      it "warns the user about deleting conflicting key" do
+        capture(:stderr) do # avoid stderr
+          capture(:stdout, input) do |variable|
+            # Since were canceliing it should exit with error but we don't
+            # test that now
+            expect { cli.run }.to exit_abnormaly
+          end
+          @buf.should match /Conflicting key could indicate compromised host/
+          @buf.should match /some.host/
+        end
+      end
+
+      it "aborts execution if canceling the deletion at the prompt" do
+        capture(:stdout) do # just a wrapper to avoid output
+          capture(:stderr, input) do
+            expect { cli.run }.to exit_abnormaly
+          end.should == "Cancelled\n"
+        end
+      end
+    end
   end
 
   context "Command abbreviation" do

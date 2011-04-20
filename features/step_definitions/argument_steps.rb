@@ -17,7 +17,7 @@
 #
 
 When /^I run the "([^"]*)" command with "([^"]*)"$/ do |command, options|
-  @args = @test_args
+  @args = @test_args.clone
   @args << command unless (command.nil? or command.empty?)
   @args += options.split
 end

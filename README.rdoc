@@ -118,6 +118,6 @@ This program is distributed under the GPL v2 license.
 * Add support for bookmarking tunnels. ✓
 * Add support for pseudo-tty (-t) option for remote command invocation. ✓
 * Enable unsafe option for deleting host key from known_hosts file with
-  proper warnings.
+  proper warnings. ✓
 * ssh-copy-id capabilities.
 * Go over documentation and make sure they're up to date.

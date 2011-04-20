@@ -80,3 +80,14 @@ When /^Bookmark "([^"]*)" should contain:$/ do |group, options|
     host.definition[row[0].to_sym].should == row[1]
   end
 end
+
+Given /^Conflicting key for "([^"]*)" exists in known_hosts file$/ do |host|
+  create_known_hosts_file host
+end
+
+Then /^The conflicting line for "([^"]*)" should be removed$/ do |host|
+  # we're hiding this as it is not interesting for our tests
+  Then "It should run successfully"
+  contents = IO.read(KNOWN_HOSTS_FILE)
+  contents.should_not =~ /#{host}/
+end

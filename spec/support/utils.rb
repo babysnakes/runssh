@@ -91,12 +91,14 @@ end
 TMP_FILE = File.join(Dir.tmpdir, 'tempfile')
 TMP_YML = TMP_FILE + '.yml'
 YML_FIXTURE = File.expand_path('../../fixtures/runssh.yml', __FILE__)
+KNOWN_HOSTS_FILE = File.join(Dir.tmpdir, 'known_hosts')
 
 def cleanup_tmp_file
   File.delete TMP_FILE if File.exists? TMP_FILE
   bf = TMP_FILE + '.bak'
   File.delete bf if File.exists? bf
   File.delete TMP_YML if File.exists? TMP_YML
+  File.delete KNOWN_HOSTS_FILE if File.exists? KNOWN_HOSTS_FILE
 end
 
 def import_fixtures
@@ -106,6 +108,22 @@ end
 
 def dump_config hsh
   File.open(TMP_FILE, 'w') { |out| Marshal.dump(hsh, out) }
+end
+
+# Instead of running 'ssh ...' it prints the command.
+def stub_ssh_exec
+  RunSSHLib::SshBackend.stub(:exec) do |_command, *args|
+    output = _command
+    output + args.join(" ") unless args.empty?
+    puts output
+  end
+end
+
+# known_hosts file for testing (with the specified host)
+def create_known_hosts_file(host)
+  File.open(KNOWN_HOSTS_FILE, 'w') do |io|
+    io.write("#{host} ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEA2f7VLQwGc6cc34HSra6ScQipZflsn59oVhfT0aTR08XYbQwNEbfeCL7IZVk6JWn4/kYUFmxCCwaxm/t47dex+ABnjuCeNboKLzbdDzeCiRvVtXvbjGFnaAgBGPL3Vu+7m4u59+b74a5tPQz+eRvr/jb4/fI0FssiaK+bdwfo37BD0p3c6fXI987+8F1RyDAoLS94G71+Ie47EGlj7xYvBD8RvFXtY5kaC8gNlc+sscuLqDvekJdfkwGD5F9M5kKpFQevneTk8T63+QU8mx7JJ8pNUEAi4ydAULDKRmhp/SteZfOnmcwx+jDk66Q9zXmhVUZDK4P/JwCXz5XFjgxgcw==\n")
+  end
 end
 
 # Checks whether a bookmark exists in TMP_FILE.

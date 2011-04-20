@@ -34,6 +34,7 @@ def get_host(group)
 end
 
 Before do |scenario|
+  stub_ssh_exec
   @test_args = %W(-f #{TMP_FILE})
   @input = ''
 end

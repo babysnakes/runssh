@@ -38,6 +38,9 @@ module RunSSHLib
   # message should contain only the older config version!
   class OlderConfigVersionError < StandardError; end
 
+  # Just a general abort with error
+  class AbortError < StandardError; end
+
   # A placeholder for host definitions
   HostDef = Struct.new(:name, :login)
 end

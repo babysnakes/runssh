@@ -59,11 +59,6 @@ Then /^The output should include "([^"]*)"$/ do |output|
 end
 
 Then /^It should execute "(.*)"$/ do |command|
-  RunSSHLib::SshBackend.stub(:exec) do |_command, *args|
-    output = _command
-    output + args.join(" ") unless args.empty?
-    puts output
-  end
   capture(:stdout) {
     RunSSHLib::CLI.new(@args).run
   }.should match(/^#{command}\s*\n$/)

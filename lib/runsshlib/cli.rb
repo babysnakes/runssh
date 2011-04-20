@@ -93,6 +93,8 @@ EOM
       end
     rescue ConfigError => e
       Trollop.die e.message
+    rescue AbortError => e
+      abort e.message
     end
 
     private
@@ -172,6 +174,12 @@ ssh -L option). An abbreviated syntax could be used as the requested
 port if both ports are identical and host is localhost.
 e.g. -L 7070 is converted to -L 7070:localhost:7070
 
+In case of conflicting host key (e.g, when reinstalling a server), ssh refuses
+to connect and tells you which line has the conflicting host key. ONLY if you
+know for sure why you have a conflicting key, you can add the
+--insecure-host-key option with the conflicting line as an argument. DON'T
+DO THAT UNLESS YOU KNOW WHY THE KEY HAS CHANGED!
+
 Options:
 EOS
         opt :login, "override the login in the configuration",
@@ -182,6 +190,8 @@ EOS
             :short => :L, :type => :string
         opt :no_pseudo_terminal, 'disable pseudo terminal ' \
             '(effective only with remote command)', :short => :T
+        opt :insecure_host_key, 'delete the specified line form known hosts ' \
+            'file. EXPERIMENTAL and DANGEROUS!', :type => :int, :short => :I
         stop_on "--"
       end
       # handle the case of remote command (indicated by --)
@@ -302,6 +312,9 @@ EOS
     end
 
     def run_shell(path)
+      verify_and_delete_conflicting_host_key(@options[:insecure_host_key]) if
+          @options[:insecure_host_key_given]
+
       host = @c.get_host(path)
       # only override if value exist
       # TODO: this works only for some types (e.g, not boolean) but
@@ -392,6 +405,19 @@ EOM
       end
       Trollop::with_standard_exception_handling p do
         raise Trollop::HelpNeeded
+      end
+    end
+
+    def verify_and_delete_conflicting_host_key(line_number)
+      khu = RunSSHLib::SshBackend::KnownHostsUtils.new
+      host = IO.readlines(khu.known_hosts_file)[line_number - 1].split[0]
+      question = "Are you sure you want to delete the key for host: " \
+                 "'<%= color(\"#{host}\", :red) %>'? " \
+                 "Conflicting key could indicate compromised host! [yes/no] "
+      if HighLine.new.agree(question)
+        khu.delete_line_from_known_hosts_file line_number
+      else
+        raise AbortError, "Cancelled"
       end
     end
   end
