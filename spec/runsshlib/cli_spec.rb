@@ -209,6 +209,10 @@ describe "The CLI interface" do
     it "should parse 'e' as export" do
       @ab_cli.send(:extract_subcommand, ['e']).should eql('export')
     end
+
+    it "should parse 'c' as cpid" do
+      @ab_cli.send(:extract_subcommand, ['c']).should eql('cpid')
+    end
   end
 
   after(:each) do

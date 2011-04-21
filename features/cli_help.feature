@@ -29,3 +29,4 @@ Feature: Cli help
       | print      | Print host configuration to the console.         |
       | import     | Imports a new configuration.                     |
       | export     | Exports the configuration to a YAML file.        |
+      | cpid       | Copy ssh public key to authorized_keys           |

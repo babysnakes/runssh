@@ -56,6 +56,17 @@ module RunSSHLib
       exec command
     end
 
+    # Copy ssh identity file to remote host according to options
+    # options:: A hash containing host definition (:host_name, etc) and
+    #           optionally identity_file path.
+    def copy_id(options)
+      command = "ssh-copy-id "
+      command << "-i #{options[:identity_file]} " if options[:identity_file]
+      command << "#{options[:login]}@" if options[:login]
+      command << "#{options[:host_name]}"
+      exec command
+    end
+
     # Accepts abbriviated or full definition of ssh tunnel definition
     # and converts it to full tunnel definition. If only port is
     # supplied (abbriviated form) it uses `localhost` as the hostname

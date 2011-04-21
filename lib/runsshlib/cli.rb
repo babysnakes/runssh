@@ -20,7 +20,7 @@ require 'trollop'
 module RunSSHLib
   class CLI
 
-    COMMAND = %w(shell add del update print import export)
+    COMMAND = %w(shell add del update print import export cpid)
     MAIN_HELP = <<-EOS
 Usage: runssh [global_options] COMMAND [options] <path>
 
@@ -42,6 +42,7 @@ Available commands:
 * print  : Print host definition
 * import : Import configuration
 * export : Export configuration
+* cpid   : Copy ssh public key to authorized_keys on remote host
 
 For help on commands run:
 runssh help COMMAND
@@ -145,6 +146,8 @@ EOM
         parse_import args
       when 'export'
         parse_export args
+      when 'cpid'
+        parse_cpid args
       end
     end
 
@@ -201,6 +204,26 @@ EOS
         options[:remote_cmd] = rmt.join(" ")
       end
       options
+    end
+
+    def parse_cpid(args)
+      Trollop::options(args) do
+        banner <<-EOH
+Usage: runssh [global_options] cpid [options] <path>
+
+Copy ssh public key to authorized_keys on remote host. If no id file is
+specified, It copies all the keys in your ssh-agent.
+
+Requires the `ssh-copy-id` command to be in your path.
+See manpage for ssh-copy-id for more details.
+
+<path> : See main help for description of path.
+
+Options:
+EOH
+        opt :identity_file, "Full path to identity file",
+            :short => :i, :type => :string
+      end
     end
 
     def parse_add_update(cmd, args)
@@ -324,6 +347,11 @@ EOS
         other ? other : this
       end
       SshBackend.shell(definition)
+    end
+
+    def run_cpid(path)
+      host = @c.get_host(path)
+      SshBackend.copy_id(host.definition.merge(@options))
     end
 
     def run_add(path)

@@ -14,7 +14,7 @@ function _runssh () {
         options=$(${COMP_WORDS[@]:0:COMP_CWORD} ? 2>/dev/null) # BASH
         # options=$(${COMP_WORDS[0,COMP_CWORD-1]} ? 2>/dev/null) # ZSH
     elif [ $COMP_CWORD -eq $COM_POSITION ]; then
-        options="shell add del update print import export"
+        options="shell cpid add del update print import export"
     fi
     COMPREPLY=( $(compgen -W "${options}" -- ${cur}) )
     return 0

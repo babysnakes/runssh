@@ -97,10 +97,12 @@ This program is distributed under the GPL v2 license.
 * It's possible to bookmark (local) tunnels.
 * Remote command are run with pseudo terminal (ssh -t) by default. Can be
   disabled with -T.
-* Added (_unsafe_) option for deleting conflicting host key - The conflicting 
+* Added (_unsafe_) option for deleting conflicting host key - The conflicting
   line must be specified manually (probably from the error message in the
   previous command), and currently we only deal with <code>~/.ssh/known_hosts</code>
   file.
+* Implemented copying public key to remote host's authorized_keys file (via
+  ssh-copy-id).
 * Some code refactoring (CLI class).
 * CLI Tests refactorings:
   * Created cucumber features.
@@ -123,5 +125,5 @@ This program is distributed under the GPL v2 license.
 * Add support for pseudo-tty (-t) option for remote command invocation. ✓
 * Enable unsafe option for deleting host key from known_hosts file with
   proper warnings. ✓
-* ssh-copy-id capabilities.
+* ssh-copy-id capabilities. ✓
 * Go over documentation and make sure they're up to date.
