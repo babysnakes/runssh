@@ -19,8 +19,7 @@ Feature: Deleting bookmarks
     Given Bookmark "one two three" exists
     When I delete "one two three"
     And I answer "no" at the prompt
-    Then It should run successfully
-    And The output should include "canceled"
+    Then I should get a "Cancelled" error
     And Bookmark "one two three" should exist
 
   Scenario: Prompting before deleting

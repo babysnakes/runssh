@@ -103,6 +103,8 @@ This program is distributed under the GPL v2 license.
   file.
 * Implemented copying public key to remote host's authorized_keys file (via
   ssh-copy-id).
+* Changed behavior upon prompt cancelation (in _delete_ and _import_) - It now
+  aborts execution instead of exit 0.
 * Some code refactoring (CLI class).
 * CLI Tests refactorings:
   * Created cucumber features.
@@ -126,7 +128,6 @@ This program is distributed under the GPL v2 license.
 * Enable unsafe option for deleting host key from known_hosts file with
   proper warnings. ✓
 * ssh-copy-id capabilities. ✓
-* Refactor all the ask methods to one method which raises AbortError.
 * Add the ability to add ssh options to bookmark + shortcut for ignoring ssh
   known hosts file (should issue a warning when using this shortcut).
 * Go over documentation and make sure they're up to date.

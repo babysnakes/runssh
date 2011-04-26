@@ -27,9 +27,13 @@ Then /^I should get a "([^"]*)" error$/ do |error|
 end
 
 Then /^I should be prompted with "([^"]*)"$/ do |output|
-  capture(:stdout, 'n\n') {
-    RunSSHLib::CLI.new(@args).run
-  }.should match(/#{output}/)
+  # I'm only interested in the output verification but I should hide the errors.
+  capture(:stderr) do
+    capture(:stdout, 'n\n') do
+      expect { RunSSHLib::CLI.new(@args).run }.to exit_abnormaly
+    end
+  end
+  @buf.should match(/#{output}/)
 end
 
 When /^I confirm the prompt$/ do

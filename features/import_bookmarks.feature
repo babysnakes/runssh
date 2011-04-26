@@ -31,5 +31,5 @@ Feature: Importing Bookmarks
     Given Existing database
     When I import yml file
     And I answer "no" at the prompt
-    Then It should run successfully
+    Then I should get a "Cancelled" error
     And Bookmark "cust1 dc1 host1" should not exist

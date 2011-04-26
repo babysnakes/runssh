@@ -369,13 +369,9 @@ EOS
       unless @options[:yes]
         question = %Q(Are you sure you want to delete "#{path.join(':')}") +
                    "? [yes/no] "
-        @options[:yes] = HighLine.new.agree(question)
+        @options[:yes] = agree_or_abort(question, "Cancelled")
       end
-      if @options[:yes]
-        @c.delete_path(path)
-      else
-        puts 'canceled'
-      end
+      @c.delete_path(path)
     end
 
     def run_print(path)
@@ -388,11 +384,8 @@ EOS
     def run_import(path)
       question = "Importing a file OVERWRITES existing configuration. " +
                  "Are you sure? [yes/no] "
-      if HighLine.new.agree(question)
-        @c.import(@options[:input_file])
-      else
-        puts 'canceled'
-      end
+      agree_or_abort(question, 'Cancelled')
+      @c.import(@options[:input_file])
     end
 
     # we don't use path here, it's just for easier invocation
@@ -442,11 +435,14 @@ EOM
       question = "Are you sure you want to delete the key for host: " \
                  "'<%= color(\"#{host}\", :red) %>'? " \
                  "Conflicting key could indicate compromised host! [yes/no] "
-      if HighLine.new.agree(question)
-        khu.delete_line_from_known_hosts_file line_number
-      else
-        raise AbortError, "Cancelled"
-      end
+      agree_or_abort(question, "Cancelled")
+      khu.delete_line_from_known_hosts_file line_number
+    end
+
+    # Prompts you with the supplied question and aborts with the supplied
+    # error unless confirmed the prompt.
+    def agree_or_abort(question, error_message)
+      raise(AbortError, error_message) unless HighLine.new.agree(question)
     end
   end
 end
