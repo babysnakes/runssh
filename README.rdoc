@@ -126,4 +126,7 @@ This program is distributed under the GPL v2 license.
 * Enable unsafe option for deleting host key from known_hosts file with
   proper warnings. ✓
 * ssh-copy-id capabilities. ✓
+* Refactor all the ask methods to one method which raises AbortError.
+* Add the ability to add ssh options to bookmark + shortcut for ignoring ssh
+  known hosts file (should issue a warning when using this shortcut).
 * Go over documentation and make sure they're up to date.
