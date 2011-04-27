@@ -94,6 +94,7 @@ This program is distributed under the GPL v2 license.
   +shell+ command.
 
 === 0.3
+* The print subcommand now prints the local tunnel if defined.
 * It's possible to bookmark (local) tunnels.
 * Remote command are run with pseudo terminal (ssh -t) by default. Can be
   disabled with -T.

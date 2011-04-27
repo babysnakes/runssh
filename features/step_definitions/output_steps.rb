@@ -62,6 +62,10 @@ Then /^The output should include "([^"]*)"$/ do |output|
   @buf.should match(/#{output}/)
 end
 
+Then /^The output should not include "([^"]*)"$/ do |output|
+  @buf.should_not match(/#{output}/)
+end
+
 Then /^It should execute "(.*)"$/ do |command|
   capture(:stdout) {
     RunSSHLib::CLI.new(@args).run

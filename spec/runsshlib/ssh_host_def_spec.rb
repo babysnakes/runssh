@@ -86,5 +86,10 @@ describe 'SshHostDef' do
       })
       h.to_print.should match(/^.*host:.*myhostname\n.*login:.*me$/)
     end
+
+    it "prints abbreviated local tunnel with full path" do
+      h = RunSSHLib::SshHostDef.new(:host_name => 'hostname', :local_tunnel => '7070')
+      h.to_print.should match(/local tunnel: 7070:localhost:7070/)
+    end
   end
 end

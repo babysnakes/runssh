@@ -41,8 +41,12 @@ module RunSSHLib
     alias_method :eql?, :==
 
     def to_print
-      out = "    * host: #{definition[:host_name]}"
+      out =    "    * host: #{definition[:host_name]}"
       out << "\n    * login: #{definition[:login] || 'current user'}"
+      if definition[:local_tunnel]
+        tunnel = RunSSHLib::SshBackend.normalize_tunnel_definition(definition[:local_tunnel])
+        out << "\n    * local tunnel: #{tunnel}"
+      end
       out
     end
   end
