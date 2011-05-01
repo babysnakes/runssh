@@ -16,13 +16,24 @@ Feature: Adding bookmarks
 
   Scenario: All available options
     Given Empty database
-    When I run the "add" command with "one two three -n some.host -l mylogin -L 8080:localhost:8080"
+    When I run the "add" command with "one two three -n some.host -l mylogin -L 8080:localhost:8080 -o StrictHostKeyChecking=no"
     Then It should run successfully
     And Bookmark "one two three" should contain:
-      | name         | value               |
-      | host_name    | some.host           |
-      | login        | mylogin             |
-      | local_tunnel | 8080:localhost:8080 |
+      | name         | value                    |
+      | host_name    | some.host                |
+      | login        | mylogin                  |
+      | local_tunnel | 8080:localhost:8080      |
+      | option       | StrictHostKeyChecking=no |
+
+  Scenario: Shortcut for insecure connection (no known_hosts)
+    Given Empty database
+    When I run the "add" command with "one two three -n some.host --no-host-key-checking"
+    Then It should run successfully
+    And Bookmark "one two three" should contain:
+      | name      | value                        |
+      | host_name | some.host                    |
+      | option    | StrictHostKeyChecking=no     |
+      | option    | UserKnownHostsFile=/dev/null |
 
   Scenario: Automatic database backup
     Given Existing database

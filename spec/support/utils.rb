@@ -110,6 +110,14 @@ def dump_config hsh
   File.open(TMP_FILE, 'w') { |out| Marshal.dump(hsh, out) }
 end
 
+# retrive host definition from the database.
+# group is a string containing the path like in parameters for
+# command line.
+def get_host(group)
+  cf = RunSSHLib::ConfigFile.new(TMP_FILE)
+  cf.get_host(group.split.map { |e| e.to_sym })
+end
+
 # Instead of running 'ssh ...' it prints the command.
 def stub_ssh_exec
   RunSSHLib::SshBackend.stub(:exec) do |_command, *args|

@@ -25,14 +25,6 @@ SimpleCov.start do
 end
 require 'cucumber/rspec/doubles'
 
-# retrive host definition from the database.
-# group is a string containing the path like in parameters for
-# command line.
-def get_host(group)
-  cf = RunSSHLib::ConfigFile.new(TMP_FILE)
-  cf.get_host(group.split.map { |e| e.to_sym })
-end
-
 Before do |scenario|
   stub_ssh_exec
   @test_args = %W(-f #{TMP_FILE})

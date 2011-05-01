@@ -50,8 +50,11 @@ module RunSSHLib
       command << "-t " if (rmtcmd_flag && (!definition[:no_pseudo_terminal]))
       command << "-l #{definition[:login]} " if definition[:login]
       command << "#{definition[:host_name]}"
-      command << " -L #{normalize_tunnel_definition definition[:local_tunnel]} " if
+      command << " -L #{normalize_tunnel_definition definition[:local_tunnel]}" if
                  definition[:local_tunnel]
+      definition[:option].each do |option|
+        command << " -o #{option}"
+      end if definition[:option]
       command << %( -- "#{definition[:remote_cmd]}") if rmtcmd_flag
       exec command
     end

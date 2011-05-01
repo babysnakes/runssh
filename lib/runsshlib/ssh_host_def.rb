@@ -47,6 +47,12 @@ module RunSSHLib
         tunnel = RunSSHLib::SshBackend.normalize_tunnel_definition(definition[:local_tunnel])
         out << "\n    * local tunnel: #{tunnel}"
       end
+      if definition[:option] && definition[:option].any?
+        out << "\n    * ssh options:"
+        definition[:option].each do |option|
+          out << "\n      - #{option}"
+        end
+      end
       out
     end
   end

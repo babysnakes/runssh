@@ -176,6 +176,17 @@ describe "The CLI interface" do
     end
   end
 
+  context "Add bookmark with ssh options" do
+    it "adds options specified with '-o' to the '--no-host-key-checking' options" do
+      options = %W(-f #{TMP_FILE} add -o ForwardAgent=true --no-host-key-checking -n some.host one two)
+      RunSSHLib::CLI.new(options).run
+      host = get_host('one two')
+      host.definition[:option].should include('ForwardAgent=true')
+      host.definition[:option].should include('StrictHostKeyChecking=no')
+      host.definition[:option].should include('UserKnownHostsFile=/dev/null')
+    end
+  end
+
   context "Command abbreviation" do
     before(:each) do
       # we just need valid cli. Args are not important!

@@ -46,7 +46,7 @@ describe RunSSHLib::SshBackend do
     end
   end
 
-  context "#shell" do
+  describe "#shell" do
     let(:test_data) do
       {:host_name => "a",
        :login => "user",
@@ -107,9 +107,20 @@ describe RunSSHLib::SshBackend do
                             with(/^ssh\s+.*\s-L\s+6000:localhost:6000.*/)
       RunSSHLib::SshBackend.shell(data)
     end
+
+    it "calls all available ssh options, each with '-o'" do
+      data = test_data.merge(:remote_cmd => '', :login => '',
+                             :option => %w(UserKnownHostsFile=/dev/null StrictHostKeyChecking=no))
+      stub_ssh_exec
+      capture(:stdout) do
+        RunSSHLib::SshBackend.shell(data)
+      end
+      @buf.should match(%r{-o UserKnownHostsFile=/dev/null})
+      @buf.should match(/-o StrictHostKeyChecking=no/)
+    end
   end
 
-  context "#normalize_tunnel_definition" do
+  describe "#normalize_tunnel_definition" do
     it "converts abbreviated tunnel definition correctly" do
       RunSSHLib::SshBackend.normalize_tunnel_definition("7070").should ==
           "7070:localhost:7070"

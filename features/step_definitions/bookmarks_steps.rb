@@ -77,7 +77,12 @@ end
 When /^Bookmark "([^"]*)" should contain:$/ do |group, options|
   host = get_host(group)
   options.rows.each do |row|
-    host.definition[row[0].to_sym].should == row[1]
+    # the `option` option is a list of arguments
+    if row[0] == 'option'
+      host.definition[row[0].to_sym].should include(row[1])
+    else
+      host.definition[row[0].to_sym].should == row[1]
+    end
   end
 end
 

@@ -263,15 +263,25 @@ e.g. -L 7070 is converted to -L 7070:localhost:7070
 Options:
 EOH
       end
-      Trollop::options(args) do
+      options = Trollop::options(args) do
         banner help
         opt :host_name, 'The name or address of the host (e.g, host.example.com)',
             :short => :n, :type => :string, :required => true
         opt :login, 'The user to connect as (optional)',
             :type => :string
-        opt :local_tunnel, "tunnel definition (see description above)",
+        opt :local_tunnel, "Tunnel definition (see description above)",
             :short => :L, :type => :string
+        opt :option, 'Ssh option (corresponds to ssh -o <option>)',
+            :short => :o, :multi => true, :type => :string
+        opt :no_host_key_checking, "DANGEROUS! Don't verify host key when " \
+            "connecting to this host. Shortcut for '-o UserKnownHostsFile=" \
+            "/dev/null -o StrictHostKeyChecking=no'",
+            :short => :N, :type => :boolean
       end
+      if options[:no_host_key_checking_given]
+        options[:option] << 'UserKnownHostsFile=/dev/null' << 'StrictHostKeyChecking=no'
+      end
+      options
     end
 
     def parse_del(args)
@@ -395,7 +405,7 @@ EOS
 
     # extract keys relevant for definition of SshHostDef
     def extract_definition options
-      valid_definition = [:host_name, :login, :local_tunnel]
+      valid_definition = [:host_name, :login, :local_tunnel, :option]
       options.reject do |key, value|
         ! valid_definition.include?(key)
       end
