@@ -139,6 +139,33 @@ describe "The CLI interface" do
       cli.run
     end
 
+    it "merges given options with saved ones" do
+      stub_ssh_exec
+
+			# multiple options saved, single option given
+      RunSSHLib::CLI.new(%W(-f #{TMP_FILE} add one two -n some.host -N)).run
+      capture(:stdout) do
+        RunSSHLib::CLI.new(%W(-f #{TMP_FILE} shell one two -o ForwardAgent=true)).run
+      end
+      @buf.should include('ssh some.host')
+      @buf.should include('StrictHostKeyChecking=no')
+      @buf.should include('UserKnownHostsFile=/dev/null')
+      @buf.should include('ForwardAgent=true')
+
+			# single option saved, multiple options given
+			RunSSHLib::CLI.new(%W(-f #{TMP_FILE} add one three -n some.host 
+														-o ForwardAgent=true)).run
+			capture(:stdout) do
+				RunSSHLib::CLI.new(%W(-f #{TMP_FILE} shell one three
+															-o StrictHostKeyChecking=no
+															-o UserKnownHostsFile=/dev/null)).run
+			end
+      @buf.should include('ssh some.host')
+      @buf.should include('StrictHostKeyChecking=no')
+      @buf.should include('UserKnownHostsFile=/dev/null')
+      @buf.should include('ForwardAgent=true')
+    end
+
     context "insecure-host-key" do
       let (:cli) {
         RunSSHLib::CLI.new(%W(-f #{TMP_FILE} shell --insecure-host-key 1 some host))
@@ -157,7 +184,7 @@ describe "The CLI interface" do
       it "warns the user about deleting conflicting key" do
         capture(:stderr) do # avoid stderr
           capture(:stdout, input) do |variable|
-            # Since were canceliing it should exit with error but we don't
+            # Since were cancelling it should exit with error but we don't
             # test that now
             expect { cli.run }.to exit_abnormaly
           end

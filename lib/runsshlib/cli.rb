@@ -195,6 +195,9 @@ EOS
             '(effective only with remote command)', :short => :T
         opt :insecure_host_key, 'delete the specified line form known hosts ' \
             'file. EXPERIMENTAL and DANGEROUS!', :type => :int, :short => :I
+        opt :option, 'ssh option. appended to saved ssh options. ' \
+            'can be used more then once.',
+            :short => :o, :type => :string, :multi => true
         stop_on "--"
       end
       # handle the case of remote command (indicated by --)
@@ -271,7 +274,8 @@ EOH
             :type => :string
         opt :local_tunnel, "Tunnel definition (see description above)",
             :short => :L, :type => :string
-        opt :option, 'Ssh option (corresponds to ssh -o <option>)',
+        opt :option, 'Ssh option (corresponds to ssh -o <option>). ' \
+            'Can be used multiple times.',
             :short => :o, :multi => true, :type => :string
         opt :no_host_key_checking, "DANGEROUS! Don't verify host key when " \
             "connecting to this host. Shortcut for '-o UserKnownHostsFile=" \
@@ -354,7 +358,12 @@ EOS
       # currently this is all we need. We may need to make it better
       # later.
       definition = host.definition.merge(@options) do |key, this, other|
-        other ? other : this
+        case key
+        when :option
+          this + other
+        else
+          other ? other : this
+        end
       end
       SshBackend.shell(definition)
     end

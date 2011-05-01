@@ -56,6 +56,10 @@ Feature: Connect to other hosts by ssh
       | -n other.host | ssh -l mylogin other.host   |
       | -l otherlogin | ssh -l otherlogin some.host |
 
+    Scenarios: Adding ssh options
+      | all_arguments        | command                                       |
+      | -o ForwardAgent=true | ssh -l mylogin some.host -o ForwardAgent=true |
+
     Scenarios: Remote command pseudo terminal and quoting (e.g., to avoid wrong parsing of '&')
       | all_arguments     | command                                           |
       | -- ls             | ssh -t -l mylogin some.host -- \"ls\"             |

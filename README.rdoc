@@ -102,9 +102,13 @@ This program is distributed under the GPL v2 license.
   line must be specified manually (probably from the error message in the
   previous command), and currently we only deal with <code>~/.ssh/known_hosts</code>
   file.
+* Added ssh options support. These could be specified when saving or when
+  running shell. As an _unsafe_ shortcut, there is an option to connect
+  to a host without verifying the key. This is mainly useful for local
+  virtual machines, or similar occasion where security is not an issue.
 * Implemented copying public key to remote host's authorized_keys file (via
   ssh-copy-id).
-* Changed behavior upon prompt cancelation (in _delete_ and _import_) - It now
+* Changed behavior upon prompt cancellation (in _delete_ and _import_) - It now
   aborts execution instead of exit 0.
 * Some code refactoring (CLI class).
 * CLI Tests refactorings:
@@ -130,5 +134,5 @@ This program is distributed under the GPL v2 license.
   proper warnings. ✓
 * ssh-copy-id capabilities. ✓
 * Add the ability to add ssh options to bookmark + shortcut for ignoring ssh
-  known hosts file (should issue a warning when using this shortcut).
+  known hosts file (should issue a warning when using this shortcut). √
 * Go over documentation and make sure they're up to date.
