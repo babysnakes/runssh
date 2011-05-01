@@ -7,3 +7,5 @@ coverage/
 *.gem
 pkg/
 .rubyamp-config.yml
+tags
+
