@@ -87,6 +87,17 @@ When /^Bookmark "([^"]*)" should contain:$/ do |group, options|
 end
 
 Given /^Conflicting key for "([^"]*)" exists in known_hosts file$/ do |host|
+  # TODO: This should be moved to somewhere where ALL tests uses
+  #       it. We should never touch the real known_hosts file during testing.
+  module RunSSHLib
+    module SshBackend
+      class KnownHostsUtils
+        def initialize
+          @known_hosts_file = KNOWN_HOSTS_FILE
+        end
+      end
+    end
+  end
   create_known_hosts_file host
 end
 
