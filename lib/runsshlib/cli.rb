@@ -70,13 +70,7 @@ EOS
     rescue ConfigError, InvalidSubCommandError, Errno::ENOENT => e
       Trollop.die e.message
     rescue OlderConfigVersionError => e
-      message = <<-EOM
-You seem to use older configuration version. Did you upgrade runssh?
-If so, please run <%= color('runssh [ -f config ] --update-config', :blue) %> in order to
-update your configuration to the current version.
-
-Your old configuration will be saved with the suffix <%= color(".#{e.message}", :underline) %>
-EOM
+      message = construct_update_config_message e.message
       HighLine.new.say(message)
       exit 1
     end
@@ -462,6 +456,21 @@ EOM
     # error unless confirmed the prompt.
     def agree_or_abort(question, error_message)
       raise(AbortError, error_message) unless HighLine.new.agree(question)
+    end
+
+    # Construct update_config message with correct config file.
+    # THe current_version is the number of the existing config version.
+    def construct_update_config_message(current_version)
+      config_string = @global_options[:config_file] ?
+                      "-f #{@global_options[:config_file]}" : ''
+      message = <<-EOM
+You seem to use older configuration version. Did you upgrade runssh?
+If so, please run <%= color("runssh #{config_string} --update-config", :blue) %>
+in order to update your configuration to the current version.
+
+Your old configuration will be saved with the suffix \
+<%= color(".#{current_version}", :underline) %>
+EOM
     end
   end
 end

@@ -83,6 +83,17 @@ describe "The CLI interface" do
       }.to exit_abnormaly
       @buf.should match(/--update-config/)
       @buf.should match(/.none/)
+      @buf.should include("-f #{TMP_FILE}")
+    end
+
+    it "doesn't display the config file path in the error message if using default config file" do
+      RunSSHLib::ConfigFile.stub(:new) { raise RunSSHLib::OlderConfigVersionError, 'none' }
+      expect {
+        capture(:stdout) {
+          RunSSHLib::CLI.new(%w(shell)).run
+        }
+      }.to exit_abnormaly
+      @buf.should_not include("-f")
     end
 
     it "upgrades the configuration" do
