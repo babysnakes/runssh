@@ -1,6 +1,16 @@
 == Introduction
-A CLI utility to bookmark ssh connections with hierarchy and act upon
-these bookmarks. Currently only opens a shell.
+A CLI utility to bookmark ssh connections with hierarchy and run various
+ssh commands on these bookmarks. Supported operations are:
+
+* Login
+* Copy ssh key
+* Run remote command
+* Create local tunnel
+
+I am planning to add scp support as well.
+
+This requires you to have the _ssh_ binary in your path and optionally the
+_ssh-copy-id_ binary (for copying ssh key).
 
 === Installation
 You must have ruby[http://www.ruby-lang.org/] and
@@ -29,8 +39,8 @@ For usage run _runssh_ without arguments.
 
 === Host Definition
 Host definition is a collection of attributes that help us define a host
-bookmark. As of version 0.1.0 only _hostname_ and <i>remote user</i> are supported,
-but more attributes (e.g, tunnel definition) will be added on later versions.
+bookmark. The only required attribute is a hostname. All other attributes
+(login, remote command, local tunnel info, ssh option, etc) is optional.
 
 === Bookmarks
 The bookmarks consists of a host definition inside nested groups. These
@@ -108,6 +118,7 @@ This program is distributed under the GPL v2 license.
   virtual machines, or similar occasion where security is not an issue.
 * Implemented copying public key to remote host's authorized_keys file (via
   ssh-copy-id).
+* Documentation fixes.
 * Changed behavior upon prompt cancellation (in _delete_ and _import_) - It now
   aborts execution instead of exit 0.
 * Some code refactoring (CLI class).
@@ -135,4 +146,4 @@ This program is distributed under the GPL v2 license.
 * ssh-copy-id capabilities. ✓
 * Add the ability to add ssh options to bookmark + shortcut for ignoring ssh
   known hosts file (should issue a warning when using this shortcut). √
-* Go over documentation and make sure they're up to date.
+* Go over documentation and make sure they're up to date. √

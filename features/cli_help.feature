@@ -27,6 +27,6 @@ Feature: Cli help
       | del        | Delete host definitions or `empty` groups        |
       | update     | Update host definition specified by <path>       |
       | print      | Print host configuration to the console.         |
-      | import     | Imports a new configuration.                     |
+      | import     | Imports a configuration.                         |
       | export     | Exports the configuration to a YAML file.        |
       | cpid       | Copy ssh public key to authorized_keys           |

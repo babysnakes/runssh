@@ -109,8 +109,8 @@ EOS
       end
     end
 
-    # Etracts the subcommand from args. Throws InvalidSubCommandError if
-    # invalid or ambigious subcommand
+    # Extracts the subcommand from args. Throws InvalidSubCommandError if
+    # invalid or ambiguous subcommand
     def extract_subcommand(args)
       cmd = args.shift
       if COMMAND.include? cmd
@@ -125,7 +125,7 @@ EOS
       raise InvalidSubCommandError, 'invalid command'
     end
 
-    # route argument parsing for all subcomand.
+    # route argument parsing for all subcommand.
     def parse_subcommand(cmd, args)
       case cmd
       when 'shell'
@@ -179,18 +179,18 @@ DO THAT UNLESS YOU KNOW WHY THE KEY HAS CHANGED!
 
 Options:
 EOS
-        opt :login, "override the login in the configuration",
+        opt :login, "Override the login in the configuration.",
             :type => :string
-        opt :host_name, 'override the name or address of the host',
+        opt :host_name, 'Override the name or address of the host.',
             :short => :n, :type => :string
-        opt :local_tunnel, "tunnel definition (see description above)",
+        opt :local_tunnel, "Tunnel definition (see description above).",
             :short => :L, :type => :string
-        opt :no_pseudo_terminal, 'disable pseudo terminal ' \
-            '(effective only with remote command)', :short => :T
+        opt :no_pseudo_terminal, 'Disable pseudo terminal ' \
+            '(effective only with remote command).', :short => :T
         opt :insecure_host_key, 'delete the specified line form known hosts ' \
-            'file. EXPERIMENTAL and DANGEROUS!', :type => :int, :short => :I
-        opt :option, 'ssh option. appended to saved ssh options. ' \
-            'can be used more then once.',
+            'file. EXPERIMENTAL and DANGEROUS!.', :type => :int, :short => :I
+        opt :option, 'Ssh option. Appended to saved ssh options. ' \
+            'Can be used multiple times.',
             :short => :o, :type => :string, :multi => true
         stop_on "--"
       end
@@ -218,7 +218,7 @@ See manpage for ssh-copy-id for more details.
 
 Options:
 EOH
-        opt :identity_file, "Full path to identity file",
+        opt :identity_file, "Full path to identity file.",
             :short => :i, :type => :string
       end
     end
@@ -230,8 +230,8 @@ EOH
 Usage: runssh [global_options] add [options] <path>
 
 Add a new host definition at the supplied <path>. <path> must not exist!
-A host definition can have a hostname (required) and a remote user
-(optional).
+A host definition must have a hostname. All other options (see below)
+are optional.
 
 <path> : See main help for description of path.
 
@@ -248,7 +248,7 @@ Usage: runssh [global_options] update [options] <path>
 
 Update host definition specified by <path> with new settings. The host
 definition is completely replaced by the new definition (e.g, You can
-not specify only new host and expect the user to remain the old one).
+not specify only new host and expect the login to remain the existing one).
 
 <path> : See main help for description of path.
 
@@ -262,11 +262,11 @@ EOH
       end
       options = Trollop::options(args) do
         banner help
-        opt :host_name, 'The name or address of the host (e.g, host.example.com)',
+        opt :host_name, 'The name or address of the host (e.g, host.example.com).',
             :short => :n, :type => :string, :required => true
-        opt :login, 'The user to connect as (optional)',
+        opt :login, 'The login to connect as.',
             :type => :string
-        opt :local_tunnel, "Tunnel definition (see description above)",
+        opt :local_tunnel, "Tunnel definition (see description above).",
             :short => :L, :type => :string
         opt :option, 'Ssh option (corresponds to ssh -o <option>). ' \
             'Can be used multiple times.',
@@ -295,7 +295,7 @@ verification.
 
 Options:
 EOS
-        opt :yes, 'Delete without verification'
+        opt :yes, 'Delete without verification.'
       end
     end
 
@@ -318,12 +318,12 @@ EOS
         banner <<-EOS
 Usage: runssh [global_options] import [options]
 
-Imports a new configuration.
+Imports a configuration (The configuration must be in YAML format).
 CAREFULL: This completely overrides the current configuration!
 
 Options:
 EOS
-        opt :input_file, 'The yaml file to import from',
+        opt :input_file, 'The yaml file to import from.',
             :type => :string, :required => true
       end
     end
@@ -337,7 +337,7 @@ Exports the configuration to a YAML file.
 
 Options
 EOS
-        opt :output_file, 'The output file',
+        opt :output_file, 'The output file.',
             :type => :string, :required => true
       end
     end
@@ -459,7 +459,7 @@ EOM
     end
 
     # Construct update_config message with correct config file.
-    # THe current_version is the number of the existing config version.
+    # The current_version is the number of the existing config version.
     def construct_update_config_message(current_version)
       config_string = @global_options[:config_file] ?
                       "-f #{@global_options[:config_file]}" : ''
