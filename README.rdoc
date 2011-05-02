@@ -10,7 +10,7 @@ ssh commands on these bookmarks. Supported operations are:
 I am planning to add scp support as well.
 
 This requires you to have the _ssh_ binary in your path and optionally the
-_ssh-copy-id_ binary (for copying ssh key).
+<i>ssh-copy-id</i> binary (for copying ssh key).
 
 === Installation
 You must have ruby[http://www.ruby-lang.org/] and
@@ -133,17 +133,3 @@ This program is distributed under the GPL v2 license.
 * Rename (or move) host definition
 * Maybe replace invoking ssh from the command line with some library.
 * Automatic deletion of empty groups.
-
-== Tasks for 0.3
-* Use Simplecov instead of rcov ✓
-* Add cucumber features and tidy up the rspec tests. ✓
-* Refactor of RunSSHLib::CLI to avoid repetition of so many options between
-  _add_, _update_ and _shell_. ✓
-* Add support for bookmarking tunnels. ✓
-* Add support for pseudo-tty (-t) option for remote command invocation. ✓
-* Enable unsafe option for deleting host key from known_hosts file with
-  proper warnings. ✓
-* ssh-copy-id capabilities. ✓
-* Add the ability to add ssh options to bookmark + shortcut for ignoring ssh
-  known hosts file (should issue a warning when using this shortcut). √
-* Go over documentation and make sure they're up to date. √
