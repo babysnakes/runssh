@@ -103,7 +103,10 @@ This program is distributed under the GPL v2 license.
 * Enabled definition of (local) ssh tunneling. Currently only in the
   +shell+ command.
 
-=== 0.3
+=== 0.4 (0.3)
+(Originally this was meant to be 0.3 but I made a mistake in the version file
+and there's no going back ...)
+
 * The print subcommand now prints the local tunnel if defined.
 * It's possible to bookmark (local) tunnels.
 * Remote command are run with pseudo terminal (ssh -t) by default. Can be
@@ -125,6 +128,9 @@ This program is distributed under the GPL v2 license.
 * CLI Tests refactorings:
   * Created cucumber features.
   * Fixed tests to test features and not implementations.
+
+=== 0.4.1
+* Doc fixes regarding version skip.
 
 == TODO
 * Create a _proper_ zsh completion script.
