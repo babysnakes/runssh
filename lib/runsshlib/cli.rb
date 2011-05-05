@@ -61,7 +61,7 @@ EOS
       # workaround to enable 'help COMMAND' functionality.
       if args.first == 'help'; args.shift; args << '-h'; end
       # indicate path completion request
-      @completion_requested = args.delete('?')
+      @completion_requested = args.delete('?') ? true : false # flag for required options
       @cmd = extract_subcommand(args)
       @options = parse_subcommand(@cmd, args)
       @c = init_config
@@ -263,7 +263,7 @@ EOH
       options = Trollop::options(args) do
         banner help
         opt :host_name, 'The name or address of the host (e.g, host.example.com).',
-            :short => :n, :type => :string, :required => true
+            :short => :n, :type => :string, :required => @completion_requested
         opt :login, 'The login to connect as.',
             :type => :string
         opt :local_tunnel, "Tunnel definition (see description above).",

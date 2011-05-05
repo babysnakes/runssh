@@ -21,7 +21,7 @@ require 'stringio'
 require 'yaml'
 
 describe "The CLI interface" do
-  context "argument parser" do
+  context "global options parsing" do
     it "should correctly process the -f argument" do
       cli = RunSSHLib::CLI.new(%W(-f #{TMP_FILE} print test))
       global_options = cli.instance_variable_get :@global_options
@@ -48,11 +48,22 @@ describe "The CLI interface" do
       end.to exit_abnormaly
       @buf.should match(/invalid command/)
     end
+  end
 
+  context "completion mechanism" do
     it "displays completions and exit if requested" do
       import_fixtures
       capture(:stdout) {
         RunSSHLib::CLI.new(%W(-f #{TMP_FILE} print ?)).run
+      }
+      @buf.should include("cust1")
+      @buf.should include("cust2")
+    end
+
+    it "displays completion even if required option for subcommand is missing" do
+      import_fixtures
+      capture(:stdout) {
+        RunSSHLib::CLI.new(%W(-f #{TMP_FILE} update ?)).run
       }
       @buf.should include("cust1")
       @buf.should include("cust2")

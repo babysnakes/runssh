@@ -142,5 +142,6 @@ and there's no going back ...)
 
 === Tasks for 0.4.2
 * Completion should work on commands with required options even if these
-  options are not given.
+  options are not given. √
 * Proper zsh completion?
+* Maybe bash completion improvements.
