@@ -139,3 +139,8 @@ and there's no going back ...)
 * Rename (or move) host definition
 * Maybe replace invoking ssh from the command line with some library.
 * Automatic deletion of empty groups.
+
+=== Tasks for 0.4.2
+* Completion should work on commands with required options even if these
+  options are not given.
+* Proper zsh completion?
