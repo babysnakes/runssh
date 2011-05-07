@@ -225,6 +225,39 @@ describe "The CLI interface" do
     end
   end
 
+  describe "export subcommand" do
+    context "when export file exists" do
+      let(:cli) {
+        RunSSHLib::CLI::new(%W(-f #{TMP_FILE} export -o #{TMP_YML}))
+      }
+
+      before(:each) do
+        File.open(TMP_YML, 'w') { |io| io.write "" }
+      end
+
+      it "overwrites the file if the user approves the prompt" do
+        capture(:stderr) do
+          capture(:stdout, 'yes') do
+            cli.run
+          end
+        end
+        @buf.should include('Overwrite?')
+        @buf.should include(TMP_YML)
+        IO.read(TMP_YML).should_not == ""
+      end
+
+      it "correctly cancels exporting if answered no at the prompt" do
+        capture(:stdout) do
+          capture(:stderr, 'no') do
+            expect { cli.run }.to exit_abnormaly
+          end
+        end
+        @buf.should include('Cancelled')
+        IO.read(TMP_YML).should == ''
+      end
+    end
+  end
+
   context "Add bookmark with ssh options" do
     it "adds options specified with '-o' to the '--no-host-key-checking' options" do
       options = %W(-f #{TMP_FILE} add -o ForwardAgent=true --no-host-key-checking -n some.host one two)

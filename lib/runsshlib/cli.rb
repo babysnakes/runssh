@@ -403,6 +403,10 @@ EOS
 
     # we don't use path here, it's just for easier invocation
     def run_export(path)
+      if File.exist? @options[:output_file]
+        question = "Output file (#{@options[:output_file]}) exists!. Overwrite? [yes/no] "
+        agree_or_abort question, 'Cancelled'
+      end
       @c.export(@options[:output_file])
     end
 

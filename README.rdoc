@@ -134,6 +134,7 @@ and there's no going back ...)
 * Doc fixes regarding version skip.
 
 === 0.4.2
+* If, when exporting, the output file exists, the user is prompted for approval.
 * Completion now works for commands that requires options (e.g. add) even if 
   the required option is not given.
 * Finally - proper zsh completion :)
@@ -147,5 +148,4 @@ and there's no going back ...)
 * Automatic deletion of empty groups.
 
 === Tasks for 0.4.2
-* Fix export to not allow overwriting file
 * Maybe bash completion improvements.
