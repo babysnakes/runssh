@@ -30,10 +30,13 @@ samples (mainly _cvs) and went through a _lot_ of trial and error until it worke
 me. I hope it'll work for you as well :)
 
 === Bash Completion
-For bash completion I added a simple <tt>runssh_comp.sh</tt> file which completes
-the subcommands and the paths, but not the arguments. To use it, just copy
-it from your gem's +bin+ directory to <tt>/etc/bash-completion.d/</tt> (or wherever
-your bash-completion scripts are).
+Bash completion is not as complete as the zsh one. It only supports path completions.
+Since I'm now using zsh, I have very little interest in improving this. Anybody willing
+to contribute?
+
+To install just copy the <tt>completions/runssh_comp.sh</tt> file which is included in the gem (run
+<tt>gem contents runssh</tt> to get the path to this file) to <tt>/etc/bash-completion.d/</tt>
+(or wherever your bash completion files reside).
 
 == Usage
 For usage run _runssh_ without arguments.
@@ -146,6 +149,3 @@ and there's no going back ...)
 * Rename (or move) host definition
 * Maybe replace invoking ssh from the command line with some library.
 * Automatic deletion of empty groups.
-
-=== Tasks for 0.4.2
-* Maybe bash completion improvements.
