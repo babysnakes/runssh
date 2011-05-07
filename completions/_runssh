@@ -1,0 +1,93 @@
+#compdef runssh
+
+_runssh() {
+  _arguments \
+    '(* -)'{-h,--help}'[print help]' \
+    '(* -)'{-v,--version}'[print version and exit]' \
+    '(-f --config-file)'{-f,--config-file}'+[bookmarks file]: : _files' \
+    '(* -)'{-U,--update-config}'[Update config version (after upgrade)]' \
+    '*:: :_runssh_commands'
+}
+
+(( $+funtions[_runssh_commands] )) ||
+_runssh_commands() {
+  if (( CURRENT == 1 )); then
+    _describe -t commands 'runssh commands' "(shell add del update print import export cpid)" && ret=0
+  else
+    # Since we're using a syntax that clears $words we have to get
+    # the custom config file (if given) somehow.
+    [[ -n "$opt_args[-f]" ]] && runssh_config_file="-f $opt_args[-f]"
+    subcommand=$words[1]
+    case $subcommand in
+      shell|del|print|import|export|cpid)
+        _call_function ret _runssh_subcmd_$subcommand
+        ;;
+      add|update) # they have the same options
+        _call_function ret _runssh_subcmd_add
+        ;;
+      *) # we can not identify the subcommand but since the user
+         # might have used abbreviations, we'll just complete the path.
+         _call_function ret _runssh_path_completions
+        ;;
+    esac
+  fi
+}
+
+(( $+functions[_runssh_subcmd_shell] )) ||
+_runssh_subcmd_shell() {
+  _arguments \
+    '(-l --login)'{-l,--login}'+[Override login]: :' \
+    '(-n --host-name)'{-n,--host-name}'+[host to connect to]: :' \
+    '*: :_runssh_path_completions'
+}
+
+(( $+functions[_runssh_subcmd_cpid] )) ||
+_runssh_subcmd_cpid() {
+  _arguments \
+    '(-i --identity-file)'{-i,--identity-file}'+[Ssh key to copy]: : _files' \
+    '*: :_runssh_path_completions'
+}
+
+(( $+functions[_runssh_subcmd_import] )) ||
+_runssh_subcmd_import() {
+  _arguments \
+    '(-i --input-file)'{-i,--input-file}'+[Yaml file to import]: : _files'\
+}
+
+(( $+functions[_runssh_subcmd_export] )) ||
+_runssh_subcmd_export() {
+  _arguments \
+    '(-o --output-file)'{-o,--output-file}'+[File to export to]: : _files'\
+}
+
+(( $+functions[_runssh_subcmd_del] )) ||
+_runssh_subcmd_del() {
+  _arguments \
+    '(-y --yes)'{-y,--yes}'[Delete without asking]' \
+    '*: :_runssh_path_completions'
+}
+
+(( $+functions[_runssh_subcmd_print] )) ||
+_runssh_subcmd_print() {
+  _arguments \
+    '*: :_runssh_path_completions'
+}
+
+(( $+functions[_runssh_subcmd_add] )) ||
+_runssh_subcmd_add() {
+  _arguments \
+    '(-l --login)'{-l,--login}'+[Login user]: :' \
+    '(-n --host-name)'{-n,--host-name}'+[host to connect to]: :' \
+    '(-L --local-tunnel)'{-L,--local-tunnel}'+[Local tunnel definition]: :' \
+    {\*-o,\*--option}'+[Ssh option]: :' \
+    '(-N --no-host-key-checking)'{-N,--no-host-key-checking}"[Don't verify host key!]" \
+    '*: :_runssh_path_completions'
+}
+
+# Call 'runssh ... ?' and get possible completions
+(( $+functions[_runssh_path_completions] )) ||
+_runssh_path_completions() {
+  completion_command="runssh $runssh_config_file $words[0,CURRENT-1] \? 2>/dev/null"
+  path_completions="( $(_call_program paths $completion_command ) )"
+  _describe -t paths 'available paths' $path_completions && ret=0
+}

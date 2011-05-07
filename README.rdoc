@@ -12,27 +12,28 @@ I am planning to add scp support as well.
 This requires you to have the _ssh_ binary in your path and optionally the
 <i>ssh-copy-id</i> binary (for copying ssh key).
 
-=== Installation
+== Installation
 You must have ruby[http://www.ruby-lang.org/] and
 rubygems[http://rubygems.org/] installed and then run:
 	gem install runssh
+
+=== Zsh Completion
+Finally we have a <b>fully functional</b> zsh completion. It includes options, subcommands
+and path completions. 
+
+To install just copy the <tt>completions/_runssh</tt> file which is included in the gem (run 
+<tt>gem contents runssh</tt> to get the path to this file) to one of the directories in your 
+<tt>$fpath</tt>.
+
+Note: I don't really know how it works. I just read some docs, looked at a few
+samples (mainly _cvs) and went through a _lot_ of trial and error until it worked for
+me. I hope it'll work for you as well :)
 
 === Bash Completion
 For bash completion I added a simple <tt>runssh_comp.sh</tt> file which completes
 the subcommands and the paths, but not the arguments. To use it, just copy
 it from your gem's +bin+ directory to <tt>/etc/bash-completion.d/</tt> (or wherever
 your bash-completion scripts are).
-
-=== Zsh Completion
-For zsh - Until I'll write a proper zsh completion file - I'm using bashcompinit
-to use the bash completion script. To use the bash completion file with zsh, copy
-the file to some place and switch the comments between line 14 and 15. Then add
-the following to your .zshrc file:
-	autoload bashcompinit
-	bashcompinit
-	source /path/to/modified/runssh_comp.sh
-This works for me, but I'm only starting with zsh so I hope it will work for you
-as well.
 
 == Usage
 For usage run _runssh_ without arguments.
@@ -132,6 +133,11 @@ and there's no going back ...)
 === 0.4.1
 * Doc fixes regarding version skip.
 
+=== 0.4.2
+* Completion now works for commands that requires options (e.g. add) even if 
+  the required option is not given.
+* Finally - proper zsh completion :)
+
 == TODO
 * Create a _proper_ zsh completion script.
 * Add scp capabilities.
@@ -141,7 +147,5 @@ and there's no going back ...)
 * Automatic deletion of empty groups.
 
 === Tasks for 0.4.2
-* Completion should work on commands with required options even if these
-  options are not given. √
-* Proper zsh completion?
+* Fix export to not allow overwriting file
 * Maybe bash completion improvements.
