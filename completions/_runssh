@@ -38,6 +38,10 @@ _runssh_subcmd_shell() {
   _arguments \
     '(-l --login)'{-l,--login}'+[Override login]: :' \
     '(-n --host-name)'{-n,--host-name}'+[host to connect to]: :' \
+    '(-L --local-tunnel)'{-L,--local-tunnel}'+[(local) tunnel definition]: :' \
+    {\*-o,\*--option}'+[Ssh option]: :' \
+    '(-I --insecure-host-key)'{-I,--insecure-host-key}'[Delete the specified line from hosts file]' \
+    '(-T --no-pseudo-terminal)'{-T,--no-pseudo-terminal}'[Disable pseudo terminal (in remote command)]' \
     '*: :_runssh_path_completions'
 }
 
