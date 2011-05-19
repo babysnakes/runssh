@@ -142,6 +142,9 @@ and there's no going back ...)
   the required option is not given.
 * Finally - proper zsh completion :)
 
+=== 0.4.3
+* Added missing options/arguments completions to the _shell_ subcommand.
+
 == TODO
 * Shell via gateway (connect to a firewall and from there open shell to the host).
 * Rename (or move) host definition

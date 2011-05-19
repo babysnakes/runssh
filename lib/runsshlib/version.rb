@@ -25,4 +25,3 @@ module RunSSHLib
     STRING = [MAJOR, MINOR, BUILD].compact.join('.')
   end
 end
-
