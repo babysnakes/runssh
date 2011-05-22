@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    runssh (0.5.0)
+    runssh (0.5.1)
       highline (~> 1.6.1)
       trollop (~> 1.16.2)
 
