@@ -12,14 +12,14 @@ _runssh() {
 (( $+funtions[_runssh_commands] )) ||
 _runssh_commands() {
   if (( CURRENT == 1 )); then
-    _describe -t commands 'runssh commands' "(shell add del update print import export cpid)" && ret=0
+    _describe -t commands 'runssh commands' "(shell scp add del update print import export cpid)" && ret=0
   else
     # Since we're using a syntax that clears $words we have to get
     # the custom config file (if given) somehow.
     [[ -n "$opt_args[-f]" ]] && runssh_config_file="-f $opt_args[-f]"
     subcommand=$words[1]
     case $subcommand in
-      shell|del|print|import|export|cpid)
+      shell|scp|del|print|import|export|cpid)
         _call_function ret _runssh_subcmd_$subcommand
         ;;
       add|update) # they have the same options
@@ -42,6 +42,17 @@ _runssh_subcmd_shell() {
     {\*-o,\*--option}'+[Ssh option]: :' \
     '(-I --insecure-host-key)'{-I,--insecure-host-key}'[Delete the specified line from hosts file]' \
     '(-T --no-pseudo-terminal)'{-T,--no-pseudo-terminal}'[Disable pseudo terminal (in remote command)]' \
+    '*: :_runssh_path_completions'
+}
+
+(( $+functions[_runssh_subcmd_scp] )) ||
+_runssh_subcmd_scp() {
+  _arguments \
+    '(-L --login)'{-L,--login}'+[Override login]: :' \
+    '(-n --host-name)'{-n,--host-name}'+[host to connect to]: :' \
+    {\*-o,\*--option}'+[Ssh option]: :' \
+    '(-r --recurssive)'{-r,--recurssive}'[copy directories recurssively]' \
+    '(-l --limit)'{-l,--limit}'+[limit bandwidth in kbit/s]: :' \
     '*: :_runssh_path_completions'
 }
 
