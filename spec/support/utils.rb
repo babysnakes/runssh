@@ -122,7 +122,7 @@ end
 def stub_ssh_exec
   RunSSHLib::SshBackend.stub(:exec) do |_command, *args|
     output = _command
-    output + args.join(" ") unless args.empty?
+    output += (' ' + args.join(" ")) unless args.empty?
     puts output
   end
 end

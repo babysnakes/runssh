@@ -38,6 +38,9 @@ module RunSSHLib
   # message should contain only the older config version!
   class OlderConfigVersionError < StandardError; end
 
+  # Parameters error
+  class ParametersError < StandardError; end
+
   # Just a general abort with error
   class AbortError < StandardError; end
 

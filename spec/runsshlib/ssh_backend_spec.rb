@@ -131,4 +131,34 @@ describe RunSSHLib::SshBackend do
           should == "7070:localhost:7070"
     end
   end
+
+  describe "#normalize_scp_targets" do
+    it "raises exception if not hostname given" do
+      expect {
+        RunSSHLib::SshBackend.normalize_scp_targets([1, 2], nil)
+      }.to raise_error(RuntimeError, /no hostname/)
+    end
+
+    it "raises error if number of targets doesn't match 2" do
+      expect {
+        RunSSHLib::SshBackend.normalize_scp_targets([1], 'some.host')
+      }.to raise_error(RunSSHLib::ParametersError, /Invalid targets/)
+      expect {
+        RunSSHLib::SshBackend.normalize_scp_targets([1, 2, 3], 'some.host')
+      }.to raise_error(RunSSHLib::ParametersError, /Invalid targets/)
+    end
+
+    it "raises an error if none of the targets prefixed with :" do
+      expect {
+        RunSSHLib::SshBackend.normalize_scp_targets(['one', 'two'], 'host')
+      }.to raise_error(RunSSHLib::ParametersError, /should be prefixed/)
+    end
+
+    it "correctly parses targets" do
+      RunSSHLib::SshBackend.normalize_scp_targets([':remotefile', 'localfile'],
+                 'host').should == ['host:remotefile', 'localfile']
+      RunSSHLib::SshBackend.normalize_scp_targets(['/path/to/localfile', ':/path/to/remotefile'],
+                 'host').should == ['/path/to/localfile', 'host:/path/to/remotefile']
+    end
+  end
 end

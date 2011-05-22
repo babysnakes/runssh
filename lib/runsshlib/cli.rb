@@ -20,7 +20,7 @@ require 'trollop'
 module RunSSHLib
   class CLI
 
-    COMMAND = %w(shell add del update print import export cpid)
+    COMMAND = %w(shell add del update print import export cpid scp)
     MAIN_HELP = <<-EOS
 Usage: runssh [global_options] COMMAND [options] <path>
 
@@ -36,6 +36,7 @@ COMMAND : One of the commands mentioned below. It's possible to
 
 Available commands:
 * shell  : Open ssh shell on remote host
+* scp    : Copy files from/to remote host
 * add    : Add host definition
 * del    : Delete host definition
 * update : Update host definition
@@ -86,7 +87,7 @@ EOS
         m = method(command_name.to_sym)
         m.call(@path)
       end
-    rescue ConfigError => e
+    rescue ConfigError, ParametersError => e
       Trollop.die e.message
     rescue AbortError => e
       abort e.message
@@ -130,6 +131,8 @@ EOS
       case cmd
       when 'shell'
         parse_shell args
+      when 'scp'
+        parse_scp args
       when 'add', 'update'
         parse_add_update cmd, args
       when 'del'
@@ -199,6 +202,54 @@ EOS
         rmt = args.slice!(ind, args.size - ind)
         rmt.delete_at(0) # remove --
         options[:remote_cmd] = rmt.join(" ")
+      end
+      options
+    end
+
+    def parse_scp(args)
+      options = Trollop::options(args) do
+        banner <<-EOH
+Usage: runssh [global_options] scp [options] <path> -- [:]target [:]target
+
+<path> : See main help for description of path.
+
+Copy file/directory to/from remote host using scp. The remote target should
+be prefixed with ':'. The paths can be relative or absolute. The remote 
+target is extracted to [user@]host:target.
+
+Here are some examples to make it clear. Say you have a bookmark named
+"some host" which points to 'some.host' and uses 'root' as login:
+
+The command:
+  runssh scp some host -- localfile :remotefile
+Is equivalent to:
+  scp localfile root@some.host:remotefile
+
+The command:
+  runssh scp -r some host -- :/path/to/remotedirectory /path/to/localdirectory
+Is equivalent to:
+  scp -r root@some.host:/path/to/remotedirectory /path/to/localdirectory
+
+Options:
+EOH
+        opt :login, "Override the login in the configuration.",
+            :type => :string
+        opt :host_name, 'Override the name or address of the host.',
+            :short => :n, :type => :string
+        opt :limit, "Limit the bandwidth. Kbits/s. (Corresponds to scp -l).",
+            :short => :l, :type => :string
+        opt :recurssive, "Recurssively copy entire directory (corresponds to scp -r)",
+            :short => :r
+        opt :option, 'Ssh option. Appended to saved ssh options. ' \
+            'Can be used multiple times.',
+            :short => :o, :type => :string, :multi => true
+        stop_on "--"
+      end
+      # TODO: Can I find a way to specify targets without -- ?
+      if ind = args.index("--")
+        targets = args.slice!(ind, args.size - ind)
+        targets.delete_at(0)
+        options[:targets] = targets
       end
       options
     end
@@ -360,6 +411,19 @@ EOS
         end
       end
       SshBackend.shell(definition)
+    end
+
+    def run_scp(path)
+      host = @c.get_host(path)
+      definition = host.definition.merge(@options) do |key, this, other|
+        case key
+        when :option
+          this + other
+        else
+          other ? other : this
+        end
+      end
+      SshBackend.scp(definition)
     end
 
     def run_cpid(path)

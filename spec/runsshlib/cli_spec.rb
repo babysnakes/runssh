@@ -283,8 +283,12 @@ describe "The CLI interface" do
       @ab_cli.send(:extract_subcommand, ['a']).should eql('add')
     end
 
-    it "should parse 's' as shell" do
-      @ab_cli.send(:extract_subcommand, %w(s root)).should eql('shell')
+    it "should parse 'sh' as shell" do
+      @ab_cli.send(:extract_subcommand, %w(sh root)).should eql('shell')
+    end
+
+    it "should parse 'sc' as scp" do
+      @ab_cli.send(:extract_subcommand, %w(sc root)).should eql('scp')
     end
 
     it "should parse 'i' as import" do

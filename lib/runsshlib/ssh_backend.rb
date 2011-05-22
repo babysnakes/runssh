@@ -59,6 +59,25 @@ module RunSSHLib
       exec command
     end
 
+    # Copy files to/from remote host using scp.
+    # definition: A hash containig a merge between host definition and
+    #             user input.
+    def scp(definition)
+      raise "no hostname" unless definition[:host_name] # should never happen
+      command = "scp"
+      arguments = []
+      arguments << '-r' if definition[:recurssive_given]
+      arguments += ['-l', definition[:limit]] if definition[:limit]
+      definition[:option].each do |option|
+        arguments += ['-o', option]
+      end if definition[:option]
+      host_name = definition[:login] ?
+                  "#{definition[:login]}@#{definition[:host_name]}" :
+                  definition[:host_name]
+      arguments += normalize_scp_targets(definition[:targets], host_name)
+      exec command, *arguments
+    end
+
     # Copy ssh identity file to remote host according to options
     # options:: A hash containing host definition (:host_name, etc) and
     #           optionally identity_file path.
@@ -77,6 +96,25 @@ module RunSSHLib
     def normalize_tunnel_definition(tunnel_definition)
       tunnel_definition =~ /(^\d+$)/ ? "#{$1}:localhost:#{$1}" :
                            tunnel_definition
+    end
+
+    # Prepend the remote target with supplied host_name.
+    #
+    # Raises ParametersError if no target is indicated as remote
+    # (with ':') or if the number of targets is not 2.
+    def normalize_scp_targets(targets, host_name)
+      raise ParametersError, "Invalid targets: #{targets.join(' ')}" unless
+            targets.length == 2
+      raise "no hostname" unless host_name # should never happen
+
+      if targets[0].start_with?(':')
+        targets[0] = host_name + targets[0]
+      elsif targets[1].start_with?(':')
+        targets[1] = host_name + targets[1]
+      else
+        raise ParametersError, "The remote path should be prefixed with ':'!"
+      end
+      targets
     end
   end
 end
