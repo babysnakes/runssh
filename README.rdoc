@@ -3,14 +3,13 @@ A CLI utility to bookmark ssh connections with hierarchy and run various
 ssh commands on these bookmarks. Supported operations are:
 
 * Login
+* Scp
 * Copy ssh key
 * Run remote command
 * Create local tunnel
 
-I am planning to add scp support as well.
-
-This requires you to have the _ssh_ binary in your path and optionally the
-<i>ssh-copy-id</i> binary (for copying ssh key).
+This requires you to have the _ssh_ and _scp_ binaries in your path and
+optionally the <i>ssh-copy-id</i> binary (for copying ssh key).
 
 == Installation
 You must have ruby[http://www.ruby-lang.org/] and
@@ -145,11 +144,13 @@ and there's no going back ...)
 === 0.4.3
 * Added missing options/arguments completions to the _shell_ subcommand.
 
-== TODO
-* Shell via gateway (connect to a firewall and from there open shell to the host).
-* Rename (or move) host definition
-* Maybe replace invoking ssh from the command line with some library.
-* Automatic deletion of empty groups.
+=== 0.5.0
+* Added scp support.
 
-== Tasks for 0.5.0
-* Add scp capabilities.
+== TODO for 1.0
+* Merge configurations.
+
+== TODO for later
+* Rename (or move) host definition.
+* Automatic deletion of empty groups.
+* Shell via gateway (connect to a firewall and from there open shell to the host).
