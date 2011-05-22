@@ -51,3 +51,9 @@ Feature: Scp to copy files and directories to and from a remote host
   Scenario: scp with wrong number of arguments
     When I run the "scp" command with "some host1 -- one two three"
     Then I should get a "Invalid targets: one two three" error
+
+  Scenario: Overriding hostname or login
+    When I run the "scp" command with "-n newhost some host2 -- :remote local"
+    Then It should execute "scp mylogin@newhost:remote local"
+    When I run the "scp" command with "-L otherlogin some host2 -- local :remote"
+    Then It should execute "scp local otherlogin@some.host2:remote"

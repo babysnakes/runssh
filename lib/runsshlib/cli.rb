@@ -233,7 +233,7 @@ Is equivalent to:
 Options:
 EOH
         opt :login, "Override the login in the configuration.",
-            :type => :string
+            :type => :string, :short => :L
         opt :host_name, 'Override the name or address of the host.',
             :short => :n, :type => :string
         opt :limit, "Limit the bandwidth. Kbits/s. (Corresponds to scp -l).",
