@@ -230,6 +230,12 @@ The command:
 Is equivalent to:
   scp -r root@some.host:/path/to/remotedirectory /path/to/localdirectory
 
+The next command is a bit tricky:
+  runssh scp some host -- localfile :
+Is equivalent to:
+  scp localfile root@some.host:
+  (This will copy the file "localfile" to root's home directory on some.host).
+
 Options:
 EOH
         opt :login, "Override the login in the configuration.",
