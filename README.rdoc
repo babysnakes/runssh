@@ -150,6 +150,9 @@ and there's no going back ...)
 === 0.5.1
 * Added example to the documentation.
 
+=== 0.5.2
+* Zsh completion now completes the local target.
+
 == TODO for 1.0
 * Merge configurations.
 
