@@ -47,13 +47,19 @@ _runssh_subcmd_shell() {
 
 (( $+functions[_runssh_subcmd_scp] )) ||
 _runssh_subcmd_scp() {
-  _arguments \
-    '(-L --login)'{-L,--login}'+[Override login]: :' \
-    '(-n --host-name)'{-n,--host-name}'+[host to connect to]: :' \
-    {\*-o,\*--option}'+[Ssh option]: :' \
-    '(-r --recurssive)'{-r,--recurssive}'[copy directories recurssively]' \
-    '(-l --limit)'{-l,--limit}'+[limit bandwidth in kbit/s]: :' \
-    '*: :_runssh_path_completions'
+  if [[ $words =~ " -- " ]]; then
+    if [[ ! $words[$CURRENT] =~ ^: ]]; then # currently we only offer completions for local files
+      _files
+    fi
+  else
+    _arguments \
+      '(-L --login)'{-L,--login}'+[Override login]: :' \
+      '(-n --host-name)'{-n,--host-name}'+[host to connect to]: :' \
+      {\*-o,\*--option}'+[Ssh option]: :' \
+      '(-r --recurssive)'{-r,--recurssive}'[copy directories recurssively]' \
+      '(-l --limit)'{-l,--limit}'+[limit bandwidth in kbit/s]: :' \
+      '*: :_runssh_path_completions'
+  fi
 }
 
 (( $+functions[_runssh_subcmd_cpid] )) ||
