@@ -153,6 +153,11 @@ and there's no going back ...)
 === 0.5.2
 * Zsh completion now completes the local target.
 
+=== 0.5.3
+* Fixed inconsistency between gemspec and <tt>bin/runssh</tt> with dependencies versions. I'm 
+  using fixed versions so it could be used in default ubuntu which comes with rubygems
+  1.3.x :(
+
 == TODO for 1.0
 * Merge configurations.
 
