@@ -2,8 +2,8 @@ PATH
   remote: .
   specs:
     runssh (0.5.2)
-      highline (~> 1.6.1)
-      trollop (~> 1.16.2)
+      highline (= 1.6.1)
+      trollop (= 1.16.2)
 
 GEM
   remote: http://rubygems.org/

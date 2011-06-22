@@ -17,8 +17,8 @@ ssh connections in heirarchial groups.
 EOF
 
   s.required_ruby_version = '>= 1.8.7'
-  s.add_dependency('trollop', '~> 1.16.2')
-  s.add_dependency('highline', '~> 1.6.1')
+  s.add_dependency('trollop', '1.16.2')
+  s.add_dependency('highline', '1.6.1')
 
   s.has_rdoc          = true
   s.extra_rdoc_files  = ['README.rdoc']
