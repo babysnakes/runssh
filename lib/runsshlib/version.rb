@@ -18,9 +18,9 @@
 
 module RunSSHLib
   module Version
-    MAJOR = 0
-    MINOR = 5
-    BUILD = 3
+    MAJOR = 1
+    MINOR = 0
+    BUILD = '0.dev'
 
     STRING = [MAJOR, MINOR, BUILD].compact.join('.')
   end

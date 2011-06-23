@@ -159,7 +159,10 @@ and there's no going back ...)
   1.3.x :(
 
 == TODO for 1.0
-* Merge configurations.
+* Merge configurations - The default import behaviour should be to merge configuraitons
+  instead of overwriting them. Overwriting them should come as an option.
+* Export subcommand should accept output file as an argument and not as an option.
+* Import subcommand should accept input file as an argument and not as an option.
 
 == TODO for later
 * Rename (or move) host definition.
