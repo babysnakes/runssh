@@ -191,6 +191,7 @@ module RunSSHLib
     def retrieve_path(path, error)
       host = path.inject(@config) do |hsh, ky|
         raise ConfigError.new(error) unless hsh
+        raise ConfigError.new(error) if hsh.instance_of?(RunSSHLib::SshHostDef)
         hsh[ky]
       end
     end

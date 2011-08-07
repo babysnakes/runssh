@@ -248,6 +248,12 @@ describe "RunSSH Configuration class" do
               should raise_error(RunSSHLib::ConfigError, /oesn't exist!/)
     end
 
+    it "raises invalid path error if the supplied path continues beyond the host path" do
+      initial_data
+      expect { @c.get_host([:one, :two, :three, :www, :invalid]) }.
+            to raise_error(RunSSHLib::ConfigError, /oesn't exist!/)
+    end
+
     it "should return the correct host when the path is right" do
       c = RunSSHLib::ConfigFile.new(@temp_file)
       c.add_host_def([:customer, :dc], :host1, @h1)
