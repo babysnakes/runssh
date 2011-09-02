@@ -9,3 +9,6 @@ pkg/
 .rubyamp-config.yml
 tags
 
+/.bin/
+/.bundle/
+
